@@ -211,10 +211,11 @@ function closeModals() {
   document.getElementById('config-modal')?.remove();
 }
 
-function modalShell(titleText) {
+function modalShell(titleText, modalId) {
   const dict = I18N[LANG];
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
+  overlay.id = modalId;
 
   const panel = document.createElement('div');
   panel.className = 'modal-panel';
@@ -259,7 +260,7 @@ function fieldRowEditable(dict, labelKey, value, onInput) {
 function openConfig() {
   const dict = I18N[LANG];
   closeModals();
-  const panel = modalShell(dict.apiTitle);
+  const panel = modalShell(dict.apiTitle, 'config-modal');
 
   const tgt = document.createElement('p');
   tgt.className = 'modal-label modal-hint';
@@ -345,7 +346,7 @@ function openModal(game) {
   const dict = I18N[LANG];
   closeModals();
   const eff = effGame(game);
-  const panel = modalShell(gameTitle(eff));
+  const panel = modalShell(gameTitle(eff), 'game-modal');
 
   /* editável: todos os campos de metadado */
   const fields = document.createElement('div');
@@ -481,7 +482,6 @@ function openModal(game) {
   actions.append(saveBtn, copyBtn);
   panel.appendChild(actions);
 
-  document.body.lastElementChild.id = 'game-modal';
   textarea.focus({ preventScroll: true });
 }
 
