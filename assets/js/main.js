@@ -1,8 +1,11 @@
 /* ============================================================
    Lista de Jogos — render + i18n PT-BR/EN
-   Os dados vivem em data/games.json (fácil de preencher na mão
-   ou com script). Metadados null não aparecem no card.
+   Os dados vivem em data/games.json. Edições do usuário (nota,
+   review e correções de campos) ficam em 'edits-jogos' no
+   localStorage e podem ser gravadas no repo via gh.js.
    ============================================================ */
+
+import { getToken, getRepo, setToken, setRepo, publishGames } from './gh.js';
 
 const I18N = {
   'pt-br': {
@@ -32,6 +35,19 @@ const I18N = {
     copyNotes: 'COPIAR NOTAS SALVAS',
     copied: 'COPIADO ✓',
     close: 'Fechar (Esc)',
+    publish: 'PUBLICAR NO GITHUB',
+    publishing: 'PUBLICANDO...',
+    publishOk: 'PUBLICADO ✓',
+    publishEmpty: 'nada para publicar — salve algo primeiro',
+    ghConfig: '⚙',
+    ghTitle: 'Configuração do GitHub',
+    ghToken: 'Personal Access Token (PAT)',
+    ghTokenHint:
+      'Crie em github.com/settings/personal-access-tokens — fine-grained, acesso ao repo da lista, permissão Contents: Read and write.',
+    ghRepo: 'Repositório (dono/nome)',
+    ghSave: 'SALVAR CONFIG',
+    ghSaved: 'CONFIG SALVA ✓',
+    ghClear: 'Limpar token',
   },
   en: {
     pageTitle: 'Games List',
@@ -60,6 +76,19 @@ const I18N = {
     copyNotes: 'COPY SAVED NOTES',
     copied: 'COPIED ✓',
     close: 'Close (Esc)',
+    publish: 'PUBLISH TO GITHUB',
+    publishing: 'PUBLISHING...',
+    publishOk: 'PUBLISHED ✓',
+    publishEmpty: 'nothing to publish — save something first',
+    ghConfig: '⚙',
+    ghTitle: 'GitHub configuration',
+    ghToken: 'Personal Access Token (PAT)',
+    ghTokenHint:
+      'Create at github.com/settings/personal-access-tokens — fine-grained, this repo only, permission Contents: Read and write.',
+    ghRepo: 'Repository (owner/name)',
+    ghSave: 'SAVE CONFIG',
+    ghSaved: 'CONFIG SAVED ✓',
+    ghClear: 'Clear token',
   },
 };
 
@@ -88,7 +117,28 @@ function applyI18n() {
   $('#lang-toggle').textContent = LANG === 'pt-br' ? 'EN' : 'PT-BR';
 }
 
-/* ---------- render ---------- */
+/* ---------- edições locais (nota, review, correções) ---------- */
+
+const EDITS_KEY = 'edits-jogos';
+/* migra do formato antigo (notas-jogos) se existir */
+const EDITS = new Map(
+  JSON.parse(localStorage.getItem(EDITS_KEY) || localStorage.getItem('notas-jogos') || '[]')
+);
+
+function persistEdits() {
+  localStorage.setItem(EDITS_KEY, JSON.stringify([...EDITS]));
+}
+
+function effGame(game) {
+  const ed = EDITS.get(game.title);
+  return ed ? { ...game, ...ed } : game;
+}
+
+function hasEdits(game) {
+  return EDITS.has(game.title);
+}
+
+/* ---------- i18n helpers de render ---------- */
 
 function gameTitle(game) {
   // 'title' é o título ORIGINAL do jogo (em geral em inglês/lançamento).
@@ -100,7 +150,7 @@ function gameTitle(game) {
 function metaLine(game) {
   const parts = [];
   if (game.year) parts.push(game.year);
-  if (game.platform) parts.push({ 'pt-br': game.platform, en: game.platform }[LANG]);
+  if (game.platform) parts.push(game.platform);
   return parts;
 }
 
@@ -127,50 +177,45 @@ function renderSubLine(body, game) {
   return subLine;
 }
 
-/* ---------- notas do usuário (rating + review) no navegador ---------- */
+/* ---------- seções por letra + índice A-Z ---------- */
 
-const NOTAS_KEY = 'notas-jogos';
-const NOTAS = new Map(JSON.parse(localStorage.getItem(NOTAS_KEY) || '[]'));
-
-function notaOf(game) {
-  return NOTAS.get(game.title) || {};
+function sectionLetter(title) {
+  const c = (title || '?').trim().charAt(0).normalize('NFD')[0].toUpperCase();
+  return /[A-Z0-9]/.test(c) ? c : '#';
 }
 
-function getRating(game) {
-  return notaOf(game).rating ?? game.rating ?? null;
-}
-
-function getReview(game) {
-  return notaOf(game).review ?? game.review ?? '';
-}
-
-function persistNotas() {
-  localStorage.setItem(NOTAS_KEY, JSON.stringify([...NOTAS]));
-}
-
-/* ---------- modal de detalhes do jogo ---------- */
-
-function fieldRow(dict, labelKey, value) {
-  if (value === null || value === undefined || value === '') return null;
-  const row = document.createElement('div');
-  row.className = 'modal-field';
-  const label = document.createElement('span');
-  label.className = 'modal-label';
-  label.textContent = dict[labelKey];
-  const val = document.createElement('span');
-  val.className = 'modal-value';
-  val.textContent = value;
-  row.append(label, val);
-  return row;
-}
-
-function openModal(game) {
+function renderLetterNav() {
   const dict = I18N[LANG];
-  closeModal();
+  const nav = $('#letter-nav');
+  nav.innerHTML = '';
+  const letters = [...new Set(GAMES.map((g) => sectionLetter(gameTitle(g))))].sort();
+  for (const code of 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')) {
+    if (letters.includes(code)) {
+      const a = document.createElement('a');
+      a.href = `#sec-${code.toLowerCase()}`;
+      a.textContent = code;
+      nav.appendChild(a);
+    } else {
+      const s = document.createElement('span');
+      s.textContent = code;
+      s.className = 'off';
+      nav.appendChild(s);
+    }
+  }
+  nav.setAttribute('aria-label', dict.title);
+}
 
+/* ---------- modal (detalhes + edição + config GitHub) ---------- */
+
+function closeModals() {
+  document.getElementById('game-modal')?.remove();
+  document.getElementById('config-modal')?.remove();
+}
+
+function modalShell(titleText) {
+  const dict = I18N[LANG];
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
-  overlay.id = 'game-modal';
 
   const panel = document.createElement('div');
   panel.className = 'modal-panel';
@@ -181,28 +226,123 @@ function openModal(game) {
   closeBtn.title = dict.close;
   closeBtn.setAttribute('aria-label', dict.close);
   closeBtn.textContent = '×';
-  closeBtn.addEventListener('click', closeModal);
+  closeBtn.addEventListener('click', closeModals);
   panel.appendChild(closeBtn);
 
   const h2 = document.createElement('h2');
-  h2.textContent = gameTitle(game);
+  h2.textContent = titleText;
   panel.appendChild(h2);
 
+  overlay.appendChild(panel);
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModals();
+  });
+  document.body.appendChild(overlay);
+  return panel;
+}
+
+function fieldRowEditable(dict, labelKey, value, onInput) {
+  const row = document.createElement('div');
+  row.className = 'modal-field';
+  const label = document.createElement('span');
+  label.className = 'modal-label';
+  label.textContent = dict[labelKey];
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'modal-input';
+  input.value = value ?? '';
+  input.placeholder = '—';
+  input.addEventListener('input', () => onInput(input.value.trim()));
+  row.append(label, input);
+  return row;
+}
+
+function openConfig() {
+  const dict = I18N[LANG];
+  closeModals();
+  const panel = modalShell(dict.ghTitle);
+
+  const tgt = document.createElement('p');
+  tgt.className = 'modal-label modal-hint';
+  tgt.textContent = dict.ghTokenHint;
+  tgt.id = 'gh-hint';
+  panel.appendChild(tgt);
+
+  const rowToken = document.createElement('div');
+  rowToken.className = 'modal-field';
+  const l1 = document.createElement('span');
+  l1.className = 'modal-label';
+  l1.textContent = dict.ghToken;
+  const tokenInput = document.createElement('input');
+  tokenInput.type = 'password';
+  tokenInput.className = 'modal-input';
+  tokenInput.value = getToken();
+  rowToken.append(l1, tokenInput);
+  panel.appendChild(rowToken);
+
+  const rowRepo = document.createElement('div');
+  rowRepo.className = 'modal-field';
+  const l2 = document.createElement('span');
+  l2.className = 'modal-label';
+  l2.textContent = dict.ghRepo;
+  const repoInput = document.createElement('input');
+  repoInput.type = 'text';
+  repoInput.className = 'modal-input';
+  repoInput.value = getRepo();
+  rowRepo.append(l2, repoInput);
+  panel.appendChild(rowRepo);
+
+  const actions = document.createElement('div');
+  actions.className = 'modal-actions';
+  const saveBtn = document.createElement('button');
+  saveBtn.type = 'button';
+  saveBtn.className = 'btn-neon';
+  saveBtn.textContent = dict.ghSave;
+  saveBtn.addEventListener('click', () => {
+    setToken(tokenInput.value);
+    setRepo(repoInput.value);
+    saveBtn.textContent = dict.ghSaved;
+    updatePublishUI();
+    setTimeout(closeModals, 800);
+  });
+  const clearBtn = document.createElement('button');
+  clearBtn.type = 'button';
+  clearBtn.className = 'btn-ghost';
+  clearBtn.textContent = dict.ghClear;
+  clearBtn.addEventListener('click', () => {
+    setToken('');
+    tokenInput.value = '';
+    updatePublishUI();
+  });
+  actions.append(saveBtn, clearBtn);
+  panel.appendChild(actions);
+
+  tokenInput.focus({ preventScroll: true });
+}
+
+function openModal(game) {
+  const dict = I18N[LANG];
+  closeModals();
+  const eff = effGame(game);
+  const panel = modalShell(gameTitle(eff));
+
+  /* editável: todos os campos de metadado */
   const fields = document.createElement('div');
   fields.className = 'modal-fields';
+  const edited = {};
   [
-    ['labelYear', game.year],
-    ['labelPlatform', game.platform],
-    ['labelEngine', game.engine],
-    ['labelCompany', game.company],
-    ['labelGenre', game.genre],
-    ['labelMode', game.mode],
-  ].forEach(([key, value]) => {
-    const row = fieldRow(dict, key, value);
-    if (row) fields.appendChild(row);
+    ['labelYear', 'year', eff.year],
+    ['labelPlatform', 'platform', eff.platform],
+    ['labelEngine', 'engine', eff.engine],
+    ['labelCompany', 'company', eff.company],
+    ['labelGenre', 'genre', eff.genre],
+    ['labelMode', 'mode', eff.mode],
+  ].forEach(([labelKey, field, value]) => {
+    fields.appendChild(fieldRowEditable(dict, labelKey, value, (v) => (edited[field] = v)));
   });
   panel.appendChild(fields);
 
+  /* nota por estrelas */
   const ratingLabel = document.createElement('p');
   ratingLabel.className = 'modal-label modal-rating-label';
   ratingLabel.textContent = `${dict.labelRating} (${dict.ratingHint})`;
@@ -210,7 +350,7 @@ function openModal(game) {
 
   const stars = document.createElement('div');
   stars.className = 'modal-stars';
-  let rating = getRating(game);
+  let rating = eff.rating ?? null;
   const starBtns = [];
   for (let i = 1; i <= 5; i++) {
     const star = document.createElement('button');
@@ -230,6 +370,7 @@ function openModal(game) {
   paintStars();
   panel.appendChild(stars);
 
+  /* review */
   const reviewLabel = document.createElement('p');
   reviewLabel.className = 'modal-label modal-rating-label';
   reviewLabel.textContent = dict.labelReview;
@@ -238,9 +379,10 @@ function openModal(game) {
   const textarea = document.createElement('textarea');
   textarea.className = 'review-answer modal-answer';
   textarea.placeholder = dict.reviewPlaceholder;
-  textarea.value = getReview(game);
+  textarea.value = eff.review || '';
   panel.appendChild(textarea);
 
+  /* ações */
   const actions = document.createElement('div');
   actions.className = 'modal-actions';
   const saveBtn = document.createElement('button');
@@ -248,26 +390,31 @@ function openModal(game) {
   saveBtn.className = 'btn-neon';
   saveBtn.textContent = dict.save;
   saveBtn.addEventListener('click', () => {
-    const nota = {};
-    if (rating) nota.rating = rating;
-    if (textarea.value.trim()) nota.review = textarea.value.trim();
-    if (Object.keys(nota).length) NOTAS.set(game.title, nota);
-    else NOTAS.delete(game.title);
-    persistNotas();
+    const ed = { ...edited };
+    if (rating) ed.rating = rating;
+    if (textarea.value.trim()) ed.review = textarea.value.trim();
+    if (Object.keys(ed).length) EDITS.set(game.title, ed);
+    else EDITS.delete(game.title);
+    persistEdits();
     saveBtn.textContent = dict.saved;
     setTimeout(() => (saveBtn.textContent = dict.save), 1200);
+    updatePublishUI();
     renderList($('#search').value);
   });
   const copyBtn = document.createElement('button');
   copyBtn.type = 'button';
-  copyBtn.className = 'btn-neon';
+  copyBtn.className = 'btn-ghost';
   copyBtn.textContent = dict.copyNotes;
   copyBtn.addEventListener('click', () => {
-    const lines = GAMES.filter((g) => NOTAS.has(g.title)).map((g) => {
-      const n = NOTAS.get(g.title);
+    const lines = GAMES.filter(hasEdits).map((g) => {
+      const e = EDITS.get(g.title);
       const bits = [];
-      if (n.rating) bits.push(`nota: ${n.rating} estrela(s)`);
-      if (n.review) bits.push(`review: ${n.review}`);
+      if (e.rating) bits.push(`nota: ${e.rating} estrela(s)`);
+      if (e.review) bits.push(`review: ${e.review}`);
+      const fixes = Object.entries(e)
+        .filter(([k]) => !['rating', 'review'].includes(k))
+        .map(([k, v]) => `${k}: ${v}`);
+      if (fixes.length) bits.push(`campos: ${fixes.join('; ')}`);
       return `${g.title} — ${bits.join(' — ')}`;
     });
     const text = lines.length ? lines.join('\n\n') : '(nenhuma nota salva)';
@@ -282,21 +429,50 @@ function openModal(game) {
   actions.append(saveBtn, copyBtn);
   panel.appendChild(actions);
 
-  overlay.appendChild(panel);
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) closeModal();
-  });
-  document.body.appendChild(overlay);
+  document.body.lastElementChild.id = 'game-modal';
   textarea.focus({ preventScroll: true });
 }
 
-function closeModal() {
-  document.getElementById('game-modal')?.remove();
+/* ---------- publicar (API do GitHub) ---------- */
+
+function updatePublishUI() {
+  const btn = $('#publish');
+  if (!btn) return;
+  const pending = [...new Set([...EDITS.keys()])].filter((t) => GAMES.some((g) => g.title === t));
+  btn.textContent = `${I18N[LANG].publish}${pending.length ? ` (${pending.length})` : ''}`;
+  btn.classList.toggle('ready', pending.length > 0 && Boolean(getToken()));
 }
 
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeModal();
-});
+async function publish() {
+  const dict = I18N[LANG];
+  const btn = $('#publish');
+  const status = $('#publish-status');
+  if (!getToken()) {
+    openConfig();
+    return;
+  }
+  if (![...new Set([...EDITS.keys()])].some((t) => GAMES.some((g) => g.title === t))) {
+    status.textContent = dict.publishEmpty;
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = dict.publishing;
+  status.textContent = '';
+  try {
+    const url = await publishGames(GAMES, EDITS);
+    EDITS.clear();
+    persistEdits();
+    localStorage.removeItem('notas-jogos');
+    updatePublishUI();
+    btn.textContent = dict.publishOk;
+    status.innerHTML = url ? `<a href="${url}" target="_blank" rel="noopener">${url}</a>` : '';
+  } catch (err) {
+    status.textContent = `✖ ${err.message}`;
+    updatePublishUI();
+  } finally {
+    btn.disabled = false;
+  }
+}
 
 /* ---------- render ---------- */
 
@@ -309,72 +485,94 @@ function renderList(query = '') {
   const filtered = q ? GAMES.filter((g) => gameTitle(g).toLowerCase().includes(q)) : GAMES;
 
   list.innerHTML = '';
+  renderLetterNav();
 
   if (filtered.length === 0) {
     const li = document.createElement('li');
     li.className = 'noscript';
     li.textContent = dict.noResults;
     list.appendChild(li);
+    $('#count').textContent = dict.count(0);
+    return;
   }
 
-  filtered.forEach((game, i) => {
-    const li = document.createElement('li');
-    li.className = 'game-item clickable';
-    li.tabIndex = 0;
-    const open = () => openModal(game);
-    li.addEventListener('click', open);
-    li.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        open();
+  /* agrupa por letra inicial, em ordem alfabética dentro de cada seção */
+  const sections = new Map();
+  for (const game of filtered) {
+    const letter = sectionLetter(gameTitle(game));
+    if (!sections.has(letter)) sections.set(letter, []);
+    sections.get(letter).push(game);
+  }
+  for (const group of sections.values()) {
+    group.sort((a, b) => gameTitle(a).localeCompare(gameTitle(b), 'pt-br'));
+  }
+
+  let seq = 0;
+  for (const [letter, games] of [...sections.entries()].sort(([a], [b]) => a.localeCompare(b))) {
+    const header = document.createElement('li');
+    header.className = 'section-header';
+    header.id = `sec-${letter.toLowerCase()}`;
+    header.textContent = letter;
+    list.appendChild(header);
+
+    for (const game of games) {
+      seq++;
+      const eff = effGame(game);
+      const li = document.createElement('li');
+      li.className = 'game-item clickable';
+      li.tabIndex = 0;
+      const open = () => openModal(game);
+      li.addEventListener('click', open);
+      li.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          open();
+        }
+      });
+
+      const num = document.createElement('span');
+      num.className = 'num';
+      num.textContent = String(seq).padStart(3, '0');
+      li.appendChild(num);
+
+      const body = document.createElement('div');
+      body.className = 'game-body';
+
+      const title = document.createElement('span');
+      title.className = 'title';
+      title.textContent = gameTitle(eff);
+      body.appendChild(title);
+
+      const sub = renderSubLine(body, eff);
+      li.appendChild(body);
+
+      if (eff.review) li.classList.add('has-review');
+
+      const meta = document.createElement('span');
+      meta.className = 'meta';
+      const parts = metaLine(eff);
+      if (parts.length) {
+        const line = document.createElement('span');
+        line.textContent = parts.join(' · ');
+        meta.appendChild(line);
       }
-    });
+      if (eff.rating) {
+        const r = document.createElement('span');
+        r.className = 'rating';
+        r.textContent = '★'.repeat(eff.rating) + '☆'.repeat(5 - eff.rating);
+        meta.appendChild(r);
+      } else if (!parts.length && !sub && !hasEdits(game)) {
+        const miss = document.createElement('span');
+        miss.className = 'missing';
+        miss.textContent = dict.missing;
+        meta.appendChild(miss);
+      }
+      li.appendChild(meta);
 
-    const num = document.createElement('span');
-    num.className = 'num';
-    num.textContent = String(i + 1).padStart(3, '0');
-    li.appendChild(num);
-
-    const body = document.createElement('div');
-    body.className = 'game-body';
-
-    const title = document.createElement('span');
-    title.className = 'title';
-    title.textContent = gameTitle(game);
-    body.appendChild(title);
-
-    const sub = renderSubLine(body, game);
-    li.appendChild(body);
-
-    if (getReview(game)) {
-      li.classList.add('has-review');
-      li.title = '✎ ' + dict.labelReview;
+      if (hasEdits(game)) li.classList.add('edited');
+      list.appendChild(li);
     }
-
-    const meta = document.createElement('span');
-    meta.className = 'meta';
-    const parts = metaLine(game);
-    if (parts.length) {
-      const line = document.createElement('span');
-      line.textContent = parts.join(' · ');
-      meta.appendChild(line);
-    }
-    const rating = getRating(game);
-    if (rating) {
-      const r = document.createElement('span');
-      r.className = 'rating';
-      r.textContent = '★'.repeat(rating) + '☆'.repeat(5 - rating);
-      meta.appendChild(r);
-    } else if (!parts.length && !sub) {
-      const miss = document.createElement('span');
-      miss.className = 'missing';
-      miss.textContent = dict.missing;
-      meta.appendChild(miss);
-    }
-    li.appendChild(meta);
-
-    list.appendChild(li);
-  });
+  }
 
   $('#count').textContent = dict.count(filtered.length);
 }
@@ -392,16 +590,24 @@ async function loadGames() {
     $('#count').textContent = 'erro ao carregar data/games.json';
     return;
   }
+  updatePublishUI();
   renderList($('#search').value);
 }
 
 $('#search').addEventListener('input', (e) => renderList(e.target.value));
+$('#publish').addEventListener('click', publish);
+$('#gh-config').addEventListener('click', openConfig);
 
 $('#lang-toggle').addEventListener('click', () => {
   LANG = LANG === 'pt-br' ? 'en' : 'pt-br';
   localStorage.setItem('lang', LANG);
   applyI18n();
+  updatePublishUI();
   renderList($('#search').value);
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModals();
 });
 
 applyI18n();

@@ -86,6 +86,22 @@ npm run check    # formatação + lints — o que o CI roda (exige 100% verde)
 
 > O repositório já tem `.nojekyll`, então o Pages serve os arquivos como estão (sem processamento Jekyll).
 
+## 🔑 Editar e publicar direto pelo site (sem terminal)
+
+A página permite dar nota (★ clicável no modal), escrever review, corrigir campos
+e gravar tudo direto no `data/games.json` do repositório, via API do GitHub:
+
+1. Crie um **fine-grained PAT** em <https://github.com/settings/personal-access-tokens>:
+   - "Repository access": só `lista-de-jogos`
+   - "Permissions": **Contents = Read and write**
+2. No site, clique em **⚙** e cole o token (fica só no seu navegador, `localStorage`)
+3. Edite/avalie o que quiser (SALVAR guarda localmente, cards ganham borda ciano)
+4. Clique em **PUBLICAR NO GITHUB** — isso cria um commit comum no repo
+5. O Pages recompila em ~1 min e o site sai atualizado para qualquer visitante
+
+> O botão mostra o número de pendências (ex.: `PUBLICAR NO GITHUB (3)`) e, ao publicar,
+> exibe o link do commit. Sem token configurado, ele abre a tela de configuração.
+
 ## 🙅 Sugestões de nome para o repositório
 
 - `lista-de-jogos` — direto, combina com o projeto

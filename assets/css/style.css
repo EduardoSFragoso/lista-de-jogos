@@ -191,6 +191,65 @@ main {
   }
 }
 
+@media (width >= 1100px) {
+  .game-list {
+    grid-template-columns: 1fr 1fr 1fr;
+    max-width: 1200px;
+  }
+}
+
+/* cabeçalho de seção (letra) ocupa a linha inteira da grade */
+.section-header {
+  grid-column: 1 / -1;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--green);
+  text-shadow: 0 0 16px rgb(0 233 155 / 35%);
+  padding: 1.2rem 0 0.4rem;
+  border-bottom: 1.5px solid var(--border);
+  margin-bottom: 0.75rem;
+}
+
+/* --------- índice A-Z --------- */
+.letter-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.15rem;
+  margin-top: 0.75rem;
+}
+
+.letter-nav a,
+.letter-nav span {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  min-width: 1.6rem;
+  padding: 0.15rem 0.25rem;
+  text-align: center;
+  color: var(--cyan);
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.letter-nav a:hover {
+  background: var(--bg-hover);
+  color: var(--yellow);
+  text-shadow: 0 0 10px rgb(253 224 71 / 50%);
+}
+
+.letter-nav span.off {
+  color: var(--border);
+  cursor: default;
+}
+
+#publish.ready {
+  color: #062b1c;
+  background: var(--green);
+  box-shadow: 0 0 16px rgb(0 233 155 / 35%);
+}
+
 .game-item {
   display: flex;
   align-items: baseline;
@@ -426,6 +485,63 @@ main {
 .btn-neon:hover {
   filter: brightness(1.15);
   box-shadow: 0 0 18px rgb(0 233 155 / 40%);
+}
+
+.btn-ghost {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: transparent;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+  transition:
+    color 0.15s,
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.btn-ghost:hover {
+  color: var(--cyan);
+  border-color: var(--cyan);
+  box-shadow: 0 0 14px rgb(86 217 255 / 20%);
+}
+
+.btn-ghost:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.modal-input {
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  background: var(--bg);
+  color: var(--ink);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  outline: none;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.modal-input:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgb(0 233 155 / 12%);
+}
+
+.modal-hint {
+  width: auto;
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+.game-item.edited {
+  border-left-color: var(--cyan);
 }
 
 .game-item.clickable {

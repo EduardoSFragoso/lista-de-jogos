@@ -39,7 +39,16 @@
           placeholder="Buscar jogo..."
         />
         <button id="lang-toggle" type="button" aria-label="Switch language">EN</button>
+        <button id="publish" type="button" class="btn-ghost">
+          <span data-i18n="publish">PUBLICAR NO GITHUB</span>
+        </button>
+        <button id="gh-config" type="button" class="btn-ghost" aria-label="Configuração do GitHub">
+          ⚙
+        </button>
       </div>
+
+      <p id="publish-status" class="count"></p>
+      <nav id="letter-nav" class="letter-nav" aria-label="Índice A-Z"></nav>
 
       <p id="count" class="count"></p>
     </header>
