@@ -38,7 +38,7 @@ Dica: `rating` admite casas decimais se quiser depois; hoje ele mostra estrelas 
    ```
 
 3. No GitHub: **Settings → Pages → Build and deployment** → Source: *Deploy from a branch*, Branch: `main` / `/ (root)` → Save.
-4. Em ~1 minuto a página babys like — PR live em:
+4. Em ~1 minuto a página está no ar em:
    `https://SEU-USUARIO.github.io/NOME-DO-REPO/`
 
 > O repositório já tem `.nojekyll`, então o Pages serve os arquivos como estão (sem processamento Jekyll).
