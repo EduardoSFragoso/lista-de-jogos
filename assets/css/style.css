@@ -274,6 +274,170 @@ main {
   padding: 2rem;
 }
 
+/* --------- modal de detalhes --------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgb(4 4 10 / 75%);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-panel {
+  position: relative;
+  width: min(560px, 100%);
+  max-height: 85vh;
+  overflow-y: auto;
+  background: var(--bg-panel);
+  border: 1.5px solid var(--border);
+  border-top: 3px solid var(--green);
+  border-radius: 12px;
+  padding: 1.5rem 1.6rem;
+  box-shadow:
+    0 0 40px rgb(0 233 155 / 12%),
+    0 20px 60px rgb(0 0 0 / 60%);
+}
+
+.modal-panel h2 {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--ink);
+  margin: 0 2rem 1rem 0;
+}
+
+.modal-close {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--muted);
+  background: transparent;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    color 0.15s,
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.modal-close:hover {
+  color: var(--red);
+  border-color: var(--red);
+  box-shadow: 0 0 12px rgb(255 77 109 / 25%);
+}
+
+.modal-fields {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.45rem;
+  margin-bottom: 1.1rem;
+}
+
+.modal-field {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+}
+
+.modal-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  flex-shrink: 0;
+  width: 11rem;
+}
+
+.modal-value {
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+
+.modal-rating-label {
+  width: auto;
+  margin-bottom: 0.4rem;
+}
+
+.modal-stars {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 1.1rem;
+}
+
+.modal-stars .star {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--border);
+  cursor: pointer;
+  transition:
+    color 0.12s,
+    text-shadow 0.12s,
+    transform 0.12s;
+}
+
+.modal-stars .star:hover {
+  transform: scale(1.15);
+}
+
+.modal-stars .star.lit {
+  color: var(--yellow);
+  text-shadow: 0 0 12px rgb(253 224 71 / 50%);
+}
+
+.modal-answer {
+  margin-bottom: 1.1rem;
+  min-height: 5.5rem;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.btn-neon {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: #062b1c;
+  background: var(--green);
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.1rem;
+  cursor: pointer;
+  transition:
+    box-shadow 0.15s,
+    filter 0.15s;
+}
+
+.btn-neon:hover {
+  filter: brightness(1.15);
+  box-shadow: 0 0 18px rgb(0 233 155 / 40%);
+}
+
+.game-item.clickable {
+  cursor: pointer;
+}
+
+.game-item.has-review .title::after {
+  content: ' ✎';
+  color: var(--yellow);
+  font-size: 0.85em;
+}
+
 /* --------- página de revisão --------- */
 #review-list {
   grid-template-columns: 1fr;

@@ -15,6 +15,7 @@
   - `title` — título **original** do jogo (como saiu no lançamento, em geral em inglês)
   - `title_pt` — opcional: título que saiu no **Brasil**, exibido quando o idioma é PT-BR (`null` = mostrar o original)
   - `year`, `platform`, `engine`, `rating` (1–5, estrelas), `company`, `genre`, `mode`
+  - `review` — opcional: seu review escrito do jogo, exibido no modal ao clicar no card
   - Qualquer campo `null` simplesmente não aparece na página (mostra "_a preencher_" quando não há nada).
   - `id` é só sequencial; mantenha para ordenação estável.
 
