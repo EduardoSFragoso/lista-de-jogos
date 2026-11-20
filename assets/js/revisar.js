@@ -68,6 +68,10 @@ function render(query = '') {
     const answer = document.createElement('textarea');
     answer.className = 'review-answer';
     answer.placeholder = 'Sua resposta (opcional): qual jogo, o que corrigir...';
+    if (answers.has(game.title)) {
+      answer.value = answers.get(game.title);
+      li.classList.add('answered');
+    }
     answer.addEventListener('input', () => saveAnswer(game.title, answer.value));
     wrap.appendChild(answer);
 
@@ -78,11 +82,26 @@ function render(query = '') {
   $('#copy').textContent = `COPIAR RESPOSTAS (${toReview.length})`;
 }
 
-/* respostas ficam na página (por enquanto) */
-const answers = new Map();
+function updateProgress() {
+  const total = GAMES.filter(needsReview).length;
+  $('#progress').textContent = answers.size
+    ? `${answers.size} de ${total} respondido(s) — salvo no navegador`
+    : '';
+}
+
+/* respostas ficam no navegador (localStorage) — não se perdem ao recarregar */
+const STORAGE_KEY = 'revisar-respostas';
+const answers = new Map(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+
+function persistAnswers() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify([...answers]));
+}
+
 function saveAnswer(title, text) {
   if (text.trim()) answers.set(title, text.trim());
   else answers.delete(title);
+  persistAnswers();
+  updateProgress();
 }
 
 function copyAnswers() {
@@ -104,6 +123,14 @@ function copyAnswers() {
 
 $('#search').addEventListener('input', (e) => render(e.target.value));
 $('#copy').addEventListener('click', copyAnswers);
+$('#clear').addEventListener('click', () => {
+  if (!answers.size || confirm('Apagar TODAS as respostas salvas no navegador?')) {
+    answers.clear();
+    persistAnswers();
+    render($('#search').value);
+    updateProgress();
+  }
+});
 
 fetch('data/games.json')
   .then((r) => {
@@ -113,6 +140,7 @@ fetch('data/games.json')
   .then((data) => {
     GAMES = data.games || [];
     render();
+    updateProgress();
   })
   .catch((err) => {
     console.error('[revisar] falha ao carregar games.json:', err);

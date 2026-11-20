@@ -127,6 +127,21 @@ body {
   background: var(--yellow);
 }
 
+#clear {
+  font-family: var(--font-pixel);
+  font-size: 0.55rem;
+  color: var(--ink);
+  background: var(--bg-panel);
+  border: 2px solid var(--border);
+  padding: 0.55rem 0.9rem;
+  cursor: pointer;
+}
+
+#clear:hover {
+  border-color: var(--red);
+  color: var(--red);
+}
+
 .count {
   margin-top: 1rem;
   color: var(--border);
@@ -223,6 +238,16 @@ main {
 .review-item {
   display: block;
   border-left-color: var(--yellow);
+}
+
+.review-item.answered {
+  border-left-color: var(--green);
+}
+
+.review-item.answered .review-title::after {
+  content: '✓';
+  color: var(--green);
+  margin-left: 0.5rem;
 }
 
 .review-body {
