@@ -1,0 +1,298 @@
+/* Caçada de capas — preenche assets/covers/<id>.<ext>
+   Fontes: Steam CDN (jogos de PC) e Libretro Thumbnails (consoles retrô).
+   Uso: node tools/fetch-covers.mjs [--only=1,49] */
+import fs from 'node:fs';
+
+const OUT = 'assets/covers';
+const REPORT = 'covers-report.txt';
+
+/* Correções manuais de título por id (melhoram o match nas fontes). */
+const TITLE_FIX = {
+  1: 'Final Fantasy',
+  154: 'The Legend of Zelda',
+  249: 'Shadow of the Colossus',
+  101: 'Rayman',
+  248: 'Mega Man',
+  234: 'Sonic the Hedgehog',
+  126: 'Pokemon Red Version',
+  127: 'Pokemon Gold Version',
+  128: 'Pokemon Ruby Version',
+  129: 'Pokemon Emerald Version',
+  130: 'Pokemon FireRed Version',
+  131: 'Pokemon Diamond Version',
+  132: 'Pokemon Platinum Version',
+  133: 'Pokemon HeartGold Version',
+  134: 'Pokemon Black Version',
+  135: 'Pokemon Black Version 2',
+  136: 'Pokemon X',
+  137: 'Pokemon Omega Ruby',
+  138: 'Pokemon Sun',
+  139: 'Pokemon Ultra Sun',
+  140: "Pokemon Let's Go Pikachu",
+  141: 'Pokemon Sword',
+  142: 'Pokemon Brilliant Diamond',
+  143: 'Pokemon Legends: Arceus',
+  144: 'Pokemon Scarlet',
+  145: 'Pokemon Legends Z-A',
+};
+
+const SYSLIB = {
+  NES: 'Nintendo - Nintendo Entertainment System',
+  SNES: 'Nintendo - Super Nintendo Entertainment System',
+  PS1: 'Sony - PlayStation',
+  PS2: 'Sony - PlayStation 2',
+  PS3: 'Sony - PlayStation 3',
+  PS4: 'Sony - PlayStation 4',
+  'Sega Genesis': 'Sega - Mega Drive - Genesis',
+  'Mega Drive': 'Sega - Mega Drive - Genesis',
+  'Game Boy': 'Nintendo - Game Boy',
+  'Game Boy Advance': 'Nintendo - Game Boy Advance',
+  'Game Boy Color': 'Nintendo - Game Boy Color',
+  N64: 'Nintendo - Nintendo 64',
+  'Nintendo DS': 'Nintendo - Nintendo DS',
+  'Nintendo 3DS': 'Nintendo - Nintendo 3DS',
+  GameCube: 'Nintendo - GameCube',
+  Wii: 'Nintendo - Wii',
+  'Wii U': 'Nintendo - Wii U',
+  PSP: 'Sony - PlayStation Portable',
+  Arcade: 'FBNeo - Arcade Games',
+};
+
+/* plataformas tolerantes: cada nome pode ter N sistemas libretro. */
+function libretroSystems(platform) {
+  const p = platform || '';
+  const sys = new Set();
+  const add = (name) => SYSLIB[name] && sys.add(SYSLIB[name]);
+  if (p.includes('NES')) add('NES');
+  if (p.includes('SNES')) add('SNES');
+  if (/PS1/i.test(p)) add('PS1');
+  if (/PS2/i.test(p)) add('PS2');
+  if (/PS3/i.test(p)) add('PS3');
+  if (/PS4|PS5/i.test(p)) add('PS4');
+  if (/PSP/i.test(p)) add('PSP');
+  if (/(Mega Drive|Genesis)/i.test(p)) add('Sega Genesis');
+  if (p === 'Game Boy') add('Game Boy');
+  if (/Game Boy Advance/i.test(p)) add('Game Boy Advance');
+  if (/Game Boy Color/i.test(p)) add('Game Boy Color');
+  if (/N64/i.test(p)) add('N64');
+  if (/Nintendo DS/i.test(p) && !/3DS/i.test(p)) add('Nintendo DS');
+  if (/3DS/i.test(p)) add('Nintendo 3DS');
+  if (/GameCube/i.test(p)) add('GameCube');
+  if (/Wii U/i.test(p)) add('Wii U');
+  else if (/Wii/i.test(p)) add('Wii');
+  if (/Arcade/i.test(p)) add('Arcade');
+  return [...sys];
+}
+
+const norm = (s) =>
+  (s || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[''`]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+
+async function fetchBin(url, timeoutMs = 12000) {
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { signal: ctl.signal });
+    if (!res.ok) return null;
+    const buf = Buffer.from(await res.arrayBuffer());
+    const type = res.headers.get('content-type') || '';
+    if (!type.startsWith('image/') || buf.length < 2000) return null;
+    return { buf, ext: type.includes('png') ? 'png' : 'jpg' };
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+async function steamSearch(title) {
+  const url = `https://steamcommunity.com/actions/SearchApps/${encodeURIComponent(title)}`;
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), 10000);
+  try {
+    const res = await fetch(url, { signal: ctl.signal });
+    if (!res.ok) return null;
+    const list = await res.json();
+    if (!Array.isArray(list) || !list.length) return null;
+    const hit =
+      list.find((x) => norm(x.name) === norm(title)) ||
+      list.find((x) => norm(x.name).startsWith(norm(title)));
+    return hit ? hit.appid : null;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+/* nome libretro: variantes de região + troca do artigo. */
+function libretroNames(title) {
+  const bases = [title, title.replace(/:\s*/g, ' - ')];
+  if (title.startsWith('Pokemon ')) bases.push(title.replace(/^Pokemon /, 'Pokemon - '));
+  if (title.startsWith('The ')) bases.push(`${title.slice(4)}, The`);
+  const suffixes = [
+    ' (USA, Europe)',
+    ' (USA)',
+    ' (Europe)',
+    ' (World)',
+    ' (Japan, USA)',
+    ' (Japan)',
+    ' (En,Ja,Fr,De,Es,It)',
+    ' (En,Fr,De,Es,It)',
+    ' (EU)',
+    ' (US)',
+    '',
+  ];
+  const out = new Set();
+  for (const b of bases) for (const s of suffixes) out.add(b + s);
+  return [...out];
+}
+
+async function coverFromLibretro(systems, title, maps) {
+  for (const sys of systems) {
+    const map = maps.get(sys);
+    if (!map) continue;
+    const bases = new Set([
+      title,
+      title.replace(/:\s*/g, ' - '),
+      title.endsWith('.') ? title.slice(0, -1) : title,
+    ]);
+    if (title.startsWith('The ')) bases.add(`${title.slice(4)}, The`);
+    if (title.startsWith('Pokemon ')) bases.add(title.replace(/^Pokemon /, 'Pokemon - '));
+    /* 1) match exato por nome normalizado; 2) prefixo (pegando o mais
+       curto, que tende a ser o jogo em vez de hack/remake); 3) prefixo
+       com espaço (jogo VS edição, ex. 'Mario Kart 8' em 'Mario Kart 8
+       Deluxe'). */
+    for (const base of bases) {
+      const n = norm(base);
+      if (map.has(n)) return { ...map.get(n), via: `libretro/${sys}` };
+    }
+    for (const base of bases) {
+      const n = norm(base);
+      let best = null;
+      for (const key of map.keys()) {
+        if (key.startsWith(n) && (best === null || key.length < best.length)) best = key;
+      }
+      if (best) return { ...map.get(best), via: `libretro/${sys}` };
+    }
+    for (const base of bases) {
+      const n = norm(base);
+      for (const key of map.keys()) {
+        if (key.startsWith(`${n} `)) return { ...map.get(key), via: `libretro/${sys}` };
+      }
+    }
+  }
+  return null;
+}
+
+async function coverFromSteam(title) {
+  const appid = await steamSearch(title);
+  if (!appid) return null;
+  for (const img of ['library_600x900.jpg', 'header.jpg']) {
+    const got = await fetchBin(`https://cdn.cloudflare.steamstatic.com/steam/apps/${appid}/${img}`);
+    if (got) return { ...got, via: `steam/${appid}` };
+  }
+  return null;
+}
+
+async function main() {
+  const only = process.argv.find((a) => a.startsWith('--only='));
+  const onlySet = only ? new Set(only.slice(7).split(',').map(Number)) : null;
+  const data = JSON.parse(fs.readFileSync('data/games.json', 'utf8'));
+  const games = Array.isArray(data) ? data : data.games;
+  fs.mkdirSync(OUT, { recursive: true });
+
+  /* listagens dos sistemas (1 request do GitHub API por sistema) */
+  const needed = new Set();
+  for (const g of games) for (const s of libretroSystems(g.platform)) needed.add(s);
+  const libmaps = new Map();
+  for (const sys of needed) {
+    const repo = sys.replaceAll(' ', '_');
+    const slug = `${repo}.json`;
+    let map = null;
+    let entries = null;
+    if (fs.existsSync(slug)) {
+      entries = JSON.parse(fs.readFileSync(slug, 'utf8'));
+      console.log(`lista (cache) ${sys}: ${entries.length} arquivos`);
+    } else {
+      try {
+        const r = await fetch(
+          `https://api.github.com/repos/libretro-thumbnails/${repo}/git/trees/master:Named_Boxarts`
+        );
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const j = await r.json();
+        entries = (j.tree || []).filter((f) => f.path.endsWith('.png'));
+        fs.writeFileSync(slug, JSON.stringify(entries));
+        console.log(`lista ${sys}: ${entries.length} capas`);
+      } catch (e) {
+        console.log(`sem lista ${sys}: ${e.message}`);
+        continue;
+      }
+    }
+    map = new Map();
+    for (const f of entries) {
+      const normName = norm(f.path.replace(/\.png$/, ''));
+      if (!map.has(normName) || f.path.length < map.get(normName).path.length) {
+        map.set(normName, {
+          path: f.path,
+          get() {
+            return fetchBin(
+              `https://raw.githubusercontent.com/libretro-thumbnails/${repo}/master/Named_Boxarts/${encodeURIComponent(f.path)}`
+            );
+          },
+        });
+      }
+    }
+    libmaps.set(sys, map);
+  }
+
+  const missing = [];
+  let done = 0;
+  const queue = games.filter(
+    (g) =>
+      (!onlySet || onlySet.has(g.id)) && !fs.readdirSync(OUT).some((f) => f.startsWith(`${g.id}.`))
+  );
+  const worker = async (g) => {
+    const title = TITLE_FIX[g.id] || g.title;
+    let got = null;
+    const plats = g.platform || '';
+    const isMapMod = /warcraft iii|mapa custom/i.test(plats);
+    if (plats.includes('PC') && !isMapMod) got = await coverFromSteam(title);
+    if (!got) got = await coverFromLibretro(libretroSystems(plats), title, libmaps);
+    if (got) {
+      if (got.buf) {
+        /* veio pronto (Steam) */
+        fs.writeFileSync(`${OUT}/${g.id}.${got.ext}`, got.buf);
+        console.log(`OK   ${g.id} ${g.title} <- ${got.via} (${got.buf.length}b)`);
+      } else {
+        /* veio da lista do libretro: baixa o PNG de verdade */
+        const img = typeof got.get === 'function' ? await got.get() : null;
+        if (img) {
+          fs.writeFileSync(`${OUT}/${g.id}.${img.ext}`, img.buf);
+          console.log(`OK   ${g.id} ${g.title} <- ${got.via} (${img.buf.length}b)`);
+        } else {
+          missing.push(`${g.id} | ${g.title} (${plats || '—'})`);
+          console.log(`MISS ${g.id} ${g.title}`);
+        }
+      }
+    } else {
+      missing.push(`${g.id} | ${g.title} (${plats || '—'})`);
+      console.log(`MISS ${g.id} ${g.title}`);
+    }
+    done++;
+    if (done % 25 === 0) console.log(`--- ${done}/${queue.length}`);
+  };
+  for (const g of queue) await worker(g); /* sequencial deixa o Steam de boa */
+  fs.writeFileSync(
+    REPORT,
+    `${queue.length - missing.length} capas baixadas\n\nSEM CAPA (${missing.length}):\n${missing.join('\n')}\n`
+  );
+  console.log(`FIM: ${queue.length - missing.length} capas, ${missing.length} sem capa.`);
+}
+
+main();
