@@ -2,7 +2,8 @@
   "games": [
     {
       "id": 1,
-      "title": "Final Fantasy",
+      "title": "Final Fantasy I",
+      "title_pt": null,
       "year": 1987,
       "platform": "NES",
       "engine": null,
@@ -10,12 +11,90 @@
       "company": "Square",
       "genre": "JRPG",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — assumi o primeiro"
+      "_obs": null
     },
     {
       "id": 2,
-      "title": "Warcraft",
+      "title": "Final Fantasy II",
+      "title_pt": null,
+      "year": 1988,
+      "platform": "NES",
+      "engine": null,
+      "rating": null,
+      "company": "Square",
+      "genre": "JRPG",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 3,
+      "title": "Final Fantasy VI",
+      "title_pt": null,
+      "year": 1994,
+      "platform": "SNES",
+      "engine": null,
+      "rating": null,
+      "company": "Square",
+      "genre": "JRPG",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 4,
+      "title": "Final Fantasy VII",
+      "title_pt": null,
+      "year": 1997,
+      "platform": "PS1",
+      "engine": null,
+      "rating": null,
+      "company": "Square",
+      "genre": "JRPG",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 5,
+      "title": "Final Fantasy VIII",
+      "title_pt": null,
+      "year": 1999,
+      "platform": "PS1",
+      "engine": null,
+      "rating": null,
+      "company": "Square",
+      "genre": "JRPG",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 6,
+      "title": "Final Fantasy XIII",
+      "title_pt": null,
+      "year": 2009,
+      "platform": "PS3 / Xbox 360",
+      "engine": "Crystal Tools",
+      "rating": null,
+      "company": "Square Enix",
+      "genre": "JRPG",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 7,
+      "title": "Final Fantasy XIII-2",
+      "title_pt": null,
+      "year": 2011,
+      "platform": "PS3 / Xbox 360",
+      "engine": "Crystal Tools",
+      "rating": null,
+      "company": "Square Enix",
+      "genre": "JRPG",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 8,
+      "title": "Warcraft: Orcs & Humans",
+      "title_pt": null,
       "year": 1994,
       "platform": "PC (DOS)",
       "engine": null,
@@ -23,11 +102,49 @@
       "company": "Blizzard Entertainment",
       "genre": "RTS",
       "mode": "Single / Multi",
-      "title_pt": null,
-      "_obs": "Série — assumi Warcraft: Orcs & Humans"
+      "_obs": null
     },
     {
-      "id": 3,
+      "id": 9,
+      "title": "Warcraft II: Battle.net Edition",
+      "title_pt": null,
+      "year": 1999,
+      "platform": "PC",
+      "engine": null,
+      "rating": null,
+      "company": "Blizzard Entertainment",
+      "genre": "RTS",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 10,
+      "title": "Warcraft III: Reign of Chaos",
+      "title_pt": null,
+      "year": 2002,
+      "platform": "PC",
+      "engine": null,
+      "rating": null,
+      "company": "Blizzard Entertainment",
+      "genre": "RTS",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 11,
+      "title": "Warcraft III: The Frozen Throne",
+      "title_pt": null,
+      "year": 2003,
+      "platform": "PC",
+      "engine": null,
+      "rating": null,
+      "company": "Blizzard Entertainment",
+      "genre": "RTS",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 12,
       "title": "World of Warcraft",
       "year": 2004,
       "platform": "PC",
@@ -39,7 +156,7 @@
       "title_pt": null
     },
     {
-      "id": 4,
+      "id": 13,
       "title": "Teamfight Tactics",
       "year": 2019,
       "platform": "PC / Mobile",
@@ -51,33 +168,31 @@
       "title_pt": null
     },
     {
-      "id": 5,
+      "id": 14,
       "title": "Guarding Athena - Hades",
       "year": null,
-      "platform": null,
+      "platform": "Dota 2 (mapa custom)",
       "engine": null,
       "rating": null,
       "company": null,
-      "genre": null,
-      "mode": null,
-      "title_pt": null,
-      "_obs": "Não reconheço com certeza — é o mapa custom Guarding Athena? Confirme"
+      "genre": "Arcade / mapa custom",
+      "mode": "Multiplayer",
+      "title_pt": null
     },
     {
-      "id": 6,
-      "title": "Twilight Evo",
+      "id": 15,
+      "title": "Twilight's Eve",
       "year": null,
-      "platform": null,
+      "platform": "PC (Warcraft III)",
       "engine": null,
       "rating": null,
       "company": null,
-      "genre": null,
-      "mode": null,
-      "title_pt": null,
-      "_obs": "Não reconheço — confirme (jogo mobile de evolução?)"
+      "genre": "RPG (mapa custom)",
+      "mode": "Multiplayer",
+      "title_pt": null
     },
     {
-      "id": 7,
+      "id": 16,
       "title": "Wartune",
       "year": 2012,
       "platform": "Navegador",
@@ -89,7 +204,7 @@
       "title_pt": null
     },
     {
-      "id": 8,
+      "id": 17,
       "title": "League of Legends",
       "year": 2009,
       "platform": "PC",
@@ -101,20 +216,19 @@
       "title_pt": null
     },
     {
-      "id": 9,
+      "id": 18,
       "title": "DotA",
       "year": 2003,
       "platform": "PC (Warcraft III)",
       "engine": null,
       "rating": null,
-      "company": "IceFrog / Valve",
-      "genre": "MOBA",
+      "company": "IceFrog / comunidade",
+      "genre": "MOBA (mapa custom)",
       "mode": "Multiplayer",
-      "title_pt": null,
-      "_obs": "Mapa custom do Warcraft III; Defense of the Ancients"
+      "title_pt": null
     },
     {
-      "id": 10,
+      "id": 19,
       "title": "Heroes of the Storm",
       "year": 2015,
       "platform": "PC",
@@ -126,20 +240,46 @@
       "title_pt": null
     },
     {
-      "id": 11,
-      "title": "Starcraft",
-      "year": 1998,
+      "id": 20,
+      "title": "StarCraft II: Wings of Liberty",
+      "title_pt": null,
+      "year": 2010,
       "platform": "PC",
       "engine": null,
       "rating": null,
       "company": "Blizzard Entertainment",
       "genre": "RTS",
       "mode": "Single / Multi",
-      "title_pt": null,
-      "_obs": "Série — assumi StarCraft"
+      "_obs": null
     },
     {
-      "id": 12,
+      "id": 21,
+      "title": "StarCraft II: Heart of the Swarm",
+      "title_pt": null,
+      "year": 2013,
+      "platform": "PC",
+      "engine": null,
+      "rating": null,
+      "company": "Blizzard Entertainment",
+      "genre": "RTS",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 22,
+      "title": "StarCraft II: Legacy of the Void",
+      "title_pt": null,
+      "year": 2015,
+      "platform": "PC",
+      "engine": null,
+      "rating": null,
+      "company": "Blizzard Entertainment",
+      "genre": "RTS",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 23,
       "title": "Hearthstone",
       "year": 2014,
       "platform": "PC / Mobile",
@@ -151,8 +291,9 @@
       "title_pt": null
     },
     {
-      "id": 13,
+      "id": 24,
       "title": "Diablo",
+      "title_pt": null,
       "year": 1996,
       "platform": "PC",
       "engine": null,
@@ -160,11 +301,49 @@
       "company": "Blizzard North",
       "genre": "Action RPG",
       "mode": "Single / Multi",
-      "title_pt": null,
-      "_obs": "Série — assumi Diablo 1"
+      "_obs": null
     },
     {
-      "id": 14,
+      "id": 25,
+      "title": "Diablo II",
+      "title_pt": null,
+      "year": 2000,
+      "platform": "PC",
+      "engine": null,
+      "rating": null,
+      "company": "Blizzard North",
+      "genre": "Action RPG",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 26,
+      "title": "Diablo III",
+      "title_pt": null,
+      "year": 2012,
+      "platform": "PC / Console",
+      "engine": null,
+      "rating": null,
+      "company": "Blizzard Entertainment",
+      "genre": "Action RPG",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 27,
+      "title": "Diablo IV",
+      "title_pt": null,
+      "year": 2023,
+      "platform": "PC / Console",
+      "engine": null,
+      "rating": null,
+      "company": "Blizzard Entertainment",
+      "genre": "Action RPG",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 28,
       "title": "Marvel Strike Force",
       "year": 2018,
       "platform": "Mobile",
@@ -176,8 +355,8 @@
       "title_pt": null
     },
     {
-      "id": 15,
-      "title": "Majesty",
+      "id": 29,
+      "title": "Majesty: The Fantasy Kingdom Sim",
       "year": 2000,
       "platform": "PC",
       "engine": null,
@@ -185,12 +364,12 @@
       "company": "Cyberlore Studios",
       "genre": "Estratégia (indireta)",
       "mode": "Single / Multi",
-      "title_pt": null,
-      "_obs": "Majesty: The Fantasy Kingdom Sim"
+      "title_pt": null
     },
     {
-      "id": 16,
-      "title": "Monkey Island",
+      "id": 30,
+      "title": "The Secret of Monkey Island",
+      "title_pt": null,
       "year": 1990,
       "platform": "PC",
       "engine": "SCUMM",
@@ -198,11 +377,36 @@
       "company": "Lucasfilm Games",
       "genre": "Point-and-click",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "The Secret of Monkey Island"
+      "_obs": null
     },
     {
-      "id": 17,
+      "id": 31,
+      "title": "Monkey Island 2: LeChuck's Revenge",
+      "title_pt": null,
+      "year": 1991,
+      "platform": "PC",
+      "engine": "SCUMM",
+      "rating": null,
+      "company": "LucasArts",
+      "genre": "Point-and-click",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 32,
+      "title": "The Curse of Monkey Island",
+      "title_pt": null,
+      "year": 1997,
+      "platform": "PC",
+      "engine": "SCUMM",
+      "rating": null,
+      "company": "LucasArts",
+      "genre": "Point-and-click",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 33,
       "title": "Dark Colony",
       "year": 1997,
       "platform": "PC",
@@ -214,8 +418,9 @@
       "title_pt": null
     },
     {
-      "id": 18,
+      "id": 34,
       "title": "Age of Empires",
+      "title_pt": null,
       "year": 1997,
       "platform": "PC",
       "engine": "Genie",
@@ -223,11 +428,49 @@
       "company": "Ensemble Studios",
       "genre": "RTS",
       "mode": "Single / Multi",
-      "title_pt": null,
-      "_obs": "Série — assumi AoE 1"
+      "_obs": null
     },
     {
-      "id": 19,
+      "id": 35,
+      "title": "Age of Empires II: The Age of Kings",
+      "title_pt": null,
+      "year": 1999,
+      "platform": "PC",
+      "engine": "Genie",
+      "rating": null,
+      "company": "Ensemble Studios",
+      "genre": "RTS",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 36,
+      "title": "Age of Empires II: Definitive Edition",
+      "title_pt": null,
+      "year": 2019,
+      "platform": "PC",
+      "engine": "Genie (DE)",
+      "rating": null,
+      "company": "Forgotten Empires / World's Edge",
+      "genre": "RTS",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 37,
+      "title": "Age of Empires III",
+      "title_pt": null,
+      "year": 2005,
+      "platform": "PC",
+      "engine": "AGE3",
+      "rating": null,
+      "company": "Ensemble Studios",
+      "genre": "RTS",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 38,
       "title": "The Dig",
       "year": 1995,
       "platform": "PC",
@@ -239,34 +482,112 @@
       "title_pt": null
     },
     {
-      "id": 20,
-      "title": "Speed Racer",
-      "year": null,
-      "platform": null,
+      "id": 39,
+      "title": "Speed Racer in The Challenge of Racer X",
+      "year": 1993,
+      "platform": "PC (DOS)",
       "engine": null,
       "rating": null,
       "company": null,
       "genre": "Corrida",
-      "mode": null,
-      "title_pt": null,
-      "_obs": "Há várias versões (anime) — qual você jogou? (PC 1994? PlayStation?)"
+      "mode": "Single-player",
+      "title_pt": null
     },
     {
-      "id": 21,
+      "id": 40,
       "title": "Doom",
+      "title_pt": null,
       "year": 1993,
-      "platform": "PC",
+      "platform": "PC (DOS)",
       "engine": "id Tech 1",
       "rating": null,
       "company": "id Software",
       "genre": "FPS",
       "mode": "Single / Multi",
-      "title_pt": null,
-      "_obs": "Série/versão — assumi Doom 1"
+      "_obs": null
     },
     {
-      "id": 22,
+      "id": 41,
+      "title": "Doom II: Hell on Earth",
+      "title_pt": null,
+      "year": 1994,
+      "platform": "PC (DOS)",
+      "engine": "id Tech 1",
+      "rating": null,
+      "company": "id Software",
+      "genre": "FPS",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 42,
+      "title": "Final Doom: TNT - Evilution",
+      "title_pt": null,
+      "year": 1996,
+      "platform": "PC (DOS)",
+      "engine": "id Tech 1",
+      "rating": null,
+      "company": "TeamTNT (id Software)",
+      "genre": "FPS",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 43,
+      "title": "Final Doom: The Plutonia Experiment",
+      "title_pt": null,
+      "year": 1996,
+      "platform": "PC (DOS)",
+      "engine": "id Tech 1",
+      "rating": null,
+      "company": "The Casali Brothers (id Software)",
+      "genre": "FPS",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 44,
+      "title": "Doom 3",
+      "title_pt": null,
+      "year": 2004,
+      "platform": "PC / Xbox",
+      "engine": "id Tech 4",
+      "rating": null,
+      "company": "id Software",
+      "genre": "FPS horror",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 45,
+      "title": "Doom (2016)",
+      "title_pt": null,
+      "year": 2016,
+      "platform": "PC / Console",
+      "engine": "id Tech 6",
+      "rating": null,
+      "company": "id Software",
+      "genre": "FPS",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 46,
+      "title": "Doom Eternal",
+      "title_pt": null,
+      "year": 2020,
+      "platform": "PC / Console",
+      "engine": "id Tech 7",
+      "rating": null,
+      "company": "id Software",
+      "genre": "FPS",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 47,
       "title": "The Sims",
+      "title_pt": null,
       "year": 2000,
       "platform": "PC",
       "engine": null,
@@ -274,11 +595,23 @@
       "company": "Maxis",
       "genre": "Life sim",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — assumi The Sims 1"
+      "_obs": null
     },
     {
-      "id": 23,
+      "id": 48,
+      "title": "The Sims 4",
+      "title_pt": null,
+      "year": 2014,
+      "platform": "PC",
+      "engine": null,
+      "rating": null,
+      "company": "Maxis / The Sims Studio",
+      "genre": "Life sim",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 49,
       "title": "Adventure Quest",
       "year": 2002,
       "platform": "Navegador (Flash)",
@@ -290,20 +623,19 @@
       "title_pt": null
     },
     {
-      "id": 24,
-      "title": "Dragomon",
+      "id": 50,
+      "title": "Dragomon Hunter",
       "year": 2015,
       "platform": "PC",
       "engine": null,
       "rating": null,
       "company": "Aeria Games",
-      "genre": "MMORPG",
-      "mode": "Multiplayer",
-      "title_pt": null,
-      "_obs": "Assumi Dragomon Hunter — confirme"
+      "genre": "MMO de caça",
+      "mode": "Single / Multi",
+      "title_pt": null
     },
     {
-      "id": 25,
+      "id": 51,
       "title": "Tera",
       "year": 2012,
       "platform": "PC",
@@ -315,7 +647,7 @@
       "title_pt": null
     },
     {
-      "id": 26,
+      "id": 52,
       "title": "Tower of Fantasy",
       "year": 2022,
       "platform": "PC / Mobile",
@@ -327,7 +659,7 @@
       "title_pt": null
     },
     {
-      "id": 27,
+      "id": 53,
       "title": "Elden Ring",
       "year": 2022,
       "platform": "PC / Console",
@@ -339,8 +671,9 @@
       "title_pt": null
     },
     {
-      "id": 28,
-      "title": "Darksouls",
+      "id": 54,
+      "title": "Dark Souls",
+      "title_pt": null,
       "year": 2011,
       "platform": "PC / Console",
       "engine": null,
@@ -348,11 +681,36 @@
       "company": "FromSoftware",
       "genre": "Action RPG",
       "mode": "Single / Multi",
-      "title_pt": null,
-      "_obs": "Título na página seria 'Dark Souls' — qual da trilogia?"
+      "_obs": null
     },
     {
-      "id": 29,
+      "id": 55,
+      "title": "Dark Souls II",
+      "title_pt": null,
+      "year": 2014,
+      "platform": "PC / Console",
+      "engine": null,
+      "rating": null,
+      "company": "FromSoftware",
+      "genre": "Action RPG",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 56,
+      "title": "Dark Souls III",
+      "title_pt": null,
+      "year": 2016,
+      "platform": "PC / Console",
+      "engine": null,
+      "rating": null,
+      "company": "FromSoftware",
+      "genre": "Action RPG",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 57,
       "title": "Nioh",
       "year": 2017,
       "platform": "PC / PS4",
@@ -364,7 +722,7 @@
       "title_pt": null
     },
     {
-      "id": 30,
+      "id": 58,
       "title": "Bloodborne",
       "year": 2015,
       "platform": "PS4",
@@ -376,8 +734,8 @@
       "title_pt": null
     },
     {
-      "id": 31,
-      "title": "Demonsouls",
+      "id": 59,
+      "title": "Demon's Souls",
       "year": 2009,
       "platform": "PS3",
       "engine": null,
@@ -385,24 +743,22 @@
       "company": "FromSoftware",
       "genre": "Action RPG",
       "mode": "Single / Multi",
-      "title_pt": null,
-      "_obs": "Título: 'Demon's Souls'"
+      "title_pt": null
     },
     {
-      "id": 32,
-      "title": "Roller Coaster Tycoon",
-      "year": 1999,
+      "id": 60,
+      "title": "RollerCoaster Tycoon 2",
+      "year": 2002,
       "platform": "PC",
       "engine": null,
       "rating": null,
       "company": "Chris Sawyer",
       "genre": "Managment sim",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — assumi RCT 1"
+      "title_pt": null
     },
     {
-      "id": 33,
+      "id": 61,
       "title": "Torin's Passage",
       "year": 1995,
       "platform": "PC",
@@ -414,8 +770,9 @@
       "title_pt": null
     },
     {
-      "id": 34,
+      "id": 62,
       "title": "Crash Bandicoot",
+      "title_pt": null,
       "year": 1996,
       "platform": "PS1",
       "engine": null,
@@ -423,12 +780,51 @@
       "company": "Naughty Dog",
       "genre": "Platformer",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — assumi o primeiro"
+      "_obs": null
     },
     {
-      "id": 35,
-      "title": "Mario",
+      "id": 63,
+      "title": "Crash Bandicoot 2: Cortex Strikes Back",
+      "title_pt": null,
+      "year": 1997,
+      "platform": "PS1",
+      "engine": null,
+      "rating": null,
+      "company": "Naughty Dog",
+      "genre": "Platformer",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 64,
+      "title": "Crash Bandicoot 3: Warped",
+      "title_pt": null,
+      "year": 1998,
+      "platform": "PS1",
+      "engine": null,
+      "rating": null,
+      "company": "Naughty Dog",
+      "genre": "Platformer",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 65,
+      "title": "Mario Bros.",
+      "title_pt": null,
+      "year": 1983,
+      "platform": "Arcade / NES",
+      "engine": null,
+      "rating": null,
+      "company": "Nintendo",
+      "genre": "Platformer",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 66,
+      "title": "Super Mario Bros.",
+      "title_pt": null,
       "year": 1985,
       "platform": "NES",
       "engine": null,
@@ -436,38 +832,77 @@
       "company": "Nintendo",
       "genre": "Platformer",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — assumi Super Mario Bros. Qual você jogou?"
+      "_obs": null
     },
     {
-      "id": 36,
-      "title": "Mario Kart",
-      "year": 1992,
+      "id": 67,
+      "title": "New Super Mario Bros.",
+      "title_pt": null,
+      "year": 2006,
+      "platform": "Nintendo DS",
+      "engine": null,
+      "rating": null,
+      "company": "Nintendo",
+      "genre": "Platformer",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 68,
+      "title": "Super Mario RPG: Legend of the Seven Stars",
+      "title_pt": null,
+      "year": 1996,
       "platform": "SNES",
+      "engine": null,
+      "rating": null,
+      "company": "Square / Nintendo",
+      "genre": "JRPG",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 69,
+      "title": "Mario Kart DS",
+      "title_pt": null,
+      "year": 2005,
+      "platform": "Nintendo DS",
       "engine": null,
       "rating": null,
       "company": "Nintendo",
       "genre": "Corrida",
       "mode": "Single / Multi",
-      "title_pt": null,
-      "_obs": "Série — assumi Super Mario Kart. Qual?"
+      "_obs": null
     },
     {
-      "id": 37,
-      "title": "Prince of Persia",
-      "year": 1989,
-      "platform": "PC (DOS)",
+      "id": 70,
+      "title": "Mario Kart 8",
+      "title_pt": null,
+      "year": 2014,
+      "platform": "Wii U",
+      "engine": null,
+      "rating": null,
+      "company": "Nintendo",
+      "genre": "Corrida",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 71,
+      "title": "Prince of Persia: The Forgotten Sands",
+      "year": 2010,
+      "platform": "Nintendo DS",
       "engine": null,
       "rating": null,
       "company": "Broderbund",
       "genre": "Platformer",
       "mode": "Single-player",
       "title_pt": null,
-      "_obs": "Série — assumi o clássico de 89"
+      "_obs": "Você citou GBA, mas Forgotten Sands saiu no DS (2D) e nos consoles — confirme?"
     },
     {
-      "id": 38,
+      "id": 72,
       "title": "God of War",
+      "title_pt": null,
       "year": 2005,
       "platform": "PS2",
       "engine": null,
@@ -475,11 +910,101 @@
       "company": "Santa Monica Studio",
       "genre": "Action-adventure",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — assumi o primeiro; ou GoW 2018?"
+      "_obs": null
     },
     {
-      "id": 39,
+      "id": 73,
+      "title": "God of War II",
+      "title_pt": null,
+      "year": 2007,
+      "platform": "PS2",
+      "engine": null,
+      "rating": null,
+      "company": "Santa Monica Studio",
+      "genre": "Action-adventure",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 74,
+      "title": "God of War: Chains of Olympus",
+      "title_pt": null,
+      "year": 2008,
+      "platform": "PSP",
+      "engine": null,
+      "rating": null,
+      "company": "Ready at Dawn",
+      "genre": "Action-adventure",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 75,
+      "title": "God of War: Ghost of Sparta",
+      "title_pt": null,
+      "year": 2010,
+      "platform": "PSP",
+      "engine": null,
+      "rating": null,
+      "company": "Ready at Dawn",
+      "genre": "Action-adventure",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 76,
+      "title": "God of War III",
+      "title_pt": null,
+      "year": 2010,
+      "platform": "PS3",
+      "engine": null,
+      "rating": null,
+      "company": "Santa Monica Studio",
+      "genre": "Action-adventure",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 77,
+      "title": "God of War: Ascension",
+      "title_pt": null,
+      "year": 2013,
+      "platform": "PS3",
+      "engine": null,
+      "rating": null,
+      "company": "Santa Monica Studio",
+      "genre": "Action-adventure",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 78,
+      "title": "God of War (2018)",
+      "title_pt": null,
+      "year": 2018,
+      "platform": "PS4 / PC",
+      "engine": null,
+      "rating": null,
+      "company": "Santa Monica Studio",
+      "genre": "Action-adventure",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 79,
+      "title": "God of War Ragnarok",
+      "title_pt": null,
+      "year": 2022,
+      "platform": "PS4 / PS5 / PC",
+      "engine": null,
+      "rating": null,
+      "company": "Santa Monica Studio",
+      "genre": "Action-adventure",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 80,
       "title": "Underlords",
       "year": 2020,
       "platform": "PC / Mobile",
@@ -492,8 +1017,9 @@
       "_obs": "Dota Underlords"
     },
     {
-      "id": 40,
+      "id": 81,
       "title": "Left 4 Dead",
+      "title_pt": null,
       "year": 2008,
       "platform": "PC",
       "engine": "Source",
@@ -501,11 +1027,23 @@
       "company": "Valve",
       "genre": "FPS cooperativo",
       "mode": "Co-op",
-      "title_pt": null,
-      "_obs": "Série — assumi L4D 1"
+      "_obs": null
     },
     {
-      "id": 41,
+      "id": 82,
+      "title": "Left 4 Dead 2",
+      "title_pt": null,
+      "year": 2009,
+      "platform": "PC",
+      "engine": "Source",
+      "rating": null,
+      "company": "Valve",
+      "genre": "FPS cooperativo",
+      "mode": "Co-op",
+      "_obs": null
+    },
+    {
+      "id": 83,
       "title": "Alien Swarm",
       "year": 2010,
       "platform": "PC",
@@ -517,21 +1055,20 @@
       "title_pt": null
     },
     {
-      "id": 42,
-      "title": "Castlevania",
-      "year": 1986,
-      "platform": "NES",
+      "id": 84,
+      "title": "Castlevania: Symphony of the Night",
+      "year": 1997,
+      "platform": "PS1",
       "engine": null,
       "rating": null,
       "company": "Konami",
-      "genre": "Action-platformer",
+      "genre": "Metroidvania",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — assumi o clássico de NES"
+      "title_pt": null
     },
     {
-      "id": 43,
-      "title": "Duke Nukem",
+      "id": 85,
+      "title": "Duke Nukem 3D",
       "year": 1996,
       "platform": "PC",
       "engine": "Build",
@@ -539,51 +1076,88 @@
       "company": "3D Realms",
       "genre": "FPS",
       "mode": "Single / Multi",
-      "title_pt": null,
-      "_obs": "Assumi Duke Nukem 3D — ou os jogos 2D?"
+      "title_pt": null
     },
     {
-      "id": 44,
-      "title": "Sim City",
-      "year": 1989,
+      "id": 86,
+      "title": "SimCity 2000",
+      "year": 1993,
       "platform": "PC",
       "engine": null,
       "rating": null,
       "company": "Maxis",
       "genre": "City builder",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — assumi SimCity clássico"
+      "title_pt": null
     },
     {
-      "id": 45,
-      "title": "Wolfenstein",
-      "year": 1992,
-      "platform": "PC (DOS)",
-      "engine": "id Tech 1 (antecessor)",
+      "id": 87,
+      "title": "Wolfenstein (2009)",
+      "year": 2009,
+      "platform": "PC",
+      "engine": "id Tech 4",
       "rating": null,
-      "company": "id Software",
+      "company": "Raven Software",
       "genre": "FPS",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Assumi Wolfenstein 3D — ou Wolfenstein 2009/New Order?"
+      "title_pt": null
     },
     {
-      "id": 46,
-      "title": "Counter Strike",
-      "year": 1999,
+      "id": 88,
+      "title": "Counter-Strike 1.6",
+      "title_pt": null,
+      "year": 2003,
       "platform": "PC",
-      "engine": "GoldSrc → Source",
+      "engine": "GoldSrc",
       "rating": null,
       "company": "Valve",
       "genre": "FPS tático",
       "mode": "Multiplayer",
-      "title_pt": null,
-      "_obs": "Mod → CS 1.6 → CS:GO/CS2"
+      "_obs": null
     },
     {
-      "id": 47,
-      "title": "Half-life",
+      "id": 89,
+      "title": "Counter-Strike: Source",
+      "title_pt": null,
+      "year": 2004,
+      "platform": "PC",
+      "engine": "Source",
+      "rating": null,
+      "company": "Valve",
+      "genre": "FPS tático",
+      "mode": "Multiplayer",
+      "_obs": null
+    },
+    {
+      "id": 90,
+      "title": "Counter-Strike: Global Offensive",
+      "title_pt": null,
+      "year": 2012,
+      "platform": "PC / Console",
+      "engine": "Source",
+      "rating": null,
+      "company": "Valve",
+      "genre": "FPS tático",
+      "mode": "Multiplayer",
+      "_obs": null
+    },
+    {
+      "id": 91,
+      "title": "Counter-Strike 2",
+      "title_pt": null,
+      "year": 2023,
+      "platform": "PC",
+      "engine": "Source 2",
+      "rating": null,
+      "company": "Valve",
+      "genre": "FPS tático",
+      "mode": "Multiplayer",
+      "_obs": null
+    },
+    {
+      "id": 92,
+      "title": "Half-Life",
+      "title_pt": null,
       "year": 1998,
       "platform": "PC",
       "engine": "GoldSrc",
@@ -591,25 +1165,36 @@
       "company": "Valve",
       "genre": "FPS",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — assumi HL1"
+      "_obs": null
     },
     {
-      "id": 48,
-      "title": "Beatsaber",
+      "id": 93,
+      "title": "Half-Life 2",
+      "title_pt": null,
+      "year": 2004,
+      "platform": "PC",
+      "engine": "Source",
+      "rating": null,
+      "company": "Valve",
+      "genre": "FPS",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 94,
+      "title": "Beat Saber",
       "year": 2018,
-      "platform": "VR (PC)",
+      "platform": "PC (VR)",
       "engine": "Unity",
       "rating": null,
       "company": "Beat Games",
       "genre": "Rhythm (VR)",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Título: 'Beat Saber'"
+      "title_pt": null
     },
     {
-      "id": 49,
-      "title": "Ragnarok",
+      "id": 95,
+      "title": "Ragnarok Online",
       "year": 2002,
       "platform": "PC",
       "engine": null,
@@ -617,11 +1202,10 @@
       "company": "Gravity",
       "genre": "MMORPG",
       "mode": "Multiplayer",
-      "title_pt": null,
-      "_obs": "Ragnarok Online"
+      "title_pt": null
     },
     {
-      "id": 50,
+      "id": 96,
       "title": "Lost Ark",
       "year": 2019,
       "platform": "PC",
@@ -633,7 +1217,7 @@
       "title_pt": null
     },
     {
-      "id": 51,
+      "id": 97,
       "title": "Path of Exile",
       "year": 2013,
       "platform": "PC",
@@ -645,7 +1229,7 @@
       "title_pt": null
     },
     {
-      "id": 52,
+      "id": 98,
       "title": "Rainbow Six Siege",
       "year": 2015,
       "platform": "PC / Console",
@@ -657,8 +1241,8 @@
       "title_pt": null
     },
     {
-      "id": 53,
-      "title": "S.W.A.T",
+      "id": 99,
+      "title": "SWAT 4",
       "year": 2005,
       "platform": "PC",
       "engine": "Unreal Engine 2.5",
@@ -666,25 +1250,23 @@
       "company": "Irrational Games",
       "genre": "FPS tático",
       "mode": "Single / Co-op",
-      "title_pt": null,
-      "_obs": "Assumi SWAT 4 — confirme (3 ou 4?)"
+      "title_pt": null
     },
     {
-      "id": 54,
+      "id": 100,
       "title": "Rayman",
       "year": 1995,
-      "platform": "PS1",
+      "platform": "PC",
       "engine": null,
       "rating": null,
       "company": "Ubisoft",
       "genre": "Platformer",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — assumi o clássico"
+      "title_pt": null
     },
     {
-      "id": 55,
-      "title": "Ugh",
+      "id": 101,
+      "title": "Ugh!",
       "year": 1992,
       "platform": "PC (DOS)",
       "engine": null,
@@ -692,24 +1274,36 @@
       "company": null,
       "genre": "Puzzle / Corrida",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Ugh! (jogo húngaro do táxi na pedreira?)"
+      "title_pt": null
     },
     {
-      "id": 56,
-      "title": "Tony Hawk Pro Skater",
-      "year": 1999,
-      "platform": "Console",
+      "id": 102,
+      "title": "Tony Hawk's Pro Skater 2",
+      "title_pt": null,
+      "year": 2000,
+      "platform": "PS1",
       "engine": null,
       "rating": null,
       "company": "Neversoft",
       "genre": "Skate (esporte)",
       "mode": "Single / Multi",
-      "title_pt": null,
-      "_obs": "Série — assumi THPS 1"
+      "_obs": null
     },
     {
-      "id": 57,
+      "id": 103,
+      "title": "Tony Hawk's Pro Skater 3",
+      "title_pt": null,
+      "year": 2001,
+      "platform": "PS1",
+      "engine": null,
+      "rating": null,
+      "company": "Neversoft",
+      "genre": "Skate (esporte)",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 104,
       "title": "Driver",
       "year": 1999,
       "platform": "PS1",
@@ -722,59 +1316,56 @@
       "_obs": "Série — assumi Driver 1"
     },
     {
-      "id": 58,
-      "title": "Grand Theft Auto",
-      "year": 1997,
-      "platform": "PC / PS1",
+      "id": 105,
+      "title": "Grand Theft Auto III",
+      "year": 2001,
+      "platform": "PS2 / PC",
       "engine": null,
       "rating": null,
       "company": "DMA Design (Rockstar)",
       "genre": "Ação / mundo aberto",
       "mode": "Single-player",
       "title_pt": null,
-      "_obs": "Série — qual você jogou? GTA 1, Vice City, V..."
+      "_obs": "Você disse PS1, mas GTA III saiu para PS2/PC — era no PS2? (ou GTA 1/2 no PS1?)"
     },
     {
-      "id": 59,
-      "title": "Gran Turismo",
-      "year": 1997,
+      "id": 106,
+      "title": "Gran Turismo 2",
+      "year": 1999,
       "platform": "PS1",
       "engine": null,
       "rating": null,
       "company": "Polyphony Digital",
       "genre": "Corrida (sim)",
       "mode": "Single / Multi",
-      "title_pt": null,
-      "_obs": "Série — assumi GT 1"
+      "title_pt": null
     },
     {
-      "id": 60,
-      "title": "Forza Horizon",
-      "year": 2012,
+      "id": 107,
+      "title": "Forza Horizon 5",
+      "year": 2021,
       "platform": "Xbox / PC",
       "engine": null,
       "rating": null,
       "company": "Playground Games",
       "genre": "Corrida",
       "mode": "Single / Multi",
-      "title_pt": null,
-      "_obs": "Série — qual?"
+      "title_pt": null
     },
     {
-      "id": 61,
-      "title": "Hitman",
-      "year": 2000,
-      "platform": "PC",
-      "engine": "Glacier",
+      "id": 108,
+      "title": "Hitman: Absolution",
+      "year": 2012,
+      "platform": "PS3 / Xbox 360 / PC",
+      "engine": "Glacier 2",
       "rating": null,
       "company": "IO Interactive",
       "genre": "Stealth",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Assumi Hitman: Codename 47 — ou os mais novos (WoA)?"
+      "title_pt": null
     },
     {
-      "id": 62,
+      "id": 109,
       "title": "Phasmophobia",
       "year": 2020,
       "platform": "PC",
@@ -786,7 +1377,7 @@
       "title_pt": null
     },
     {
-      "id": 63,
+      "id": 110,
       "title": "Outlast",
       "year": 2013,
       "platform": "PC",
@@ -798,7 +1389,7 @@
       "title_pt": null
     },
     {
-      "id": 64,
+      "id": 111,
       "title": "Dreadout",
       "year": 2014,
       "platform": "PC",
@@ -810,7 +1401,7 @@
       "title_pt": null
     },
     {
-      "id": 65,
+      "id": 112,
       "title": "Forewarned",
       "year": 2021,
       "platform": "PC",
@@ -822,8 +1413,9 @@
       "title_pt": null
     },
     {
-      "id": 66,
-      "title": "Five Night's at Freddy",
+      "id": 113,
+      "title": "Five Nights at Freddy's",
+      "title_pt": null,
       "year": 2014,
       "platform": "PC / Mobile",
       "engine": "Clickteam Fusion",
@@ -831,24 +1423,413 @@
       "company": "Scott Cawthon",
       "genre": "Horror",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Título: 'Five Nights at Freddy's' — qual da série?"
+      "_obs": null
     },
     {
-      "id": 67,
-      "title": "Pokemon",
-      "year": 1996,
+      "id": 114,
+      "title": "Five Nights at Freddy's 2",
+      "title_pt": null,
+      "year": 2014,
+      "platform": "PC / Mobile",
+      "engine": "Clickteam Fusion",
+      "rating": null,
+      "company": "Scott Cawthon",
+      "genre": "Horror",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 115,
+      "title": "Five Nights at Freddy's 3",
+      "title_pt": null,
+      "year": 2015,
+      "platform": "PC / Mobile",
+      "engine": "Clickteam Fusion",
+      "rating": null,
+      "company": "Scott Cawthon",
+      "genre": "Horror",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 116,
+      "title": "Five Nights at Freddy's 4",
+      "title_pt": null,
+      "year": 2015,
+      "platform": "PC / Mobile",
+      "engine": "Clickteam Fusion",
+      "rating": null,
+      "company": "Scott Cawthon",
+      "genre": "Horror",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 117,
+      "title": "Five Nights at Freddy's: Sister Location",
+      "title_pt": null,
+      "year": 2016,
+      "platform": "PC",
+      "engine": "Clickteam Fusion",
+      "rating": null,
+      "company": "Scott Cawthon",
+      "genre": "Horror",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 118,
+      "title": "Five Nights at Freddy's: Pizzeria Simulator",
+      "title_pt": null,
+      "year": 2017,
+      "platform": "PC",
+      "engine": "Clickteam Fusion",
+      "rating": null,
+      "company": "Scott Cawthon",
+      "genre": "Horror / management",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 119,
+      "title": "FNaF World",
+      "title_pt": null,
+      "year": 2016,
+      "platform": "PC",
+      "engine": "Clickteam Fusion",
+      "rating": null,
+      "company": "Scott Cawthon",
+      "genre": "RPG (spin-off)",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 120,
+      "title": "Ultimate Custom Night",
+      "title_pt": null,
+      "year": 2018,
+      "platform": "PC",
+      "engine": "Clickteam Fusion",
+      "rating": null,
+      "company": "Scott Cawthon",
+      "genre": "Horror",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 121,
+      "title": "Five Nights at Freddy's: Help Wanted",
+      "title_pt": null,
+      "year": 2019,
+      "platform": "PC (VR) / Console",
+      "engine": "Unity",
+      "rating": null,
+      "company": "Steel Wool Studios",
+      "genre": "Horror (VR)",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 122,
+      "title": "Five Nights at Freddy's: Security Breach",
+      "title_pt": null,
+      "year": 2021,
+      "platform": "PC / Console",
+      "engine": "Unity",
+      "rating": null,
+      "company": "Steel Wool Studios",
+      "genre": "Horror",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 123,
+      "title": "Five Nights at Freddy's: Into the Pit",
+      "title_pt": null,
+      "year": 2024,
+      "platform": "PC / Console / Mobile",
+      "engine": "Unity",
+      "rating": null,
+      "company": "Mega Cat Studios",
+      "genre": "Horror (2D)",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 124,
+      "title": "Five Nights at Freddy's: Secret of the Mimic",
+      "title_pt": null,
+      "year": 2025,
+      "platform": "PC / Console",
+      "engine": null,
+      "rating": null,
+      "company": "Steel Wool Studios",
+      "genre": "Horror",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 125,
+      "title": "Pokemon Red / Blue",
+      "title_pt": null,
+      "year": 1998,
       "platform": "Game Boy",
       "engine": null,
       "rating": null,
       "company": "Game Freak / Nintendo",
-      "genre": "JRPG",
-      "mode": "Single / Multi",
-      "title_pt": null,
-      "_obs": "Série — quais versões? Red/Blue, Gen 2..."
+      "genre": "RPG de captura",
+      "mode": "Single / Multi (trocas)",
+      "_obs": null
     },
     {
-      "id": 68,
+      "id": 126,
+      "title": "Pokemon Gold / Silver",
+      "title_pt": null,
+      "year": 2000,
+      "platform": "Game Boy Color",
+      "engine": null,
+      "rating": null,
+      "company": "Game Freak / Nintendo",
+      "genre": "RPG de captura",
+      "mode": "Single / Multi (trocas)",
+      "_obs": null
+    },
+    {
+      "id": 127,
+      "title": "Pokemon Ruby / Sapphire",
+      "title_pt": null,
+      "year": 2003,
+      "platform": "Game Boy Advance",
+      "engine": null,
+      "rating": null,
+      "company": "Game Freak / Nintendo",
+      "genre": "RPG de captura",
+      "mode": "Single / Multi (trocas)",
+      "_obs": null
+    },
+    {
+      "id": 128,
+      "title": "Pokemon Emerald",
+      "title_pt": null,
+      "year": 2005,
+      "platform": "Game Boy Advance",
+      "engine": null,
+      "rating": null,
+      "company": "Game Freak / Nintendo",
+      "genre": "RPG de captura",
+      "mode": "Single / Multi (trocas)",
+      "_obs": null
+    },
+    {
+      "id": 129,
+      "title": "Pokemon FireRed / LeafGreen",
+      "title_pt": null,
+      "year": 2004,
+      "platform": "Game Boy Advance",
+      "engine": null,
+      "rating": null,
+      "company": "Game Freak / Nintendo",
+      "genre": "RPG de captura",
+      "mode": "Single / Multi (trocas)",
+      "_obs": null
+    },
+    {
+      "id": 130,
+      "title": "Pokemon Diamond / Pearl",
+      "title_pt": null,
+      "year": 2007,
+      "platform": "Nintendo DS",
+      "engine": null,
+      "rating": null,
+      "company": "Game Freak / Nintendo",
+      "genre": "RPG de captura",
+      "mode": "Single / Multi (trocas)",
+      "_obs": null
+    },
+    {
+      "id": 131,
+      "title": "Pokemon Platinum",
+      "title_pt": null,
+      "year": 2009,
+      "platform": "Nintendo DS",
+      "engine": null,
+      "rating": null,
+      "company": "Game Freak / Nintendo",
+      "genre": "RPG de captura",
+      "mode": "Single / Multi (trocas)",
+      "_obs": null
+    },
+    {
+      "id": 132,
+      "title": "Pokemon HeartGold / SoulSilver",
+      "title_pt": null,
+      "year": 2010,
+      "platform": "Nintendo DS",
+      "engine": null,
+      "rating": null,
+      "company": "Game Freak / Nintendo",
+      "genre": "RPG de captura",
+      "mode": "Single / Multi (trocas)",
+      "_obs": null
+    },
+    {
+      "id": 133,
+      "title": "Pokemon Black / White",
+      "title_pt": null,
+      "year": 2011,
+      "platform": "Nintendo DS",
+      "engine": null,
+      "rating": null,
+      "company": "Game Freak / Nintendo",
+      "genre": "RPG de captura",
+      "mode": "Single / Multi (trocas)",
+      "_obs": null
+    },
+    {
+      "id": 134,
+      "title": "Pokemon Black 2 / White 2",
+      "title_pt": null,
+      "year": 2012,
+      "platform": "Nintendo DS",
+      "engine": null,
+      "rating": null,
+      "company": "Game Freak / Nintendo",
+      "genre": "RPG de captura",
+      "mode": "Single / Multi (trocas)",
+      "_obs": null
+    },
+    {
+      "id": 135,
+      "title": "Pokemon X / Y",
+      "title_pt": null,
+      "year": 2013,
+      "platform": "Nintendo 3DS",
+      "engine": null,
+      "rating": null,
+      "company": "Game Freak / Nintendo",
+      "genre": "RPG de captura",
+      "mode": "Single / Multi (trocas)",
+      "_obs": null
+    },
+    {
+      "id": 136,
+      "title": "Pokemon Omega Ruby / Alpha Sapphire",
+      "title_pt": null,
+      "year": 2014,
+      "platform": "Nintendo 3DS",
+      "engine": null,
+      "rating": null,
+      "company": "Game Freak / Nintendo",
+      "genre": "RPG de captura",
+      "mode": "Single / Multi (trocas)",
+      "_obs": null
+    },
+    {
+      "id": 137,
+      "title": "Pokemon Sun / Moon",
+      "title_pt": null,
+      "year": 2016,
+      "platform": "Nintendo 3DS",
+      "engine": null,
+      "rating": null,
+      "company": "Game Freak / Nintendo",
+      "genre": "RPG de captura",
+      "mode": "Single / Multi (trocas)",
+      "_obs": null
+    },
+    {
+      "id": 138,
+      "title": "Pokemon Ultra Sun / Ultra Moon",
+      "title_pt": null,
+      "year": 2017,
+      "platform": "Nintendo 3DS",
+      "engine": null,
+      "rating": null,
+      "company": "Game Freak / Nintendo",
+      "genre": "RPG de captura",
+      "mode": "Single / Multi (trocas)",
+      "_obs": null
+    },
+    {
+      "id": 139,
+      "title": "Pokemon Let's Go, Pikachu! / Eevee!",
+      "title_pt": null,
+      "year": 2018,
+      "platform": "Switch",
+      "engine": null,
+      "rating": null,
+      "company": "Game Freak / Nintendo",
+      "genre": "RPG de captura",
+      "mode": "Single / Co-op",
+      "_obs": null
+    },
+    {
+      "id": 140,
+      "title": "Pokemon Sword / Shield",
+      "title_pt": null,
+      "year": 2019,
+      "platform": "Switch",
+      "engine": null,
+      "rating": null,
+      "company": "Game Freak / Nintendo",
+      "genre": "RPG de captura",
+      "mode": "Single / Multi (trocas)",
+      "_obs": null
+    },
+    {
+      "id": 141,
+      "title": "Pokemon Brilliant Diamond / Shining Pearl",
+      "title_pt": null,
+      "year": 2021,
+      "platform": "Switch",
+      "engine": null,
+      "rating": null,
+      "company": "ILCA / Game Freak",
+      "genre": "RPG de captura",
+      "mode": "Single / Multi (trocas)",
+      "_obs": null
+    },
+    {
+      "id": 142,
+      "title": "Pokemon Legends: Arceus",
+      "title_pt": null,
+      "year": 2022,
+      "platform": "Switch",
+      "engine": null,
+      "rating": null,
+      "company": "Game Freak / Nintendo",
+      "genre": "RPG de captura (mundo aberto)",
+      "mode": "Single-player",
+      "_obs": null
+    },
+    {
+      "id": 143,
+      "title": "Pokemon Scarlet / Violet",
+      "title_pt": null,
+      "year": 2022,
+      "platform": "Switch",
+      "engine": null,
+      "rating": null,
+      "company": "Game Freak / Nintendo",
+      "genre": "RPG de captura (mundo aberto)",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 144,
+      "title": "Pokemon Legends: Z-A",
+      "title_pt": null,
+      "year": 2025,
+      "platform": "Switch",
+      "engine": null,
+      "rating": null,
+      "company": "Game Freak / Nintendo",
+      "genre": "RPG de captura",
+      "mode": "Single / Multi",
+      "_obs": null
+    },
+    {
+      "id": 145,
       "title": "Pokemon Go",
       "year": 2016,
       "platform": "Mobile",
@@ -860,8 +1841,8 @@
       "title_pt": null
     },
     {
-      "id": 69,
-      "title": "Saint Seiya Awakening",
+      "id": 146,
+      "title": "Saint Seiya Awakening: Knights of the Zodiac",
       "year": 2019,
       "platform": "Mobile",
       "engine": "Unity",
@@ -869,11 +1850,10 @@
       "company": "Tencent / DeNA",
       "genre": "RPG (gacha)",
       "mode": "Multiplayer / Single",
-      "title_pt": null,
-      "_obs": "Knights of the Zodiac"
+      "title_pt": null
     },
     {
-      "id": 70,
+      "id": 147,
       "title": "Archero",
       "year": 2019,
       "platform": "Mobile",
@@ -885,7 +1865,7 @@
       "title_pt": null
     },
     {
-      "id": 71,
+      "id": 148,
       "title": "Clash of Clans",
       "year": 2012,
       "platform": "Mobile",
@@ -897,7 +1877,7 @@
       "title_pt": null
     },
     {
-      "id": 72,
+      "id": 149,
       "title": "Clash Royale",
       "year": 2016,
       "platform": "Mobile",
@@ -909,7 +1889,7 @@
       "title_pt": null
     },
     {
-      "id": 73,
+      "id": 150,
       "title": "Brawl Stars",
       "year": 2018,
       "platform": "Mobile",
@@ -921,8 +1901,8 @@
       "title_pt": null
     },
     {
-      "id": 74,
-      "title": "Final Fantasy Record Keepers",
+      "id": 151,
+      "title": "Final Fantasy Record Keeper",
       "year": 2014,
       "platform": "Mobile",
       "engine": null,
@@ -930,24 +1910,22 @@
       "company": "DeNA / Square Enix",
       "genre": "RPG (gacha)",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Título: 'Final Fantasy Record Keeper'"
+      "title_pt": null
     },
     {
-      "id": 75,
+      "id": 152,
       "title": "Occult",
       "year": null,
-      "platform": null,
+      "platform": "PC (Steam)",
       "engine": null,
       "rating": null,
       "company": null,
-      "genre": null,
+      "genre": "Horror",
       "mode": null,
-      "title_pt": null,
-      "_obs": "Não reconheço o jogo certo — confirme"
+      "title_pt": null
     },
     {
-      "id": 76,
+      "id": 153,
       "title": "Zelda",
       "year": 1986,
       "platform": "NES",
@@ -960,7 +1938,7 @@
       "_obs": "Série — qual? Ocarina? BotW?"
     },
     {
-      "id": 77,
+      "id": 154,
       "title": "Raft",
       "year": 2018,
       "platform": "PC",
@@ -972,7 +1950,7 @@
       "title_pt": null
     },
     {
-      "id": 78,
+      "id": 155,
       "title": "Smite",
       "year": 2014,
       "platform": "PC",
@@ -984,7 +1962,7 @@
       "title_pt": null
     },
     {
-      "id": 79,
+      "id": 156,
       "title": "Rogue Legacy 2",
       "year": 2022,
       "platform": "PC",
@@ -996,7 +1974,7 @@
       "title_pt": null
     },
     {
-      "id": 80,
+      "id": 157,
       "title": "Project Zomboid",
       "year": 2013,
       "platform": "PC",
@@ -1008,7 +1986,7 @@
       "title_pt": null
     },
     {
-      "id": 81,
+      "id": 158,
       "title": "Valheim",
       "year": 2021,
       "platform": "PC",
@@ -1020,7 +1998,7 @@
       "title_pt": null
     },
     {
-      "id": 82,
+      "id": 159,
       "title": "Lunch Lady",
       "year": 2020,
       "platform": "PC",
@@ -1032,7 +2010,7 @@
       "title_pt": null
     },
     {
-      "id": 83,
+      "id": 160,
       "title": "Albion Online",
       "year": 2017,
       "platform": "PC / Mobile",
@@ -1044,7 +2022,7 @@
       "title_pt": null
     },
     {
-      "id": 84,
+      "id": 161,
       "title": "Amnesia",
       "year": 2010,
       "platform": "PC",
@@ -1057,7 +2035,7 @@
       "_obs": "The Dark Descent — ou Rebirth?"
     },
     {
-      "id": 85,
+      "id": 162,
       "title": "Among Us",
       "year": 2018,
       "platform": "PC / Mobile",
@@ -1069,7 +2047,7 @@
       "title_pt": null
     },
     {
-      "id": 86,
+      "id": 163,
       "title": "Borderlands",
       "year": 2009,
       "platform": "PC / Console",
@@ -1082,7 +2060,7 @@
       "_obs": "Série — assumi BL1"
     },
     {
-      "id": 87,
+      "id": 164,
       "title": "Broforce",
       "year": 2015,
       "platform": "PC",
@@ -1094,7 +2072,7 @@
       "title_pt": null
     },
     {
-      "id": 88,
+      "id": 165,
       "title": "Chased By Darkness",
       "year": null,
       "platform": null,
@@ -1107,7 +2085,7 @@
       "_obs": "Não reconheço — confirme"
     },
     {
-      "id": 89,
+      "id": 166,
       "title": "Conan Exiles",
       "year": 2017,
       "platform": "PC",
@@ -1119,7 +2097,7 @@
       "title_pt": null
     },
     {
-      "id": 90,
+      "id": 167,
       "title": "Destiny 2",
       "year": 2017,
       "platform": "PC / Console",
@@ -1131,7 +2109,7 @@
       "title_pt": null
     },
     {
-      "id": 91,
+      "id": 168,
       "title": "Devour",
       "year": 2021,
       "platform": "PC",
@@ -1143,7 +2121,7 @@
       "title_pt": null
     },
     {
-      "id": 92,
+      "id": 169,
       "title": "Dungeon Defenders",
       "year": 2011,
       "platform": "PC",
@@ -1155,7 +2133,7 @@
       "title_pt": null
     },
     {
-      "id": 93,
+      "id": 170,
       "title": "Fall Guys",
       "year": 2020,
       "platform": "PC / Console",
@@ -1167,7 +2145,7 @@
       "title_pt": null
     },
     {
-      "id": 94,
+      "id": 171,
       "title": "Fear Therapy",
       "year": null,
       "platform": null,
@@ -1180,7 +2158,7 @@
       "_obs": "Não reconheço — confirme"
     },
     {
-      "id": 95,
+      "id": 172,
       "title": "F.e.a.r",
       "year": 2005,
       "platform": "PC",
@@ -1193,7 +2171,7 @@
       "_obs": "Título: F.E.A.R."
     },
     {
-      "id": 96,
+      "id": 173,
       "title": "Gauntlet",
       "year": 1985,
       "platform": "Arcade",
@@ -1206,7 +2184,7 @@
       "_obs": "Série — qual? arcade, Legends/Slayer?"
     },
     {
-      "id": 97,
+      "id": 174,
       "title": "Gems of War",
       "year": 2014,
       "platform": "PC / Mobile",
@@ -1218,7 +2196,7 @@
       "title_pt": null
     },
     {
-      "id": 98,
+      "id": 175,
       "title": "Guacamelee",
       "year": 2013,
       "platform": "PC / Console",
@@ -1231,7 +2209,7 @@
       "_obs": "Guacamelee! — ou Super Turbo?"
     },
     {
-      "id": 99,
+      "id": 176,
       "title": "Grim Dawn",
       "year": 2016,
       "platform": "PC",
@@ -1243,7 +2221,7 @@
       "title_pt": null
     },
     {
-      "id": 100,
+      "id": 177,
       "title": "Ghost Exocism Inc",
       "year": 2021,
       "platform": "PC",
@@ -1256,7 +2234,7 @@
       "_obs": "Título: 'Ghost Exorcism Inc'"
     },
     {
-      "id": 101,
+      "id": 178,
       "title": "GTFO",
       "year": 2019,
       "platform": "PC",
@@ -1268,7 +2246,7 @@
       "title_pt": null
     },
     {
-      "id": 102,
+      "id": 179,
       "title": "Hacknet",
       "year": 2015,
       "platform": "PC",
@@ -1280,7 +2258,7 @@
       "title_pt": null
     },
     {
-      "id": 103,
+      "id": 180,
       "title": "Half-dead",
       "year": null,
       "platform": null,
@@ -1293,7 +2271,7 @@
       "_obs": "Half Dead 2? Confirme qual"
     },
     {
-      "id": 104,
+      "id": 181,
       "title": "Hell yeah",
       "year": 2012,
       "platform": "PC / Console",
@@ -1306,7 +2284,7 @@
       "_obs": "Hell Yeah! Wrath of the Dead Rabbit"
     },
     {
-      "id": 105,
+      "id": 182,
       "title": "Hero Siege",
       "year": 2014,
       "platform": "PC",
@@ -1318,7 +2296,7 @@
       "title_pt": null
     },
     {
-      "id": 106,
+      "id": 183,
       "title": "Hellblade: Senua's Sacrifice",
       "year": 2017,
       "platform": "PC / Console",
@@ -1330,7 +2308,7 @@
       "title_pt": null
     },
     {
-      "id": 107,
+      "id": 184,
       "title": "Hollow Knight",
       "year": 2017,
       "platform": "PC / Console",
@@ -1342,7 +2320,7 @@
       "title_pt": null
     },
     {
-      "id": 108,
+      "id": 185,
       "title": "Injustice",
       "year": 2013,
       "platform": "Console / PC",
@@ -1355,7 +2333,7 @@
       "_obs": "Gods Among Us — ou Injustice 2?"
     },
     {
-      "id": 109,
+      "id": 186,
       "title": "Kholat",
       "year": 2015,
       "platform": "PC",
@@ -1367,7 +2345,7 @@
       "title_pt": null
     },
     {
-      "id": 110,
+      "id": 187,
       "title": "Labyrinthine",
       "year": 2021,
       "platform": "PC",
@@ -1379,7 +2357,7 @@
       "title_pt": null
     },
     {
-      "id": 111,
+      "id": 188,
       "title": "Layers of Fear",
       "year": 2016,
       "platform": "PC",
@@ -1391,7 +2369,7 @@
       "title_pt": null
     },
     {
-      "id": 112,
+      "id": 189,
       "title": "Legends of Idleon",
       "year": 2021,
       "platform": "PC / Mobile",
@@ -1404,7 +2382,7 @@
       "_obs": "Título: 'Legends of Idleon'"
     },
     {
-      "id": 113,
+      "id": 190,
       "title": "Metro 2033",
       "year": 2010,
       "platform": "PC / Xbox 360",
@@ -1416,7 +2394,7 @@
       "title_pt": null
     },
     {
-      "id": 114,
+      "id": 191,
       "title": "Middle-earth",
       "year": 2014,
       "platform": "PC / Console",
@@ -1429,7 +2407,7 @@
       "_obs": "Assumi Shadow of Mordor — confirme"
     },
     {
-      "id": 115,
+      "id": 192,
       "title": "Minion Master",
       "year": 2016,
       "platform": "PC",
@@ -1442,7 +2420,7 @@
       "_obs": "Minion Masters"
     },
     {
-      "id": 116,
+      "id": 193,
       "title": "New World",
       "year": 2021,
       "platform": "PC",
@@ -1454,7 +2432,7 @@
       "title_pt": null
     },
     {
-      "id": 117,
+      "id": 194,
       "title": "Obsideo",
       "year": 2016,
       "platform": "PC",
@@ -1466,7 +2444,7 @@
       "title_pt": null
     },
     {
-      "id": 118,
+      "id": 195,
       "title": "Monster Hunter",
       "year": 2004,
       "platform": "PS2",
@@ -1479,7 +2457,7 @@
       "_obs": "Série — qual? World? Rise?"
     },
     {
-      "id": 119,
+      "id": 196,
       "title": "Ori",
       "year": 2015,
       "platform": "PC / Console",
@@ -1492,7 +2470,7 @@
       "_obs": "Ori and the Blind Forest"
     },
     {
-      "id": 120,
+      "id": 197,
       "title": "Celeste",
       "year": 2018,
       "platform": "PC / Console",
@@ -1504,7 +2482,7 @@
       "title_pt": null
     },
     {
-      "id": 121,
+      "id": 198,
       "title": "Paladins",
       "year": 2016,
       "platform": "PC / Console",
@@ -1516,7 +2494,7 @@
       "title_pt": null
     },
     {
-      "id": 122,
+      "id": 199,
       "title": "Portal",
       "year": 2007,
       "platform": "PC / Console",
@@ -1528,7 +2506,7 @@
       "title_pt": null
     },
     {
-      "id": 123,
+      "id": 200,
       "title": "Quake",
       "year": 1996,
       "platform": "PC",
@@ -1541,7 +2519,7 @@
       "_obs": "Série — qual?"
     },
     {
-      "id": 124,
+      "id": 201,
       "title": "PUBG",
       "year": 2017,
       "platform": "PC / Console / Mobile",
@@ -1554,7 +2532,7 @@
       "_obs": "PlayerUnknown's Battlegrounds"
     },
     {
-      "id": 125,
+      "id": 202,
       "title": "Fortnite",
       "year": 2017,
       "platform": "PC / Console / Mobile",
@@ -1566,7 +2544,7 @@
       "title_pt": null
     },
     {
-      "id": 126,
+      "id": 203,
       "title": "Red Dead",
       "year": 2004,
       "platform": "Console",
@@ -1579,7 +2557,7 @@
       "_obs": "Revolver? Redemption 1? RDR2?"
     },
     {
-      "id": 127,
+      "id": 204,
       "title": "Resident Evil",
       "year": 1996,
       "platform": "PS1",
@@ -1592,7 +2570,7 @@
       "_obs": "Série — qual?"
     },
     {
-      "id": 128,
+      "id": 205,
       "title": "Sign of Silence",
       "year": 2021,
       "platform": "PC",
@@ -1604,7 +2582,7 @@
       "title_pt": null
     },
     {
-      "id": 129,
+      "id": 206,
       "title": "The Talos Principle",
       "year": 2014,
       "platform": "PC",
@@ -1616,7 +2594,7 @@
       "title_pt": null
     },
     {
-      "id": 130,
+      "id": 207,
       "title": "Titan Quest",
       "year": 2006,
       "platform": "PC",
@@ -1628,7 +2606,7 @@
       "title_pt": null
     },
     {
-      "id": 131,
+      "id": 208,
       "title": "We Were Here",
       "year": 2017,
       "platform": "PC",
@@ -1641,7 +2619,7 @@
       "_obs": "Série — We Were Here, Too, Forever?"
     },
     {
-      "id": 132,
+      "id": 209,
       "title": "The Witcher",
       "year": 2007,
       "platform": "PC",
@@ -1654,7 +2632,7 @@
       "_obs": "Série — 1, 2 ou 3?"
     },
     {
-      "id": 133,
+      "id": 210,
       "title": "Yu-Gi-Oh",
       "year": 1999,
       "platform": "Navegador / Console / Cartas",
@@ -1667,7 +2645,7 @@
       "_obs": "Série — qual jogo? Duel Links? Master Duel?"
     },
     {
-      "id": 134,
+      "id": 211,
       "title": "Soma",
       "year": 2015,
       "platform": "PC",
@@ -1680,7 +2658,7 @@
       "_obs": "Título: 'SOMA'"
     },
     {
-      "id": 135,
+      "id": 212,
       "title": "Solast",
       "year": 2021,
       "platform": "PC",
@@ -1693,7 +2671,7 @@
       "_obs": "Título: 'Solasta: Crown of the Magister'?"
     },
     {
-      "id": 136,
+      "id": 213,
       "title": "Anvil",
       "year": null,
       "platform": null,
@@ -1706,7 +2684,7 @@
       "_obs": "ANVIL: Vault Breakers? Outro? Confirme"
     },
     {
-      "id": 137,
+      "id": 214,
       "title": "Gears of War",
       "year": 2006,
       "platform": "Xbox 360 / PC",
@@ -1719,7 +2697,7 @@
       "_obs": "Série — qual?"
     },
     {
-      "id": 138,
+      "id": 215,
       "title": "Overwatch",
       "year": 2016,
       "platform": "PC / Console",
@@ -1731,7 +2709,7 @@
       "title_pt": null
     },
     {
-      "id": 139,
+      "id": 216,
       "title": "Battlefield",
       "year": 2002,
       "platform": "PC",
@@ -1744,7 +2722,7 @@
       "_obs": "Série — 1942? BF3? V?"
     },
     {
-      "id": 140,
+      "id": 217,
       "title": "Call of Duty",
       "year": 2003,
       "platform": "PC / Console",
@@ -1757,7 +2735,7 @@
       "_obs": "Série — qual?"
     },
     {
-      "id": 141,
+      "id": 218,
       "title": "Assassin's Creed",
       "year": 2007,
       "platform": "Console / PC",
@@ -1770,7 +2748,7 @@
       "_obs": "Série — qual?"
     },
     {
-      "id": 142,
+      "id": 219,
       "title": "Titanfall",
       "year": 2014,
       "platform": "PC / Console",
@@ -1782,7 +2760,7 @@
       "title_pt": null
     },
     {
-      "id": 143,
+      "id": 220,
       "title": "Deadspace",
       "year": 2008,
       "platform": "PC / Console",
@@ -1795,7 +2773,7 @@
       "_obs": "Título: 'Dead Space' — 1, 2, 3 ou remake?"
     },
     {
-      "id": 144,
+      "id": 221,
       "title": "Dragon Age",
       "year": 2009,
       "platform": "PC / Console",
@@ -1808,7 +2786,7 @@
       "_obs": "Origins — ou 2 / Inquisition? Engines variam"
     },
     {
-      "id": 145,
+      "id": 222,
       "title": "Plants vs Zombies",
       "year": 2009,
       "platform": "PC / Mobile",
@@ -1820,7 +2798,7 @@
       "title_pt": null
     },
     {
-      "id": 146,
+      "id": 223,
       "title": "Mass Effect",
       "year": 2007,
       "platform": "PC / Console",
@@ -1833,7 +2811,7 @@
       "_obs": "Série — qual?"
     },
     {
-      "id": 147,
+      "id": 224,
       "title": "Need for Speed",
       "year": 1994,
       "platform": "PC / Console",
@@ -1846,7 +2824,7 @@
       "_obs": "Série — qual?"
     },
     {
-      "id": 148,
+      "id": 225,
       "title": "Osu",
       "year": 2007,
       "platform": "PC",
@@ -1859,7 +2837,7 @@
       "_obs": "Título: 'osu!'"
     },
     {
-      "id": 149,
+      "id": 226,
       "title": "Medal of Honor",
       "year": 1999,
       "platform": "PS1",
@@ -1872,7 +2850,7 @@
       "_obs": "Série — qual? Allied Assault? 2010?"
     },
     {
-      "id": 150,
+      "id": 227,
       "title": "Valorant",
       "year": 2020,
       "platform": "PC",
@@ -1884,7 +2862,7 @@
       "title_pt": null
     },
     {
-      "id": 151,
+      "id": 228,
       "title": "Xenoblade",
       "year": 2010,
       "platform": "Wii",
@@ -1897,7 +2875,7 @@
       "_obs": "Xenoblade Chronicles — ou 2/3?"
     },
     {
-      "id": 152,
+      "id": 229,
       "title": "Hades",
       "year": 2020,
       "platform": "PC / Console",
@@ -1909,7 +2887,7 @@
       "title_pt": null
     },
     {
-      "id": 153,
+      "id": 230,
       "title": "Corsairs",
       "year": 1999,
       "platform": "PC",
@@ -1922,7 +2900,7 @@
       "_obs": "Corsairs: Conquest at Sea — ou Sea Dogs? Confirme"
     },
     {
-      "id": 154,
+      "id": 231,
       "title": "Luigi's Mansion",
       "year": 2001,
       "platform": "GameCube",
@@ -1934,7 +2912,7 @@
       "title_pt": null
     },
     {
-      "id": 155,
+      "id": 232,
       "title": "Kingdom Hearts",
       "year": 2002,
       "platform": "PS2",
@@ -1947,7 +2925,7 @@
       "_obs": "Série — qual?"
     },
     {
-      "id": 156,
+      "id": 233,
       "title": "Sonic",
       "year": 1991,
       "platform": "Mega Drive",
@@ -1960,7 +2938,7 @@
       "_obs": "Série — qual?"
     },
     {
-      "id": 157,
+      "id": 234,
       "title": "Super Smash Bros",
       "year": 1999,
       "platform": "N64",
@@ -1972,7 +2950,7 @@
       "title_pt": null
     },
     {
-      "id": 158,
+      "id": 235,
       "title": "Spyro",
       "year": 1998,
       "platform": "PS1",
@@ -1985,7 +2963,7 @@
       "_obs": "Série — Spyro the Dragon?"
     },
     {
-      "id": 159,
+      "id": 236,
       "title": "Keitai Denjuu Telefang",
       "year": 2000,
       "platform": "Game Boy Color",
@@ -1997,7 +2975,7 @@
       "title_pt": null
     },
     {
-      "id": 160,
+      "id": 237,
       "title": "Final Fantasy Tactics",
       "year": 1997,
       "platform": "PS1",
@@ -2009,7 +2987,7 @@
       "title_pt": null
     },
     {
-      "id": 161,
+      "id": 238,
       "title": "Chrono Trigger",
       "year": 1995,
       "platform": "SNES",
@@ -2021,7 +2999,7 @@
       "title_pt": null
     },
     {
-      "id": 162,
+      "id": 239,
       "title": "Chrono Cross",
       "year": 1999,
       "platform": "PS1",
@@ -2033,7 +3011,7 @@
       "title_pt": null
     },
     {
-      "id": 163,
+      "id": 240,
       "title": "Summon Night - Twin Age",
       "year": 2007,
       "platform": "Nintendo DS",
@@ -2045,7 +3023,7 @@
       "title_pt": null
     },
     {
-      "id": 164,
+      "id": 241,
       "title": "Disgaea",
       "year": 2003,
       "platform": "PS2",
@@ -2058,7 +3036,7 @@
       "_obs": "Hour of Darkness — ou qual?"
     },
     {
-      "id": 165,
+      "id": 242,
       "title": "Maniac Mansion",
       "year": 1987,
       "platform": "PC (C64/PC)",
@@ -2070,7 +3048,7 @@
       "title_pt": null
     },
     {
-      "id": 166,
+      "id": 243,
       "title": "Day of the Tentacle",
       "year": 1993,
       "platform": "PC",
@@ -2082,7 +3060,7 @@
       "title_pt": null
     },
     {
-      "id": 167,
+      "id": 244,
       "title": "Devil May Cry",
       "year": 2001,
       "platform": "PS2",
@@ -2095,7 +3073,7 @@
       "_obs": "Série — qual?"
     },
     {
-      "id": 168,
+      "id": 245,
       "title": "Dragonball",
       "year": null,
       "platform": null,
@@ -2108,7 +3086,7 @@
       "_obs": "Série — qual jogo? Budokai? Kakarot? FighterZ?"
     },
     {
-      "id": 169,
+      "id": 246,
       "title": "Lord of the Rings",
       "year": 2002,
       "platform": "Console / PC",
@@ -2121,7 +3099,7 @@
       "_obs": "Assumi The Two Towers / ROTK da EA — confirme"
     },
     {
-      "id": 170,
+      "id": 247,
       "title": "Megaman",
       "year": 1987,
       "platform": "NES",
@@ -2134,7 +3112,7 @@
       "_obs": "Série — Mega Man clássico? X? Battle Network?"
     },
     {
-      "id": 171,
+      "id": 248,
       "title": "Shadow of the Colossus",
       "year": 2005,
       "platform": "PS2",
@@ -2146,7 +3124,7 @@
       "title_pt": null
     },
     {
-      "id": 172,
+      "id": 249,
       "title": "Deux Ex Machina",
       "year": 2000,
       "platform": "PC",
@@ -2159,7 +3137,7 @@
       "_obs": "Nome no jogo: 'Deus Ex' (2000) — certo?"
     },
     {
-      "id": 173,
+      "id": 250,
       "title": "Metal Slug",
       "year": 1996,
       "platform": "Arcade",
@@ -2172,7 +3150,7 @@
       "_obs": "Série — qual?"
     },
     {
-      "id": 174,
+      "id": 251,
       "title": "Metal Gear Solid",
       "year": 1998,
       "platform": "PS1",
@@ -2185,7 +3163,7 @@
       "_obs": "Série — qual? (engine/graphic MGS1)"
     },
     {
-      "id": 175,
+      "id": 252,
       "title": "Marvel vs Capcom",
       "year": 1998,
       "platform": "Arcade",
@@ -2198,7 +3176,7 @@
       "_obs": "Clash of Super Heroes — ou MVC2/3?"
     },
     {
-      "id": 176,
+      "id": 253,
       "title": "Bloody Roar",
       "year": 1997,
       "platform": "PS1",
@@ -2210,7 +3188,7 @@
       "title_pt": null
     },
     {
-      "id": 177,
+      "id": 254,
       "title": "Strider",
       "year": 1989,
       "platform": "Arcade",
@@ -2223,7 +3201,7 @@
       "_obs": "Strider arcade — ou Strider 2014?"
     },
     {
-      "id": 178,
+      "id": 255,
       "title": "Nier",
       "year": 2010,
       "platform": "PS3 / Xbox 360",
@@ -2236,7 +3214,7 @@
       "_obs": "NieR (Replicant/Gestalt) — ou Automata?"
     },
     {
-      "id": 179,
+      "id": 256,
       "title": "Drakengard",
       "year": 2003,
       "platform": "PS2",
@@ -2248,7 +3226,7 @@
       "title_pt": null
     },
     {
-      "id": 180,
+      "id": 257,
       "title": "Army of Two",
       "year": 2008,
       "platform": "Console",
@@ -2260,7 +3238,7 @@
       "title_pt": null
     },
     {
-      "id": 181,
+      "id": 258,
       "title": "Bomberman",
       "year": 1985,
       "platform": "NES",
@@ -2272,7 +3250,7 @@
       "title_pt": null
     },
     {
-      "id": 182,
+      "id": 259,
       "title": "Animaniacs",
       "year": 1994,
       "platform": "SNES / Genesis",
@@ -2284,7 +3262,7 @@
       "title_pt": null
     },
     {
-      "id": 183,
+      "id": 260,
       "title": "Octopath Traveler",
       "year": 2018,
       "platform": "Switch / PC",
@@ -2296,7 +3274,7 @@
       "title_pt": null
     },
     {
-      "id": 184,
+      "id": 261,
       "title": "Alone in the Dark",
       "year": 1992,
       "platform": "PC (DOS)",
@@ -2309,7 +3287,7 @@
       "_obs": "Série — clássico 92 ou remake?"
     },
     {
-      "id": 185,
+      "id": 262,
       "title": "Apocalypse",
       "year": 1998,
       "platform": "PS1",
@@ -2322,7 +3300,7 @@
       "_obs": "O do Bruce Willis — certo?"
     },
     {
-      "id": 186,
+      "id": 263,
       "title": "Croc",
       "year": 1997,
       "platform": "PS1",
@@ -2334,7 +3312,7 @@
       "title_pt": null
     },
     {
-      "id": 187,
+      "id": 264,
       "title": "In the Hunt",
       "year": 1993,
       "platform": "Arcade",
@@ -2346,7 +3324,7 @@
       "title_pt": null
     },
     {
-      "id": 188,
+      "id": 265,
       "title": "King of Fighters",
       "year": 1994,
       "platform": "Arcade / Neo Geo",
@@ -2359,7 +3337,7 @@
       "_obs": "Série — qual? ('94, '98, XIII..."
     },
     {
-      "id": 189,
+      "id": 266,
       "title": "Medievil",
       "year": 1998,
       "platform": "PS1",
@@ -2372,7 +3350,7 @@
       "_obs": "Título: MediEvil"
     },
     {
-      "id": 190,
+      "id": 267,
       "title": "Nightmare Creatures",
       "year": 1997,
       "platform": "PS1",
@@ -2384,7 +3362,7 @@
       "title_pt": null
     },
     {
-      "id": 191,
+      "id": 268,
       "title": "Parasite Eve",
       "year": 1998,
       "platform": "PS1",
@@ -2396,7 +3374,7 @@
       "title_pt": null
     },
     {
-      "id": 192,
+      "id": 269,
       "title": "Pandemonium",
       "year": 1996,
       "platform": "PS1",
@@ -2408,7 +3386,7 @@
       "title_pt": null
     },
     {
-      "id": 193,
+      "id": 270,
       "title": "Rival Schools",
       "year": 1997,
       "platform": "PS1",
@@ -2421,7 +3399,7 @@
       "_obs": "Rival Schools: United by Fate"
     },
     {
-      "id": 194,
+      "id": 271,
       "title": "Road Rash",
       "year": 1991,
       "platform": "Sega Genesis",
@@ -2434,7 +3412,7 @@
       "_obs": "Série — qual?"
     },
     {
-      "id": 195,
+      "id": 272,
       "title": "Silent Hill",
       "year": 1999,
       "platform": "PS1",
@@ -2447,7 +3425,7 @@
       "_obs": "Série — qual?"
     },
     {
-      "id": 196,
+      "id": 273,
       "title": "Samurai Showdown",
       "year": 1993,
       "platform": "Neo Geo / Arcade",
@@ -2460,7 +3438,7 @@
       "_obs": "Título: 'Samurai Shodown' — qual?"
     },
     {
-      "id": 197,
+      "id": 274,
       "title": "Spiderman",
       "year": 2000,
       "platform": "PS1 / N64",
@@ -2473,7 +3451,7 @@
       "_obs": "Série — o da Neversoft (2000)? Outro?"
     },
     {
-      "id": 198,
+      "id": 275,
       "title": "Tekken",
       "year": 1994,
       "platform": "Arcade / PS1",
@@ -2486,7 +3464,7 @@
       "_obs": "Série — qual?"
     },
     {
-      "id": 199,
+      "id": 276,
       "title": "Commandos",
       "year": 1998,
       "platform": "PC",
@@ -2499,7 +3477,7 @@
       "_obs": "Behind Enemy Lines"
     },
     {
-      "id": 200,
+      "id": 277,
       "title": "Valdis Story",
       "year": 2013,
       "platform": "PC",
@@ -2512,7 +3490,7 @@
       "_obs": "Valdis Story: Abyssal City"
     },
     {
-      "id": 201,
+      "id": 278,
       "title": "White Day",
       "year": 2001,
       "platform": "PC",
@@ -2525,7 +3503,7 @@
       "_obs": "'A Labyrinth Named School' — ou remake 2017?"
     },
     {
-      "id": 202,
+      "id": 279,
       "title": "SCP - Contaiment Breach",
       "year": 2012,
       "platform": "PC",
@@ -2538,7 +3516,7 @@
       "_obs": "Título: 'SCP – Containment Breach'"
     },
     {
-      "id": 203,
+      "id": 280,
       "title": "Worms",
       "year": 1995,
       "platform": "PC",
@@ -2551,7 +3529,7 @@
       "_obs": "Série — qual?"
     },
     {
-      "id": 204,
+      "id": 281,
       "title": "Guild Wars 2",
       "year": 2012,
       "platform": "PC",
@@ -2563,7 +3541,7 @@
       "title_pt": null
     },
     {
-      "id": 205,
+      "id": 282,
       "title": "Perfect World",
       "year": 2006,
       "platform": "PC",
@@ -2576,7 +3554,7 @@
       "_obs": "Perfect World International?"
     },
     {
-      "id": 206,
+      "id": 283,
       "title": "Aion",
       "year": 2008,
       "platform": "PC",
@@ -2588,7 +3566,7 @@
       "title_pt": null
     },
     {
-      "id": 207,
+      "id": 284,
       "title": "Metin 2",
       "year": 2005,
       "platform": "PC",
