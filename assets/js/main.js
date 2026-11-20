@@ -572,10 +572,14 @@ function renderList(query = '') {
         }
       });
 
+      /* vertical: num → título → estrelas → resto */
+      const body = document.createElement('div');
+      body.className = 'game-body';
+
       const num = document.createElement('span');
       num.className = 'num';
       num.textContent = String(seq).padStart(3, '0');
-      li.appendChild(num);
+      body.appendChild(num);
 
       /* Capa do R2 via Worker (GET /covers/:id). Sem capa em jogo
          nenhum no bucket, o onerror remove a thumb da DOM. */
@@ -589,12 +593,9 @@ function renderList(query = '') {
         li.appendChild(cover);
       }
 
-      const body = document.createElement('div');
-      body.className = 'game-body';
-
       const metaParts = metaLine(eff);
 
-      /* título + estrelas na mesma linha */
+      /* título + estrelas empilhados (layout vertical) */
       const titleRow = document.createElement('span');
       titleRow.className = 'title-row';
       const title = document.createElement('span');

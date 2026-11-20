@@ -277,6 +277,7 @@ main {
 .game-body {
   display: flex;
   flex-direction: column;
+  gap: 0.15rem;
   min-width: 0;
   flex: 1;
 }
@@ -316,21 +317,19 @@ main {
 
 .game-item .title-row {
   display: flex;
-  align-items: baseline;
-  gap: 0.6rem;
+  flex-direction: column;
+  gap: 0.15rem;
   min-width: 0;
 }
 
 .game-item .rating {
-  margin-left: auto;
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   color: var(--yellow);
   text-shadow: 0 0 10px rgb(253 224 71 / 40%);
-  flex-shrink: 0;
+  align-self: flex-start;
 }
 
 .game-item .title-row .missing {
-  margin-left: auto;
   font-size: 0.8rem;
   color: var(--muted);
   font-style: italic;
