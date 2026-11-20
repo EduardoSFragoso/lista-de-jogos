@@ -66,7 +66,9 @@ lista_jogos/
 | `/api/games`     | POST   | `Bearer token` | cria um jogo novo (id = max+1)         |
 
 Escritas exigem uma sessão aberta via `POST /api/login` (senha = secret
-`ADMIN_PASSWORD` do Worker, devolvida como **cookie HttpOnly** que o JavaScript
+`ADMIN_PASSWORD` do Worker, comparada em tempo constante, devolvida como
+**cookie HttpOnly** assinado com `SESSION_SECRET` — payload `iat.jti.exp`,
+HMAC-SHA256 — que o JavaScript
 do site não lê) ou o header `Authorization: Bearer <senha>` no terminal.
 Validação: `rating` 1–5, `year` plausível, textos ≤ 200 (review ≤ 4000) caracteres.
 
@@ -121,7 +123,7 @@ npm run check    # formatação + lints — o que o CI roda (exige 100% verde)
 O passo a passo detalhado está em [`worker/README.md`](worker/README.md). Resumo:
 
 1. **Neon**: crie o projeto, copie a connection string, rode `worker/schema.sql` e `worker/seed.sql` no SQL Editor.
-2. **Cloudflare**: `cd worker && npm install && npx wrangler login`, configure os secrets (`DATABASE_URL`, `ADMIN_PASSWORD`) e `npx wrangler deploy`.
+2. **Cloudflare**: `cd worker && npm install && npx wrangler login`, configure os secrets (`DATABASE_URL`, `ADMIN_PASSWORD`, `SESSION_SECRET`) e `npx wrangler deploy`.
 3. **Site**: no ⚙ da página, cole a URL do Worker e a senha — o login abre uma sessão de 7 dias (cookie HttpOnly) e o site passa a gravar no banco.
 
 Sem API configurada, o site continua funcionando em **modo local** (lê `data/games.json`,

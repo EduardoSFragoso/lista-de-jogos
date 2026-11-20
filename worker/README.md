@@ -25,9 +25,11 @@ chave é rejeitada.
 
 **Segurança** — a senha nunca fica salva no navegador:
 
-1. O site faz `POST /api/login` com a senha; o Worker responde com um cookie
-   `lista_session` assinado (HMAC-SHA256), `HttpOnly`, `Secure`, `SameSite=None`,
-   válido 7 dias — o JavaScript **não consegue ler** esse cookie.
+1. O site faz `POST /api/login` com a senha (comparada em tempo constante); o
+   Worker responde com um cookie `lista_session` assinado (HMAC-SHA256 com o
+   secret `SESSION_SECRET`, payload `iat.jti.exp`), `HttpOnly`, `Secure`,
+   `SameSite=None`, válido 7 dias — o JavaScript **não consegue ler** esse
+   cookie. Trocar `SESSION_SECRET` revoga todas as sessões abertas.
 2. Toda escrita autenticada por cookie também confere o header `Origin`
    (deve ser exatamente `ALLOWED_ORIGIN`), o que bloqueia CSRF.
 3. No terminal, escreva com `Authorization: Bearer <senha>` — a senha nunca
@@ -76,6 +78,10 @@ npx wrangler secret put DATABASE_URL
 npx wrangler secret put ADMIN_PASSWORD
 # escolha uma senha FORTE e cole aqui (é ela que você usa no ⚙ do site
 # e no header Bearer do terminal)
+
+npx wrangler secret put SESSION_SECRET
+# chave que assina os cookies de sessão — gere uma aleatória, ex.:
+#   node -e "console.log(crypto.randomUUID()+crypto.randomUUID())"
 ```
 
 Ajuste o CORS em `wrangler.toml` se o domínio do front mudar:

@@ -10,9 +10,12 @@
      POST   /api/logout      → encerra sessão
 
    Autenticação nas rotas de escrita, de duas formas:
-   1. Site: POST /api/login valida a senha (secret ADMIN_PASSWORD)
-      e devolve um cookie de sessão HttpOnly + Secure (HMAC-SHA256,
-      7 dias). O JS do site NÃO consegue ler esse cookie.
+   1. Site: POST /api/login valida a senha (secret ADMIN_PASSWORD,
+      comparada em tempo constante) e devolve um cookie de sessão
+      HttpOnly + Secure — HMAC-SHA256 do payload "iat.jti.exp"
+      assinado com SESSION_SECRET (7 dias, sem estado). O JS do
+      site NÃO consegue ler esse cookie. Trocar SESSION_SECRET
+      revoga todas as sessões abertas.
    2. Terminal/scripts: header `Authorization: Bearer <senha>`.
 
    Em ambas, toda escrita também exige Origin igual a ALLOWED_ORIGIN
@@ -62,7 +65,24 @@ function fail(env, status, message) {
   return json(env, { error: message }, status);
 }
 
-/* ---------------- sessão (HMAC sobre a data de expiração) ---------------- */
+/* ---------------- sessão (HMAC-SHA256 com SESSION_SECRET) ---------------- */
+
+/**
+ * Comparação de strings em tempo constante (UTF-8).
+ * Evita vazamento de informação por variação de tempo em `===`
+ * quando um dos lados é segredo.
+ */
+function safeEqual(a, b) {
+  const enc = new TextEncoder();
+  const ba = enc.encode(a);
+  const bb = enc.encode(b);
+  const len = Math.max(ba.length, bb.length);
+  let diff = ba.length ^ bb.length;
+  for (let i = 0; i < len; i++) {
+    diff |= (ba[i] ?? 0) ^ (bb[i] ?? 0);
+  }
+  return diff === 0;
+}
 
 async function hmacHex(key, message) {
   const enc = new TextEncoder();
@@ -77,13 +97,19 @@ async function hmacHex(key, message) {
   return [...new Uint8Array(sig)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-/** Cookie de sessão: "<expiração>.<hmac da expiração>". Sem estado. */
+/**
+ * Cookie de sessão: "<iat>.<jti>.<exp>.<hmac do payload>".
+ * Sem estado; iat = emissão (epoch s), jti = id aleatório da
+ * sessão, exp = expiração (epoch s). Assinado com SESSION_SECRET
+ * — trocar esse secret revoga todas as sessões.
+ */
 async function createSessionCookie(env) {
-  const exp = Math.floor(Date.now() / 1000) + SESSION_TTL;
-  const sig = await hmacHex(env.ADMIN_PASSWORD, String(exp));
+  const now = Math.floor(Date.now() / 1000);
+  const payload = [now, crypto.randomUUID(), now + SESSION_TTL].join('.');
+  const sig = await hmacHex(env.SESSION_SECRET, payload);
   return {
-    value: `${exp}.${sig}`,
-    setCookie: `${COOKIE}=${exp}.${sig}; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=${SESSION_TTL}`,
+    value: `${payload}.${sig}`,
+    setCookie: `${COOKIE}=${payload}.${sig}; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=${SESSION_TTL}`,
   };
 }
 
@@ -97,20 +123,35 @@ function readSessionCookie(req) {
 }
 
 async function sessionValid(req, env) {
+  if (!env.SESSION_SECRET) return false;
   const raw = readSessionCookie(req);
   if (!raw) return false;
-  const [expStr, sig] = raw.split('.');
+  const parts = raw.split('.');
+  if (parts.length !== 4) return false;
+  const [iatStr, jti, expStr, sig] = parts;
   const exp = Number(expStr);
-  if (!Number.isInteger(exp) || exp < Math.floor(Date.now() / 1000) || !sig) return false;
-  const expected = await hmacHex(env.ADMIN_PASSWORD, expStr);
-  return sig === expected;
+  const iat = Number(iatStr);
+  if (
+    !Number.isInteger(exp) ||
+    !Number.isInteger(iat) ||
+    iat > exp ||
+    exp < Math.floor(Date.now() / 1000) ||
+    !/^[0-9a-f-]{36}$/.test(jti) ||
+    !sig
+  ) {
+    return false;
+  }
+  const expected = await hmacHex(env.SESSION_SECRET, [iatStr, jti, expStr].join('.'));
+  return safeEqual(sig, expected);
 }
 
 /** Escritas: cookie de sessão (site) OU bearer password (terminal). */
 async function authorized(req, env) {
   if (!env.ADMIN_PASSWORD) return false;
   const header = req.headers.get('authorization') || '';
-  if (header === `Bearer ${env.ADMIN_PASSWORD}`) return true;
+  if (header.startsWith('Bearer ') && safeEqual(header.slice(7), env.ADMIN_PASSWORD)) {
+    return true;
+  }
   return sessionValid(req, env);
 }
 
@@ -220,7 +261,14 @@ export default {
           return fail(env, 403, 'origem não permitida');
         }
         const body = await req.json().catch(() => null);
-        if (!body || typeof body.password !== 'string' || body.password !== env.ADMIN_PASSWORD) {
+        if (!env.SESSION_SECRET) {
+          return fail(env, 500, 'SESSION_SECRET não configurado no Worker');
+        }
+        if (
+          !body ||
+          typeof body.password !== 'string' ||
+          !safeEqual(body.password, env.ADMIN_PASSWORD)
+        ) {
           return fail(env, 401, 'senha incorreta');
         }
         const session = await createSessionCookie(env);
