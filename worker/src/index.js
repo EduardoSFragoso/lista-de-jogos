@@ -214,13 +214,6 @@ function validate(body, { partial }) {
   return { ok: true, fields };
 }
 
-/** Monta SET de um UPDATE dinâmico (colunas ≤ whitelist, safe). */
-function buildSet(sql, fields) {
-  const sets = Object.keys(fields).map((col) => sql`${sql.identifier(col)} = ${fields[col]}`);
-  sets.push(sql`updated_at = now()`);
-  return sql.join(sets, sql`, `);
-}
-
 /* ---------------- handler ---------------- */
 
 export default {
@@ -321,11 +314,17 @@ export default {
         if (Object.keys(check.fields).length === 0) {
           return fail(env, 400, 'nenhum campo válido enviado');
         }
-        const [game] = await sql`
-          update games set ${buildSet(sql, check.fields)}
-          where id = ${id}
-          returning id, title, title_pt, year, platform, engine,
-                    rating, company, genre, mode, review, updated_at`;
+        /* SET dinâmico via sql.query: colunas vêm só da whitelist
+           (validate), mas o driver do Neon não tem sql.identifier. */
+        const cols = Object.keys(check.fields);
+        const sets = cols.map((col, i) => `"${col}" = $${i + 1}`);
+        sets.push('updated_at = now()');
+        const [game] = await sql.query(
+          `update games set ${sets.join(', ')} where id = $${cols.length + 1}
+             returning id, title, title_pt, year, platform, engine,
+                       rating, company, genre, mode, review, updated_at`,
+          [...cols.map((col) => check.fields[col]), id]
+        );
         if (!game) return fail(env, 404, `jogo ${id} não encontrado`);
         return json(env, { game });
       }
