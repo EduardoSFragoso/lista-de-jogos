@@ -6,15 +6,7 @@
    no banco (db.js); sem API, fica pendente em local.
    ============================================================ */
 
-import {
-  apiConfigured,
-  fetchGames,
-  getApiUrl,
-  getToken,
-  patchGame,
-  setApiUrl,
-  setToken,
-} from './db.js';
+import { apiConfigured, fetchGames, getApiUrl, login, logout, patchGame, setApiUrl } from './db.js';
 
 const I18N = {
   'pt-br': {
@@ -49,12 +41,13 @@ const I18N = {
     saveFailed: '✖ falhou na API — salvo local',
     apiTitle: 'Configuração da API',
     apiHint:
-      'URL do Worker (ex.: https://lista-api.seu-usuario.workers.dev) e o ADMIN_TOKEN definido no deploy. Sem API, o site roda em modo local.',
+      'URL do Worker (ex.: https://lista-api.seu-usuario.workers.dev) e a senha de admin (ADMIN_PASSWORD do deploy). A senha não é salva: ela abre uma sessão com cookie HttpOnly, válida por 7 dias. Sem API, o site roda em modo local.',
     apiLabelUrl: 'URL da API',
-    apiLabelToken: 'ADMIN_TOKEN',
-    apiSave: 'SALVAR CONFIG',
-    apiSaved: 'CONFIG SALVA ✓',
-    apiClear: 'Limpar',
+    apiLabelPassword: 'Senha de admin',
+    apiSave: 'ENTRAR',
+    apiConnected: 'CONECTADO ✓',
+    connectFailed: '✖ falha ao conectar',
+    apiClear: 'Sair e limpar URL',
   },
   en: {
     pageTitle: 'Games List',
@@ -88,12 +81,13 @@ const I18N = {
     saveFailed: '✖ API failed — saved locally',
     apiTitle: 'API configuration',
     apiHint:
-      'Worker URL (e.g. https://lista-api.your-user.workers.dev) and the ADMIN_TOKEN set at deploy. Without an API, the site runs in local mode.',
+      'Worker URL (e.g. https://lista-api.your-user.workers.dev) and the admin password (ADMIN_PASSWORD set at deploy). The password is never stored: it opens an HttpOnly session cookie, valid for 7 days. Without an API, the site runs in local mode.',
     apiLabelUrl: 'API URL',
-    apiLabelToken: 'ADMIN_TOKEN',
-    apiSave: 'SAVE CONFIG',
-    apiSaved: 'CONFIG SAVED ✓',
-    apiClear: 'Clear',
+    apiLabelPassword: 'Admin password',
+    apiSave: 'SIGN IN',
+    apiConnected: 'CONNECTED ✓',
+    connectFailed: '✖ failed to connect',
+    apiClear: 'Sign out and clear URL',
   },
 };
 
@@ -289,12 +283,12 @@ function openConfig() {
   rowToken.className = 'modal-field';
   const l2 = document.createElement('span');
   l2.className = 'modal-label';
-  l2.textContent = dict.apiLabelToken;
-  const tokenInput = document.createElement('input');
-  tokenInput.type = 'password';
-  tokenInput.className = 'modal-input';
-  tokenInput.value = getToken();
-  rowToken.append(l2, tokenInput);
+  l2.textContent = dict.apiLabelPassword;
+  const passInput = document.createElement('input');
+  passInput.type = 'password';
+  passInput.className = 'modal-input';
+  passInput.placeholder = '—';
+  rowToken.append(l2, passInput);
   panel.appendChild(rowToken);
 
   const actions = document.createElement('div');
@@ -303,23 +297,37 @@ function openConfig() {
   saveBtn.type = 'button';
   saveBtn.className = 'btn-neon';
   saveBtn.textContent = dict.apiSave;
-  saveBtn.addEventListener('click', () => {
-    setApiUrl(urlInput.value);
-    setToken(tokenInput.value);
-    saveBtn.textContent = dict.apiSaved;
-    updateStatus();
-    setTimeout(closeModals, 800);
+  saveBtn.addEventListener('click', async () => {
+    saveBtn.disabled = true;
+    try {
+      await login(urlInput.value, passInput.value);
+      passInput.value = '';
+      saveBtn.textContent = dict.apiConnected;
+      updateStatus();
+      setTimeout(() => {
+        closeModals();
+        loadGames(); /* recarrega os dados do banco */
+      }, 800);
+    } catch (err) {
+      console.error('[lista-de-jogos] login:', err);
+      saveBtn.textContent = dict.connectFailed;
+      setTimeout(() => {
+        saveBtn.textContent = dict.apiSave;
+        saveBtn.disabled = false;
+      }, 1800);
+    }
   });
   const clearBtn = document.createElement('button');
   clearBtn.type = 'button';
   clearBtn.className = 'btn-ghost';
   clearBtn.textContent = dict.apiClear;
-  clearBtn.addEventListener('click', () => {
+  clearBtn.addEventListener('click', async () => {
+    await logout().catch(() => {});
     setApiUrl('');
-    setToken('');
     urlInput.value = '';
-    tokenInput.value = '';
+    passInput.value = '';
     updateStatus();
+    loadGames();
   });
   actions.append(saveBtn, clearBtn);
   panel.appendChild(actions);
@@ -330,7 +338,7 @@ function openConfig() {
 /** Linha de status no hero: modo local x API conectada. */
 function updateStatus() {
   const status = $('#status-line');
-  if (status) status.textContent = apiConfigured() ? '' : I18N[LANG].readOnly;
+  if (status) status.textContent = apiConfigured() ? I18N[LANG].apiMode : I18N[LANG].readOnly;
 }
 
 function openModal(game) {
@@ -428,6 +436,8 @@ function openModal(game) {
         EDITS.set(game.title, { ...EDITS.get(game.title), ...ed });
         saveBtn.disabled = false;
         saveBtn.textContent = dict.saveFailed;
+        const status = $('#status-line');
+        if (status) status.textContent = `✖ ${err.message}`;
         setTimeout(() => (saveBtn.textContent = dict.save), 1800);
         renderList($('#search').value);
         return;

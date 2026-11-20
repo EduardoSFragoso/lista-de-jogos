@@ -4,12 +4,19 @@
    API REST da Lista de Jogos:
      GET    /api/health      → status do serviço (público)
      GET    /api/games       → lista completa de jogos (público)
-     PATCH  /api/games/:id   → atualiza campos de um jogo (token)
-     POST   /api/games       → cria um jogo novo (token)
+     PATCH  /api/games/:id   → atualiza campos de um jogo (auth)
+     POST   /api/games       → cria um jogo novo (auth)
+     POST   /api/login       → abre sessão (cookie HttpOnly)
+     POST   /api/logout      → encerra sessão
 
-   Autenticação: header `Authorization: Bearer <ADMIN_TOKEN>`
-   apenas nas rotas de escrita. O ADMIN_TOKEN é um secret do
-   Worker (`npx wrangler secret put ADMIN_TOKEN`).
+   Autenticação nas rotas de escrita, de duas formas:
+   1. Site: POST /api/login valida a senha (secret ADMIN_PASSWORD)
+      e devolve um cookie de sessão HttpOnly + Secure (HMAC-SHA256,
+      7 dias). O JS do site NÃO consegue ler esse cookie.
+   2. Terminal/scripts: header `Authorization: Bearer <senha>`.
+
+   Em ambas, toda escrita também exige Origin igual a ALLOWED_ORIGIN
+   (via navegador) — isso bloqueia CSRF de outros sites.
 
    Banco: driver serverless do Neon via HTTP/fetch — não usa
    Hyperdrive (veja comentário no wrangler.toml).
@@ -23,6 +30,9 @@ const EDITABLE_INT = ['year', 'rating'];
 const MAX_TEXT = 200;
 const MAX_REVIEW = 4000;
 
+const COOKIE = 'lista_session';
+const SESSION_TTL = 7 * 24 * 60 * 60; // 7 dias, em segundos
+
 /* ---------------- helpers de resposta/CORS ---------------- */
 
 function corsHeaders(env) {
@@ -30,17 +40,20 @@ function corsHeaders(env) {
     'access-control-allow-origin': env.ALLOWED_ORIGIN || '*',
     'access-control-allow-methods': 'GET, POST, PATCH, OPTIONS',
     'access-control-allow-headers': 'Content-Type, Authorization',
+    'access-control-allow-credentials': 'true',
     'access-control-max-age': '86400',
+    vary: 'Origin',
   };
 }
 
-function json(env, data, status = 200) {
+function json(env, data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
     status,
     headers: {
       'content-type': 'application/json; charset=utf-8',
       'cache-control': 'no-store',
       ...corsHeaders(env),
+      ...extraHeaders,
     },
   });
 }
@@ -49,10 +62,62 @@ function fail(env, status, message) {
   return json(env, { error: message }, status);
 }
 
-/** 401 se o token não bater com o secret ADMIN_TOKEN. */
-function authorized(req, env) {
+/* ---------------- sessão (HMAC sobre a data de expiração) ---------------- */
+
+async function hmacHex(key, message) {
+  const enc = new TextEncoder();
+  const cryptoKey = await crypto.subtle.importKey(
+    'raw',
+    enc.encode(key),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const sig = await crypto.subtle.sign('HMAC', cryptoKey, enc.encode(message));
+  return [...new Uint8Array(sig)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+/** Cookie de sessão: "<expiração>.<hmac da expiração>". Sem estado. */
+async function createSessionCookie(env) {
+  const exp = Math.floor(Date.now() / 1000) + SESSION_TTL;
+  const sig = await hmacHex(env.ADMIN_PASSWORD, String(exp));
+  return {
+    value: `${exp}.${sig}`,
+    setCookie: `${COOKIE}=${exp}.${sig}; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=${SESSION_TTL}`,
+  };
+}
+
+function readSessionCookie(req) {
+  const header = req.headers.get('cookie') || '';
+  for (const part of header.split(';')) {
+    const [name, ...rest] = part.trim().split('=');
+    if (name === COOKIE) return rest.join('=');
+  }
+  return null;
+}
+
+async function sessionValid(req, env) {
+  const raw = readSessionCookie(req);
+  if (!raw) return false;
+  const [expStr, sig] = raw.split('.');
+  const exp = Number(expStr);
+  if (!Number.isInteger(exp) || exp < Math.floor(Date.now() / 1000) || !sig) return false;
+  const expected = await hmacHex(env.ADMIN_PASSWORD, expStr);
+  return sig === expected;
+}
+
+/** Escritas: cookie de sessão (site) OU bearer password (terminal). */
+async function authorized(req, env) {
+  if (!env.ADMIN_PASSWORD) return false;
   const header = req.headers.get('authorization') || '';
-  return Boolean(env.ADMIN_TOKEN) && header === `Bearer ${env.ADMIN_TOKEN}`;
+  if (header === `Bearer ${env.ADMIN_PASSWORD}`) return true;
+  return sessionValid(req, env);
+}
+
+/** Em rotas de escrita autenticadas por cookie, exige Origin confiável. */
+function originAllowed(req, env) {
+  if (!env.ALLOWED_ORIGIN || env.ALLOWED_ORIGIN === '*') return true; // dev/teste
+  return req.headers.get('origin') === env.ALLOWED_ORIGIN;
 }
 
 /* ---------------- validação ---------------- */
@@ -146,9 +211,36 @@ export default {
         return json(env, { games });
       }
 
+      /* -------- POST /api/login (abre sessão) -------- */
+      if (req.method === 'POST' && pathname === '/api/login') {
+        if (!env.ADMIN_PASSWORD) {
+          return fail(env, 500, 'ADMIN_PASSWORD não configurada no Worker');
+        }
+        if (!originAllowed(req, env)) {
+          return fail(env, 403, 'origem não permitida');
+        }
+        const body = await req.json().catch(() => null);
+        if (!body || typeof body.password !== 'string' || body.password !== env.ADMIN_PASSWORD) {
+          return fail(env, 401, 'senha incorreta');
+        }
+        const session = await createSessionCookie(env);
+        return json(env, { ok: true }, 200, { 'set-cookie': session.setCookie });
+      }
+
+      /* -------- POST /api/logout -------- */
+      if (req.method === 'POST' && pathname === '/api/logout') {
+        const clearCookie = `${COOKIE}=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0`;
+        return json(env, { ok: true }, 200, { 'set-cookie': clearCookie });
+      }
+
       /* -------- POST /api/games (novo jogo) -------- */
       if (req.method === 'POST' && pathname === '/api/games') {
-        if (!authorized(req, env)) return fail(env, 401, 'token ausente ou inválido');
+        if (!(await authorized(req, env))) {
+          return fail(env, 401, 'não autenticado — faça login ou use Bearer');
+        }
+        if (!originAllowed(req, env)) {
+          return fail(env, 403, 'origem não permitida');
+        }
         const body = await req.json().catch(() => null);
         const check = validate(body, { partial: false });
         if (!check.ok) return fail(env, 400, check.error);
@@ -168,7 +260,12 @@ export default {
       /* -------- PATCH /api/games/:id -------- */
       const patchMatch = pathname.match(/^\/api\/games\/(\d+)$/);
       if (req.method === 'PATCH' && patchMatch) {
-        if (!authorized(req, env)) return fail(env, 401, 'token ausente ou inválido');
+        if (!(await authorized(req, env))) {
+          return fail(env, 401, 'não autenticado — faça login ou use Bearer');
+        }
+        if (!originAllowed(req, env)) {
+          return fail(env, 403, 'origem não permitida');
+        }
         const id = Number(patchMatch[1]);
         const body = await req.json().catch(() => null);
         const check = validate(body, { partial: true });
