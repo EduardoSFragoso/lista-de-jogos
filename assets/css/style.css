@@ -274,3 +274,12 @@ main {
   color: var(--border);
   padding: 1.5rem 0 2rem;
 }
+
+.footer-link {
+  color: var(--border);
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  color: var(--yellow);
+}
