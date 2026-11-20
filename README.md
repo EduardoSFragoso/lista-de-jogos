@@ -7,8 +7,10 @@
 ## 🗂 Estrutura
 
 - `index.html` — página principal
+- `revisar.html` — página interna de revisão dos metadados (`/_obs`), com campos para responder e botão de copiar respostas
 - `assets/css/style.css` — tema retrô (paleta 16-bit, fonte Press Start 2P + VT323, scanlines CRT)
 - `assets/js/main.js` — render da lista, busca, idioma (toggle PT/EN, salvo no `localStorage`)
+- `assets/js/revisar.js` — lógica da página de revisão
 - `data/games.json` — **a lista em si**. Cada jogo tem:
   - `title` — título **original** do jogo (como saiu no lançamento, em geral em inglês)
   - `title_pt` — opcional: título que saiu no **Brasil**, exibido quando o idioma é PT-BR (`null` = mostrar o original)
@@ -21,12 +23,51 @@
 Edite `data/games.json` direto (no GitHub ou no seu editor). Exemplo de jogo preenchido:
 
 ```json
-{ "id": 137, "title": "Hollow Knight", "title_pt": null,
-  "year": 2017, "platform": "PC / Switch", "engine": "Unity",
-  "rating": 5, "company": "Team Cherry", "genre": "Metroidvania", "mode": "Single-player" }
+{
+  "id": 137,
+  "title": "Hollow Knight",
+  "title_pt": null,
+  "year": 2017,
+  "platform": "PC / Switch",
+  "engine": "Unity",
+  "rating": 5,
+  "company": "Team Cherry",
+  "genre": "Metroidvania",
+  "mode": "Single-player"
+}
 ```
 
 Dica: `rating` admite casas decimais se quiser depois; hoje ele mostra estrelas cheias.
+
+## 🧰 Qualidade de código (formatação, linters e CI)
+
+O projeto tem verificação automática de estilo a cada push, via [GitHub Actions](.github/workflows/lint.yml):
+
+| Ferramenta | O que faz | Config |
+|---|---|---|
+| [Prettier](https://prettier.io) | formata HTML, CSS, JS, JSON e Markdown (indentação, aspas, quebras) | `.prettierrc.json` |
+| [ESLint](https://eslint.org) | lint de JavaScript (erros, variáveis não usadas, boas práticas) | `eslint.config.js` |
+| [Stylelint](https://stylelint.io) | lint de CSS (notação de cores, seletores duplicados, ordem) | `stylelint.config.mjs` |
+| [EditorConfig](https://editorconfig.org) | indentação, charset e fim de linha em qualquer editor | `.editorconfig` |
+
+### Rodando localmente
+
+```bash
+npm install      # só na primeira vez
+
+npm run format   # formata tudo (Prettier)
+npm run lint     # aponta erros de JS e CSS
+npm run lint:fix # corrige o que dá automaticamente
+npm run check    # formatação + lints — o que o CI roda (exige 100% verde)
+```
+
+### Padrões de estilo
+
+- Indentação: **2 espaços** (sem tabs) em todos os arquivos
+- Aspas **simples** em JS, `;` sempre
+- JS em **ES modules** (`type="module"` no `<script>`), `const`/`let` (nunca `var`)
+- Comparações estritas (`===`/`!==`), cores CSS em notação moderna (`rgb(... / 18%)`)
+- O CI no GitHub bloqueia o push ❌ se algo passar do padrão — rode `npm run check` antes
 
 ## 🚀 Deploy no GitHub Pages
 
@@ -38,7 +79,7 @@ Dica: `rating` admite casas decimais se quiser depois; hoje ele mostra estrelas 
    git push -u origin main
    ```
 
-3. No GitHub: **Settings → Pages → Build and deployment** → Source: *Deploy from a branch*, Branch: `main` / `/ (root)` → Save.
+3. No GitHub: **Settings → Pages → Build and deployment** → Source: _Deploy from a branch_, Branch: `main` / `/ (root)` → Save.
 4. Em ~1 minuto a página está no ar em:
    `https://SEU-USUARIO.github.io/NOME-DO-REPO/`
 

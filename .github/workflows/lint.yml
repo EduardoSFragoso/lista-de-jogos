@@ -1,0 +1,29 @@
+name: Lint e formatação
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  quality:
+    name: ESLint + Stylelint + Prettier
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Verificar formatação (Prettier)
+        run: npx prettier --check .
+
+      - name: Lint de JavaScript (ESLint)
+        run: npx eslint .
+
+      - name: Lint de CSS (Stylelint)
+        run: npx stylelint "assets/css/**/*.css"

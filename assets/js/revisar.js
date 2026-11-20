@@ -4,8 +4,6 @@
    colar no chat. Nada é salvo no repositório daqui.
    ============================================================ */
 
-'use strict';
-
 let GAMES = [];
 
 const $ = (sel) => document.querySelector(sel);
@@ -25,16 +23,16 @@ function needsReview(g) {
 
 function currentValues(g) {
   return Object.entries(FIELD_LABELS)
-    .filter(([k]) => g[k] != null)
+    .filter(([k]) => g[k] !== null)
     .map(([k, label]) => `${label}: ${g[k]}`);
 }
 
 function render(query = '') {
   const list = $('#review-list');
-  const q = String(query ?? '').trim().toLowerCase();
-  const toReview = GAMES.filter(needsReview).filter(
-    (g) => !q || g.title.toLowerCase().includes(q)
-  );
+  const q = String(query ?? '')
+    .trim()
+    .toLowerCase();
+  const toReview = GAMES.filter(needsReview).filter((g) => !q || g.title.toLowerCase().includes(q));
 
   list.innerHTML = '';
   if (toReview.length === 0 && !q) {
@@ -91,10 +89,7 @@ function copyAnswers() {
   const lines = GAMES.filter((g) => answers.has(g.title)).map(
     (g) => `${g.title}: ${answers.get(g.title)}`
   );
-  const text =
-    lines.length > 0
-      ? lines.join('\n')
-      : '(nenhuma resposta preenchida)';
+  const text = lines.length > 0 ? lines.join('\n') : '(nenhuma resposta preenchida)';
   navigator.clipboard.writeText(text).then(
     () => {
       $('#copy').textContent = 'COPIADO! ✓';

@@ -1,0 +1,20 @@
+{
+  "name": "lista-de-jogos",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Lista de jogos que já joguei — site estático retrô 8/16-bit para GitHub Pages",
+  "scripts": {
+    "lint": "eslint . && stylelint \"assets/css/**/*.css\"",
+    "lint:fix": "eslint . --fix && stylelint \"assets/css/**/*.css\" --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run format:check && npm run lint"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "prettier": "^3.3.0",
+    "stylelint": "^16.0.0",
+    "stylelint-config-standard": "^36.0.0"
+  },
+  "type": "module"
+}

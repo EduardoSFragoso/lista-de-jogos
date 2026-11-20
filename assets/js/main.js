@@ -4,8 +4,6 @@
    ou com script). Metadados null não aparecem no card.
    ============================================================ */
 
-'use strict';
-
 const I18N = {
   'pt-br': {
     pageTitle: 'Lista de Jogos',
@@ -77,10 +75,10 @@ function metaLine(game) {
 function renderList(query = '') {
   const dict = I18N[LANG];
   const list = $('#game-list');
-  const q = String(query ?? '').trim().toLowerCase();
-  const filtered = q
-    ? GAMES.filter((g) => gameTitle(g).toLowerCase().includes(q))
-    : GAMES;
+  const q = String(query ?? '')
+    .trim()
+    .toLowerCase();
+  const filtered = q ? GAMES.filter((g) => gameTitle(g).toLowerCase().includes(q)) : GAMES;
 
   list.innerHTML = '';
 
@@ -113,7 +111,7 @@ function renderList(query = '') {
       line.textContent = parts.join(' · ');
       meta.appendChild(line);
     }
-    if (game.rating != null) {
+    if (game.rating !== null) {
       const r = document.createElement('span');
       r.className = 'rating';
       r.textContent = '★'.repeat(game.rating);
