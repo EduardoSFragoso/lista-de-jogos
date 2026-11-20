@@ -1,14 +1,14 @@
 # 🎮 Lista de Jogos
 
-**PT-BR** · página estática com a lista de jogos que já joguei, em estilo retrô 8/16-bit, bilíngue (PT-BR / EN). Hosteada no [GitHub Pages](https://pages.github.com/).
+**PT-BR** · página estática com a lista de jogos que já joguei, em tema dark/neon, bilíngue (PT-BR / EN). Hosteada no [GitHub Pages](https://pages.github.com/).
 
-**EN** · A static page with the list of games I have played, in retro 8/16-bit style, bilingual (PT-BR / EN). Hosted on GitHub Pages.
+**EN** · A static page with the list of games I have played, in a dark/neon theme, bilingual (PT-BR / EN). Hosted on GitHub Pages.
 
 ## 🗂 Estrutura
 
 - `index.html` — página principal
 - `revisar.html` — página interna de revisão dos metadados (`/_obs`), com campos para responder e botão de copiar respostas
-- `assets/css/style.css` — tema retrô (paleta 16-bit, fonte Press Start 2P + VT323, scanlines CRT)
+- `assets/css/style.css` — tema dark/neon (fundo escuro, acentos com glow; fontes Orbitron, Inter e JetBrains Mono)
 - `assets/js/main.js` — render da lista, busca, idioma (toggle PT/EN, salvo no `localStorage`)
 - `assets/js/revisar.js` — lógica da página de revisão
 - `data/games.json` — **a lista em si**. Cada jogo tem:
