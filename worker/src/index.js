@@ -28,7 +28,16 @@
 import { neon } from '@neondatabase/serverless';
 
 /** Campos permitidos em PATCH/POST (whitelist). */
-const EDITABLE_TEXT = ['title', 'title_pt', 'platform', 'engine', 'company', 'genre', 'mode'];
+const EDITABLE_TEXT = [
+  'title',
+  'title_pt',
+  'platform',
+  'engine',
+  'company',
+  'genre',
+  'mode',
+  'review',
+];
 const EDITABLE_INT = ['year', 'rating'];
 const MAX_TEXT = 200;
 const MAX_REVIEW = 4000;
@@ -314,17 +323,29 @@ export default {
         if (Object.keys(check.fields).length === 0) {
           return fail(env, 400, 'nenhum campo válido enviado');
         }
-        /* SET dinâmico via sql.query: colunas vêm só da whitelist
-           (validate), mas o driver do Neon não tem sql.identifier. */
-        const cols = Object.keys(check.fields);
-        const sets = cols.map((col, i) => `"${col}" = $${i + 1}`);
-        sets.push('updated_at = now()');
-        const [game] = await sql.query(
-          `update games set ${sets.join(', ')} where id = $${cols.length + 1}
-             returning id, title, title_pt, year, platform, engine,
-                       rating, company, genre, mode, review, updated_at`,
-          [...cols.map((col) => check.fields[col]), id]
-        );
+        /* O driver HTTP do Neon não tem helpers (sql.identifier/query).
+           Workaround: UPDATE com ATUALIZAÇÕES de colunas 100% fixas no
+           template, uma flag "enviado?" por coluna. Flag 0 mantém o valor
+           atual; flag 1 aplica (inclui zerar com null). As colunas vêm só
+           da whitelist (validate), então nada dinâmico entra no SQL. */
+        const flag = (col) => (col in check.fields ? 1 : 0);
+        const val = (col) => (col in check.fields ? check.fields[col] : null);
+        const [game] = await sql`
+          update games set
+            title      = case when ${flag('title')} = 1 then ${val('title')} else title end,
+            title_pt   = case when ${flag('title_pt')} = 1 then ${val('title_pt')} else title_pt end,
+            platform   = case when ${flag('platform')} = 1 then ${val('platform')} else platform end,
+            engine     = case when ${flag('engine')} = 1 then ${val('engine')} else engine end,
+            company    = case when ${flag('company')} = 1 then ${val('company')} else company end,
+            genre      = case when ${flag('genre')} = 1 then ${val('genre')} else genre end,
+            mode       = case when ${flag('mode')} = 1 then ${val('mode')} else mode end,
+            review     = case when ${flag('review')} = 1 then ${val('review')} else review end,
+            year       = case when ${flag('year')} = 1 then ${val('year')} else year end,
+            rating     = case when ${flag('rating')} = 1 then ${val('rating')} else rating end,
+            updated_at = now()
+          where id = ${id}
+          returning id, title, title_pt, year, platform, engine,
+                    rating, company, genre, mode, review, updated_at`;
         if (!game) return fail(env, 404, `jogo ${id} não encontrado`);
         return json(env, { game });
       }
