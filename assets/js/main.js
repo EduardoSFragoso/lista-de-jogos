@@ -61,7 +61,9 @@ function applyI18n() {
 /* ---------- render ---------- */
 
 function gameTitle(game) {
-  if (LANG === 'en' && game.title_en) return game.title_en;
+  // 'title' é o título ORIGINAL do jogo (em geral em inglês/lançamento).
+  // 'title_pt' é opcional: título existente no Brasil, mostrado em pt-br.
+  if (LANG === 'pt-br' && game.title_pt) return game.title_pt;
   return game.title;
 }
 

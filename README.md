@@ -10,7 +10,8 @@
 - `assets/css/style.css` — tema retrô (paleta 16-bit, fonte Press Start 2P + VT323, scanlines CRT)
 - `assets/js/main.js` — render da lista, busca, idioma (toggle PT/EN, salvo no `localStorage`)
 - `data/games.json` — **a lista em si**. Cada jogo tem:
-  - `title` (nome original) e `title_en` (opcional, para a versão em inglês)
+  - `title` — título **original** do jogo (como saiu no lançamento, em geral em inglês)
+  - `title_pt` — opcional: título que saiu no **Brasil**, exibido quando o idioma é PT-BR (`null` = mostrar o original)
   - `year`, `platform`, `engine`, `rating` (1–5, estrelas), `company`, `genre`, `mode`
   - Qualquer campo `null` simplesmente não aparece na página (mostra "_a preencher_" quando não há nada).
   - `id` é só sequencial; mantenha para ordenação estável.
@@ -20,7 +21,7 @@
 Edite `data/games.json` direto (no GitHub ou no seu editor). Exemplo de jogo preenchido:
 
 ```json
-{ "id": 137, "title": "Hollow Knight", "title_en": null,
+{ "id": 137, "title": "Hollow Knight", "title_pt": null,
   "year": 2017, "platform": "PC / Switch", "engine": "Unity",
   "rating": 5, "company": "Team Cherry", "genre": "Metroidvania", "mode": "Single-player" }
 ```
