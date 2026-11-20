@@ -623,6 +623,33 @@ main {
   box-shadow: 0 0 0 3px rgb(253 224 71 / 12%);
 }
 
+/* review do modal de detalhes: mais alto por padrão */
+.review-detail {
+  min-height: 7.5rem;
+}
+
+/* contador de caracteres abaixo do review */
+.review-count {
+  display: block;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+
+.review-count.limit {
+  color: var(--yellow);
+}
+
+/* inputs somente-leitura (metadados do jogo) */
+.modal-input[readonly] {
+  color: var(--ink);
+  opacity: 0.75;
+  cursor: default;
+  border-color: var(--border);
+}
+
 /* --------- footer --------- */
 .footer {
   text-align: center;

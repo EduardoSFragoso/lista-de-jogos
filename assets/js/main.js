@@ -8,6 +8,9 @@
 
 import { apiConfigured, fetchGames, getApiUrl, login, logout, patchGame, setApiUrl } from './db.js';
 
+/** Limite do review — igual ao whitelist do Worker (worker/src/index.js). */
+const MAX_REVIEW = 4000;
+
 const I18N = {
   'pt-br': {
     pageTitle: 'Lista de Jogos',
@@ -257,6 +260,16 @@ function fieldRowEditable(dict, labelKey, value, onInput) {
   return row;
 }
 
+/** Metadados vêm do banco/repo — exibidos somente-leitura no modal. */
+function fieldRowStatic(dict, labelKey, value) {
+  const row = fieldRowEditable(dict, labelKey, value, () => {});
+  const input = row.querySelector('.modal-input');
+  input.readOnly = true;
+  input.removeAttribute('placeholder');
+  input.tabIndex = -1;
+  return row;
+}
+
 function openConfig() {
   const dict = I18N[LANG];
   closeModals();
@@ -348,10 +361,9 @@ function openModal(game) {
   const eff = effGame(game);
   const panel = modalShell(gameTitle(eff), 'game-modal');
 
-  /* editável: todos os campos de metadado */
+  /* metadados: somente-leitura (a avaliação pessoal é o que se edita) */
   const fields = document.createElement('div');
   fields.className = 'modal-fields';
-  const edited = {};
   [
     ['labelYear', 'year', eff.year],
     ['labelPlatform', 'platform', eff.platform],
@@ -359,8 +371,8 @@ function openModal(game) {
     ['labelCompany', 'company', eff.company],
     ['labelGenre', 'genre', eff.genre],
     ['labelMode', 'mode', eff.mode],
-  ].forEach(([labelKey, field, value]) => {
-    fields.appendChild(fieldRowEditable(dict, labelKey, value, (v) => (edited[field] = v)));
+  ].forEach(([labelKey, , value]) => {
+    fields.appendChild(fieldRowStatic(dict, labelKey, value));
   });
   panel.appendChild(fields);
 
@@ -399,10 +411,22 @@ function openModal(game) {
   panel.appendChild(reviewLabel);
 
   const textarea = document.createElement('textarea');
-  textarea.className = 'review-answer modal-answer';
+  textarea.className = 'review-answer modal-answer review-detail';
   textarea.placeholder = dict.reviewPlaceholder;
+  textarea.maxLength = MAX_REVIEW;
   textarea.value = eff.review || '';
   panel.appendChild(textarea);
+
+  /* contador de caracteres do review */
+  const counter = document.createElement('span');
+  counter.className = 'review-count';
+  const updateCount = () => {
+    counter.textContent = `${textarea.value.length}/${MAX_REVIEW}`;
+    counter.classList.toggle('limit', textarea.value.length > MAX_REVIEW - 250);
+  };
+  textarea.addEventListener('input', updateCount);
+  updateCount();
+  panel.appendChild(counter);
 
   /* ações */
   const actions = document.createElement('div');
@@ -412,7 +436,7 @@ function openModal(game) {
   saveBtn.className = 'btn-neon';
   saveBtn.textContent = dict.save;
   saveBtn.addEventListener('click', async () => {
-    const ed = { ...edited };
+    const ed = {};
     if (apiConfigured()) {
       /* na API, manda rating/review mesmo para LIMPAR (null) */
       if (game.rating !== rating) ed.rating = rating;
