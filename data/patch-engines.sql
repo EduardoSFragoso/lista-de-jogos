@@ -30,3 +30,14 @@ UPDATE games SET engine = 'Proprietária (EA)' WHERE id = 272;
 UPDATE games SET engine = 'Proprietária (Neversoft)' WHERE id = 275;
 UPDATE games SET engine = 'WangReal Engine' WHERE id = 279;
 UPDATE games SET engine = 'Proprietária (Team17)' WHERE id = 281;
+
+-- Correção: 174 era o Gauntlet arcade de 1985 da Atari; o jogo na verdade é o reboot da Steam
+UPDATE games SET
+  title = 'Gauntlet: Slayer Edition',
+  year = 2015,
+  platform = 'PC',
+  company = 'Arrowhead Game Studios',
+  engine = 'Proprietária (Arrowhead)',
+  genre = 'Dungeon crawler',
+  mode = 'Co-op'
+WHERE id = 174;

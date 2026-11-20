@@ -2182,16 +2182,15 @@
     },
     {
       "id": 174,
-      "title": "Gauntlet",
-      "year": 1985,
-      "platform": "Arcade",
-      "engine": "Proprietária (Atari)",
+      "title": "Gauntlet: Slayer Edition",
+      "year": 2015,
+      "platform": "PC",
+      "engine": "Proprietária (Arrowhead)",
       "rating": null,
-      "company": "Atari Games",
+      "company": "Arrowhead Game Studios",
       "genre": "Dungeon crawler",
       "mode": "Co-op",
-      "title_pt": null,
-      "_obs": "Série — qual? arcade, Legends/Slayer?"
+      "title_pt": null
     },
     {
       "id": 175,
