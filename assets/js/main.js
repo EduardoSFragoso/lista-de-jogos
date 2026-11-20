@@ -74,6 +74,11 @@ function metaLine(game) {
   return parts;
 }
 
+/* linha secundária: gênero · empresa · engine · modo */
+function metaSub(game) {
+  return [game.genre, game.company, game.engine, game.mode].filter(Boolean).join(' · ');
+}
+
 function renderList(query = '') {
   const dict = I18N[LANG];
   const list = $('#game-list');
@@ -100,10 +105,22 @@ function renderList(query = '') {
     num.textContent = String(i + 1).padStart(3, '0');
     li.appendChild(num);
 
+    const body = document.createElement('div');
+    body.className = 'game-body';
+
     const title = document.createElement('span');
     title.className = 'title';
     title.textContent = gameTitle(game);
-    li.appendChild(title);
+    body.appendChild(title);
+
+    const sub = metaSub(game);
+    if (sub) {
+      const subLine = document.createElement('span');
+      subLine.className = 'sub';
+      subLine.textContent = sub;
+      body.appendChild(subLine);
+    }
+    li.appendChild(body);
 
     const meta = document.createElement('span');
     meta.className = 'meta';
@@ -118,7 +135,7 @@ function renderList(query = '') {
       r.className = 'rating';
       r.textContent = '★'.repeat(game.rating);
       meta.appendChild(r);
-    } else if (!parts.length) {
+    } else if (!parts.length && !sub) {
       const miss = document.createElement('span');
       miss.className = 'missing';
       miss.textContent = dict.missing;

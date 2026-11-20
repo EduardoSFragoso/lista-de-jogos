@@ -188,6 +188,22 @@ main {
   border-left-color: var(--yellow);
 }
 
+.game-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.game-item .sub {
+  font-family: var(--font-pixel);
+  font-size: 0.45rem;
+  line-height: 1.7;
+  color: var(--cyan);
+  opacity: 0.85;
+  word-break: break-word;
+}
+
 .game-item .num {
   font-family: var(--font-pixel);
   font-size: 0.5rem;
