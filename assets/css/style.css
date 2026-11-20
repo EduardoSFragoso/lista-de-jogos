@@ -190,6 +190,56 @@ main { flex: 1; }
   padding: 2rem;
 }
 
+/* --------- página de revisão --------- */
+#review-list {
+  grid-template-columns: 1fr;
+  max-width: 760px;
+}
+
+.review-item {
+  display: block;
+  border-left-color: var(--yellow);
+}
+
+.review-body { padding: 0.2rem 0; }
+
+.review-title {
+  font-family: var(--font-pixel);
+  font-size: 0.6rem;
+  color: var(--ink);
+  margin-bottom: 0.6rem;
+}
+
+.review-values {
+  color: var(--cyan);
+  font-size: 1.1rem;
+  margin-bottom: 0.4rem;
+}
+
+.review-obs {
+  color: var(--yellow);
+  font-size: 1.2rem;
+  margin-bottom: 0.6rem;
+}
+
+.review-answer {
+  width: 100%;
+  min-height: 3.2rem;
+  background: var(--bg);
+  color: var(--ink);
+  border: 2px solid var(--border);
+  font-family: var(--font-term);
+  font-size: 1.15rem;
+  padding: 0.35rem 0.6rem;
+  resize: vertical;
+  outline: none;
+}
+
+.review-answer:focus {
+  border-color: var(--yellow);
+  box-shadow: 0 0 0 2px rgba(247, 213, 29, 0.25);
+}
+
 /* --------- footer --------- */
 .footer {
   text-align: center;

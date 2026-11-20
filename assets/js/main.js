@@ -77,7 +77,7 @@ function metaLine(game) {
 function renderList(query = '') {
   const dict = I18N[LANG];
   const list = $('#game-list');
-  const q = query.trim().toLowerCase();
+  const q = String(query ?? '').trim().toLowerCase();
   const filtered = q
     ? GAMES.filter((g) => gameTitle(g).toLowerCase().includes(q))
     : GAMES;
@@ -158,6 +158,6 @@ $('#lang-toggle').addEventListener('click', () => {
 });
 
 applyI18n();
-renderList(0);
+renderList();
 $('#count').textContent = I18N[LANG].loading;
 loadGames();
