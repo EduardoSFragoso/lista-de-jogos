@@ -1,44 +1,72 @@
 # 🎮 Lista de Jogos
 
-**PT-BR** · página estática com a lista de jogos que já joguei, em tema dark/neon, bilíngue (PT-BR / EN). Hosteada no [GitHub Pages](https://pages.github.com/).
+**PT-BR** · página estática com a lista de jogos que já joguei, em tema dark/neon, bilíngue (PT-BR / EN). Front no [GitHub Pages](https://pages.github.com/), API no Cloudflare Workers e dados num PostgreSQL no [Neon](https://neon.tech).
 
-**EN** · A static page with the list of games I have played, in a dark/neon theme, bilingual (PT-BR / EN). Hosted on GitHub Pages.
+**EN** · Static page with the list of games I have played (dark/neon theme, PT-BR/EN). Front on GitHub Pages, API on Cloudflare Workers, data in a PostgreSQL database on Neon.
+
+## 🏗 Arquitetura
+
+| Peça                  | O que faz no projeto                                                                                             |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| **GitHub + Pages**    | guarda o código e publica o front (HTML, CSS, JS) — estático, sem backend                                        |
+| **Cloudflare Worker** | roda a API REST (`/api/games`), valida requests, aplica CORS e devolve JSON                                      |
+| **Neon**              | hospeda o PostgreSQL: tabela `games`, metadados, ratings e reviews                                               |
+| **Hyperdrive**        | opcional — só se usar driver TCP (node-postgres). Com o driver serverless do Neon (usado aqui), não é necessário |
+
+Fluxo: `Pages (estático) → Worker (API REST) → Neon (PostgreSQL)`.
 
 ## 🗂 Estrutura
 
-- `index.html` — página principal
-- `revisar.html` — página interna de revisão dos metadados (`/_obs`), com campos para responder e botão de copiar respostas
-- `assets/css/style.css` — tema dark/neon (fundo escuro, acentos com glow; fontes Orbitron, Inter e JetBrains Mono)
-- `assets/js/main.js` — render da lista, busca, idioma (toggle PT/EN, salvo no `localStorage`)
-- `assets/js/revisar.js` — lógica da página de revisão
-- `data/games.json` — **a lista em si**. Cada jogo tem:
-  - `title` — título **original** do jogo (como saiu no lançamento, em geral em inglês)
-  - `title_pt` — opcional: título que saiu no **Brasil**, exibido quando o idioma é PT-BR (`null` = mostrar o original)
-  - `year`, `platform`, `engine`, `rating` (1–5, estrelas), `company`, `genre`, `mode`
-  - `review` — opcional: seu review escrito do jogo, exibido no modal ao clicar no card
-  - Qualquer campo `null` simplesmente não aparece na página (mostra "_a preencher_" quando não há nada).
-  - `id` é só sequencial; mantenha para ordenação estável.
-
-## ✍️ Como preencher
-
-Edite `data/games.json` direto (no GitHub ou no seu editor). Exemplo de jogo preenchido:
-
-```json
-{
-  "id": 137,
-  "title": "Hollow Knight",
-  "title_pt": null,
-  "year": 2017,
-  "platform": "PC / Switch",
-  "engine": "Unity",
-  "rating": 5,
-  "company": "Team Cherry",
-  "genre": "Metroidvania",
-  "mode": "Single-player"
-}
+```text
+lista_jogos/
+├── index.html            página principal
+├── revisar.html          página interna de revisão dos metadados (_obs)
+├── assets/
+│   ├── css/style.css     tema dark/neon (Orbitron, Inter, JetBrains Mono)
+│   └── js/
+│       ├── main.js       render da lista, busca, modal, i18n PT-BR/EN
+│       ├── db.js         cliente da API (GET/PATCH no Worker)
+│       └── revisar.js    lógica da página de revisão
+├── data/games.json       cópia estática dos jogos (fallback sem API)
+├── worker/               Cloudflare Worker (a API)
+│   ├── src/index.js      rotas, validação, auth, CORS
+│   ├── schema.sql        CREATE TABLE do Neon
+│   ├── seed.sql          os 285 jogos (gerado por tools/generate-seed.mjs)
+│   ├── wrangler.toml     config do deploy (vars, Hyperdrive opcional)
+│   └── package.json
+└── tools/generate-seed.mjs  regenera o seed.sql a partir de data/games.json
 ```
 
-Dica: `rating` admite casas decimais se quiser depois; hoje ele mostra estrelas cheias.
+### Campos de cada jogo
+
+- `title` — título **original** do jogo (como saiu no lançamento, em geral em inglês)
+- `title_pt` — opcional: título que saiu no **Brasil**, exibido quando o idioma é PT-BR
+- `year`, `platform`, `engine`, `rating` (1–5, estrelas), `company`, `genre`, `mode`
+- `review` — opcional: seu review escrito do jogo, exibido no modal ao clicar no card
+- Qualquer campo `null` simplesmente não aparece na página (mostra "_a preencher_" quando não há nada).
+
+## ✍️ Como editar os dados
+
+- **Pelo site (recomendado)**: clique num jogo → preencha campos/estrelas/review → SALVAR.
+  Com a API configurada (⚙), isso grava direto no PostgreSQL via `PATCH /api/games/:id`.
+- **Pelo JSON**: edite `data/games.json` (serve de fallback offline), depois regenere e re rode o seed:
+
+  ```bash
+  node tools/generate-seed.mjs   # regenera worker/seed.sql
+  # rode worker/seed.sql no SQL Editor do Neon Novamente
+  ```
+
+## 🛠 API (Worker)
+
+| Rota             | Método | Auth           | O que faz                              |
+| ---------------- | ------ | -------------- | -------------------------------------- |
+| `/api/health`    | GET    | pública        | status + total de jogos                |
+| `/api/games`     | GET    | pública        | lista completa de jogos (JSON)         |
+| `/api/games/:id` | PATCH  | `Bearer token` | atualiza campos de um jogo (whitelist) |
+| `/api/games`     | POST   | `Bearer token` | cria um jogo novo (id = max+1)         |
+
+Escritas exigem o header `Authorization: Bearer <ADMIN_TOKEN>` (secret do Worker).
+Validação: `rating` 1–5, `year` plausível, textos ≤ 200 (review ≤ 4000) caracteres.
 
 ## 🧰 Qualidade de código (formatação, linters e CI)
 
@@ -86,21 +114,17 @@ npm run check    # formatação + lints — o que o CI roda (exige 100% verde)
 
 > O repositório já tem `.nojekyll`, então o Pages serve os arquivos como estão (sem processamento Jekyll).
 
-## 🔑 Editar e publicar direto pelo site (sem terminal)
+## ☁️ Colocando o backend no ar (Neon + Cloudflare)
 
-A página permite dar nota (★ clicável no modal), escrever review, corrigir campos
-e gravar tudo direto no `data/games.json` do repositório, via API do GitHub:
+O passo a passo detalhado está em [`worker/README.md`](worker/README.md). Resumo:
 
-1. Crie um **fine-grained PAT** em <https://github.com/settings/personal-access-tokens>:
-   - "Repository access": só `lista-de-jogos`
-   - "Permissions": **Contents = Read and write**
-2. No site, clique em **⚙** e cole o token (fica só no seu navegador, `localStorage`)
-3. Edite/avalie o que quiser (SALVAR guarda localmente, cards ganham borda ciano)
-4. Clique em **PUBLICAR NO GITHUB** — isso cria um commit comum no repo
-5. O Pages recompila em ~1 min e o site sai atualizado para qualquer visitante
+1. **Neon**: crie o projeto, copie a connection string, rode `worker/schema.sql` e `worker/seed.sql` no SQL Editor.
+2. **Cloudflare**: `cd worker && npm install && npx wrangler login`, configure os secrets (`DATABASE_URL`, `ADMIN_TOKEN`) e `npx wrangler deploy`.
+3. **Site**: no ⚙ da página, cole a URL do Worker e o ADMIN_TOKEN — pronto, o site grava no banco.
 
-> O botão mostra o número de pendências (ex.: `PUBLICAR NO GITHUB (3)`) e, ao publicar,
-> exibe o link do commit. Sem token configurado, ele abre a tela de configuração.
+Sem API configurada, o site continua funcionando em **modo local** (lê `data/games.json`,
+salva edições no `localStorage` do navegador). Motivo do fallback: o front é estático —
+a linha de status no topo avisa quando está nesse modo.
 
 ## 🙅 Sugestões de nome para o repositório
 

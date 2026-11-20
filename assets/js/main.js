@@ -1,11 +1,20 @@
 /* ============================================================
    Lista de Jogos — render + i18n PT-BR/EN
-   Os dados vivem em data/games.json. Edições do usuário (nota,
-   review e correções de campos) ficam em 'edits-jogos' no
-   localStorage e podem ser gravadas no repo via gh.js.
+   Os dados vêm da API (Worker + Neon/PostgreSQL) quando serve
+   de ⚙, com fallback local: data/games.json + 'edits-jogos'
+   no localStorage. Com API configurada, cada SALVA vai direto
+   no banco (db.js); sem API, fica pendente em local.
    ============================================================ */
 
-import { getToken, getRepo, setToken, setRepo, publishGames } from './gh.js';
+import {
+  apiConfigured,
+  fetchGames,
+  getApiUrl,
+  getToken,
+  patchGame,
+  setApiUrl,
+  setToken,
+} from './db.js';
 
 const I18N = {
   'pt-br': {
@@ -35,19 +44,17 @@ const I18N = {
     copyNotes: 'COPIAR NOTAS SALVAS',
     copied: 'COPIADO ✓',
     close: 'Fechar (Esc)',
-    publish: 'PUBLICAR NO GITHUB',
-    publishing: 'PUBLICANDO...',
-    publishOk: 'PUBLICADO ✓',
-    publishEmpty: 'nada para publicar — salve algo primeiro',
-    ghConfig: '⚙',
-    ghTitle: 'Configuração do GitHub',
-    ghToken: 'Personal Access Token (PAT)',
-    ghTokenHint:
-      'Crie em github.com/settings/personal-access-tokens — fine-grained, acesso ao repo da lista, permissão Contents: Read and write.',
-    ghRepo: 'Repositório (dono/nome)',
-    ghSave: 'SALVAR CONFIG',
-    ghSaved: 'CONFIG SALVA ✓',
-    ghClear: 'Limpar token',
+    readOnly: 'modo local (somente leitura) — edite com ⚙',
+    apiMode: 'API conectada — salvas vão direto no banco',
+    saveFailed: '✖ falhou na API — salvo local',
+    apiTitle: 'Configuração da API',
+    apiHint:
+      'URL do Worker (ex.: https://lista-api.seu-usuario.workers.dev) e o ADMIN_TOKEN definido no deploy. Sem API, o site roda em modo local.',
+    apiLabelUrl: 'URL da API',
+    apiLabelToken: 'ADMIN_TOKEN',
+    apiSave: 'SALVAR CONFIG',
+    apiSaved: 'CONFIG SALVA ✓',
+    apiClear: 'Limpar',
   },
   en: {
     pageTitle: 'Games List',
@@ -76,19 +83,17 @@ const I18N = {
     copyNotes: 'COPY SAVED NOTES',
     copied: 'COPIED ✓',
     close: 'Close (Esc)',
-    publish: 'PUBLISH TO GITHUB',
-    publishing: 'PUBLISHING...',
-    publishOk: 'PUBLISHED ✓',
-    publishEmpty: 'nothing to publish — save something first',
-    ghConfig: '⚙',
-    ghTitle: 'GitHub configuration',
-    ghToken: 'Personal Access Token (PAT)',
-    ghTokenHint:
-      'Create at github.com/settings/personal-access-tokens — fine-grained, this repo only, permission Contents: Read and write.',
-    ghRepo: 'Repository (owner/name)',
-    ghSave: 'SAVE CONFIG',
-    ghSaved: 'CONFIG SAVED ✓',
-    ghClear: 'Clear token',
+    readOnly: 'local mode (read-only) — edit via ⚙',
+    apiMode: 'API connected — saves go straight to the database',
+    saveFailed: '✖ API failed — saved locally',
+    apiTitle: 'API configuration',
+    apiHint:
+      'Worker URL (e.g. https://lista-api.your-user.workers.dev) and the ADMIN_TOKEN set at deploy. Without an API, the site runs in local mode.',
+    apiLabelUrl: 'API URL',
+    apiLabelToken: 'ADMIN_TOKEN',
+    apiSave: 'SAVE CONFIG',
+    apiSaved: 'CONFIG SAVED ✓',
+    apiClear: 'Clear',
   },
 };
 
@@ -260,64 +265,72 @@ function fieldRowEditable(dict, labelKey, value, onInput) {
 function openConfig() {
   const dict = I18N[LANG];
   closeModals();
-  const panel = modalShell(dict.ghTitle);
+  const panel = modalShell(dict.apiTitle);
 
   const tgt = document.createElement('p');
   tgt.className = 'modal-label modal-hint';
-  tgt.textContent = dict.ghTokenHint;
-  tgt.id = 'gh-hint';
+  tgt.textContent = dict.apiHint;
   panel.appendChild(tgt);
+
+  const rowUrl = document.createElement('div');
+  rowUrl.className = 'modal-field';
+  const l1 = document.createElement('span');
+  l1.className = 'modal-label';
+  l1.textContent = dict.apiLabelUrl;
+  const urlInput = document.createElement('input');
+  urlInput.type = 'text';
+  urlInput.className = 'modal-input';
+  urlInput.placeholder = 'https://lista-api.seu-usuario.workers.dev';
+  urlInput.value = getApiUrl();
+  rowUrl.append(l1, urlInput);
+  panel.appendChild(rowUrl);
 
   const rowToken = document.createElement('div');
   rowToken.className = 'modal-field';
-  const l1 = document.createElement('span');
-  l1.className = 'modal-label';
-  l1.textContent = dict.ghToken;
+  const l2 = document.createElement('span');
+  l2.className = 'modal-label';
+  l2.textContent = dict.apiLabelToken;
   const tokenInput = document.createElement('input');
   tokenInput.type = 'password';
   tokenInput.className = 'modal-input';
   tokenInput.value = getToken();
-  rowToken.append(l1, tokenInput);
+  rowToken.append(l2, tokenInput);
   panel.appendChild(rowToken);
-
-  const rowRepo = document.createElement('div');
-  rowRepo.className = 'modal-field';
-  const l2 = document.createElement('span');
-  l2.className = 'modal-label';
-  l2.textContent = dict.ghRepo;
-  const repoInput = document.createElement('input');
-  repoInput.type = 'text';
-  repoInput.className = 'modal-input';
-  repoInput.value = getRepo();
-  rowRepo.append(l2, repoInput);
-  panel.appendChild(rowRepo);
 
   const actions = document.createElement('div');
   actions.className = 'modal-actions';
   const saveBtn = document.createElement('button');
   saveBtn.type = 'button';
   saveBtn.className = 'btn-neon';
-  saveBtn.textContent = dict.ghSave;
+  saveBtn.textContent = dict.apiSave;
   saveBtn.addEventListener('click', () => {
+    setApiUrl(urlInput.value);
     setToken(tokenInput.value);
-    setRepo(repoInput.value);
-    saveBtn.textContent = dict.ghSaved;
-    updatePublishUI();
+    saveBtn.textContent = dict.apiSaved;
+    updateStatus();
     setTimeout(closeModals, 800);
   });
   const clearBtn = document.createElement('button');
   clearBtn.type = 'button';
   clearBtn.className = 'btn-ghost';
-  clearBtn.textContent = dict.ghClear;
+  clearBtn.textContent = dict.apiClear;
   clearBtn.addEventListener('click', () => {
+    setApiUrl('');
     setToken('');
+    urlInput.value = '';
     tokenInput.value = '';
-    updatePublishUI();
+    updateStatus();
   });
   actions.append(saveBtn, clearBtn);
   panel.appendChild(actions);
 
-  tokenInput.focus({ preventScroll: true });
+  urlInput.focus({ preventScroll: true });
+}
+
+/** Linha de status no hero: modo local x API conectada. */
+function updateStatus() {
+  const status = $('#status-line');
+  if (status) status.textContent = apiConfigured() ? '' : I18N[LANG].readOnly;
 }
 
 function openModal(game) {
@@ -389,16 +402,45 @@ function openModal(game) {
   saveBtn.type = 'button';
   saveBtn.className = 'btn-neon';
   saveBtn.textContent = dict.save;
-  saveBtn.addEventListener('click', () => {
+  saveBtn.addEventListener('click', async () => {
     const ed = { ...edited };
-    if (rating) ed.rating = rating;
-    if (textarea.value.trim()) ed.review = textarea.value.trim();
-    if (Object.keys(ed).length) EDITS.set(game.title, ed);
-    else EDITS.delete(game.title);
-    persistEdits();
-    saveBtn.textContent = dict.saved;
-    setTimeout(() => (saveBtn.textContent = dict.save), 1200);
-    updatePublishUI();
+    if (apiConfigured()) {
+      /* na API, manda rating/review mesmo para LIMPAR (null) */
+      if (game.rating !== rating) ed.rating = rating;
+      const review = textarea.value.trim();
+      if ((game.review || '') !== review) ed.review = review || null;
+    } else {
+      if (rating) ed.rating = rating;
+      if (textarea.value.trim()) ed.review = textarea.value.trim();
+    }
+    const flash = (txt) => {
+      saveBtn.textContent = txt;
+      setTimeout(() => (saveBtn.textContent = dict.save), 1200);
+    };
+    if (apiConfigured() && Object.keys(ed).length) {
+      saveBtn.disabled = true;
+      try {
+        const updated = await patchGame(game.id, ed);
+        Object.assign(game, updated);
+        EDITS.delete(game.title); /* já está no banco */
+      } catch (err) {
+        console.error('[lista-de-jogos] falha na API:', err);
+        EDITS.set(game.title, { ...EDITS.get(game.title), ...ed });
+        saveBtn.disabled = false;
+        saveBtn.textContent = dict.saveFailed;
+        setTimeout(() => (saveBtn.textContent = dict.save), 1800);
+        renderList($('#search').value);
+        return;
+      }
+      persistEdits();
+      saveBtn.disabled = false;
+      flash(dict.saved);
+    } else {
+      if (Object.keys(ed).length) EDITS.set(game.title, ed);
+      else EDITS.delete(game.title);
+      persistEdits();
+      flash(dict.saved);
+    }
     renderList($('#search').value);
   });
   const copyBtn = document.createElement('button');
@@ -431,47 +473,6 @@ function openModal(game) {
 
   document.body.lastElementChild.id = 'game-modal';
   textarea.focus({ preventScroll: true });
-}
-
-/* ---------- publicar (API do GitHub) ---------- */
-
-function updatePublishUI() {
-  const btn = $('#publish');
-  if (!btn) return;
-  const pending = [...new Set([...EDITS.keys()])].filter((t) => GAMES.some((g) => g.title === t));
-  btn.textContent = `${I18N[LANG].publish}${pending.length ? ` (${pending.length})` : ''}`;
-  btn.classList.toggle('ready', pending.length > 0 && Boolean(getToken()));
-}
-
-async function publish() {
-  const dict = I18N[LANG];
-  const btn = $('#publish');
-  const status = $('#publish-status');
-  if (!getToken()) {
-    openConfig();
-    return;
-  }
-  if (![...new Set([...EDITS.keys()])].some((t) => GAMES.some((g) => g.title === t))) {
-    status.textContent = dict.publishEmpty;
-    return;
-  }
-  btn.disabled = true;
-  btn.textContent = dict.publishing;
-  status.textContent = '';
-  try {
-    const url = await publishGames(GAMES, EDITS);
-    EDITS.clear();
-    persistEdits();
-    localStorage.removeItem('notas-jogos');
-    updatePublishUI();
-    btn.textContent = dict.publishOk;
-    status.innerHTML = url ? `<a href="${url}" target="_blank" rel="noopener">${url}</a>` : '';
-  } catch (err) {
-    status.textContent = `✖ ${err.message}`;
-    updatePublishUI();
-  } finally {
-    btn.disabled = false;
-  }
 }
 
 /* ---------- render ---------- */
@@ -581,28 +582,42 @@ function renderList(query = '') {
 
 async function loadGames() {
   try {
-    const res = await fetch('data/games.json');
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    GAMES = data.games || [];
+    if (apiConfigured()) {
+      /* API (Worker + Neon): dados sempre frescos do banco */
+      GAMES = await fetchGames();
+    } else {
+      /* modo local: JSON estático + edições do localStorage */
+      const res = await fetch('data/games.json');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      GAMES = data.games || [];
+    }
   } catch (err) {
-    console.error('[lista-de-jogos] falha ao carregar data/games.json:', err);
-    $('#count').textContent = 'erro ao carregar data/games.json';
-    return;
+    console.error('[lista-de-jogos] falha ao carregar jogos:', err);
+    /* API falhou? tenta o JSON estático como fallback */
+    try {
+      const res = await fetch('data/games.json');
+      const data = await res.json();
+      GAMES = data.games || [];
+      $('#status-line').textContent = `✖ ${err.message}`;
+    } catch (fallbackErr) {
+      $('#count').textContent = 'erro ao carregar os jogos';
+      console.error('[lista-de-jogos] fallback local também falhou:', fallbackErr);
+      return;
+    }
   }
-  updatePublishUI();
+  updateStatus();
   renderList($('#search').value);
 }
 
 $('#search').addEventListener('input', (e) => renderList(e.target.value));
-$('#publish').addEventListener('click', publish);
-$('#gh-config').addEventListener('click', openConfig);
+$('#config-btn').addEventListener('click', openConfig);
 
 $('#lang-toggle').addEventListener('click', () => {
   LANG = LANG === 'pt-br' ? 'en' : 'pt-br';
   localStorage.setItem('lang', LANG);
   applyI18n();
-  updatePublishUI();
+  updateStatus();
   renderList($('#search').value);
 });
 

@@ -1,0 +1,24 @@
+# ============================================================
+# lista-api — configuração do Cloudflare Worker
+# Deploy: npx wrangler deploy   (após `npx wrangler login`)
+# Secrets: npx wrangler secret put DATABASE_URL
+#          npx wrangler secret put ADMIN_TOKEN
+# ============================================================
+
+name = "lista-api"
+main = "src/index.js"
+compatibility_date = "2024-09-23"
+
+[vars]
+# Origem do front (GitHub Pages) enviada no header CORS.
+ALLOWED_ORIGIN = "https://eduardosfragoso.github.io"
+
+# ------------------------------------------------------------------
+# Hyperdrive: OPCIONAL neste projeto. O driver @neondatabase/serverless
+# conecta ao Neon por HTTP/fetch, sem TCP, então não passa pelo
+# Hyperdrive. Só descomente (e crie o pool com `npx wrangler
+# hyperdrive create`) se trocar para o driver node-postgres/TCP.
+# ------------------------------------------------------------------
+# [[hyperdrive]]
+# binding = "HYPERDRIVE"
+# id = "<id-do-hyperdrive>"
