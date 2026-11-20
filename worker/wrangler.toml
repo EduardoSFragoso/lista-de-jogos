@@ -15,19 +15,8 @@ compatibility_date = "2024-09-23"
 ALLOWED_ORIGIN = "https://eduardosfragoso.github.io"
 
 # ------------------------------------------------------------------
-# Capas dos jogos em R2 (bucket público via Worker, key = "<id>.jpg").
-# Criar uma vez: npx wrangler r2 bucket create lista-covers
-# Upload manual: npx wrangler r2 object put lista-covers/12.jpg --file capa.jpg --remote
-# ------------------------------------------------------------------
-[[r2_buckets]]
-binding = "COVERS"
-bucket_name = "lista-covers"
-
-# ------------------------------------------------------------------
-# Hyperdrive: OPCIONAL neste projeto. O driver @neondatabase/serverless
-# conecta ao Neon por HTTP/fetch, sem TCP, então não passa pelo
-# Hyperdrive. Só descomente (e crie o pool com `npx wrangler
-# hyperdrive create`) se trocar para o driver node-postgres/TCP.
+# Capas dos jogos NÃO ficam no Worker/R2: são arquivos estáticos em
+# assets/covers/<id>.jpg no GitHub Pages (ver assets/covers/README.md).
 # ------------------------------------------------------------------
 # [[hyperdrive]]
 # binding = "HYPERDRIVE"

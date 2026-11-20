@@ -581,15 +581,22 @@ function renderList(query = '') {
       num.textContent = String(seq).padStart(3, '0');
       body.appendChild(num);
 
-      /* Capa do R2 via Worker (GET /covers/:id). Sem capa em jogo
-         nenhum no bucket, o onerror remove a thumb da DOM. */
-      if (apiConfigured()) {
+      /* Capa do jogo: arquivo estático assets/covers/<id>.jpg|.png|.webp.
+         Sem capa, o onerror tenta a próxima extensão e por fim remove. */
+      {
         const cover = document.createElement('img');
         cover.className = 'cover';
         cover.loading = 'lazy';
         cover.alt = '';
-        cover.src = `${getApiUrl()}/covers/${eff.id}`;
-        cover.addEventListener('error', () => cover.remove());
+        const tryCover = (exts) => {
+          if (!exts.length) {
+            cover.remove();
+            return;
+          }
+          cover.src = `assets/covers/${eff.id}.${exts[0]}`;
+          cover.onerror = () => tryCover(exts.slice(1));
+        };
+        tryCover(['jpg', 'png', 'webp']);
         li.appendChild(cover);
       }
 

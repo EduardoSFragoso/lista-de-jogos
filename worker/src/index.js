@@ -43,9 +43,6 @@ const MAX_TEXT = 200;
 const MAX_REVIEW = 4000;
 
 const COOKIE = 'lista_session';
-
-/* Content-types aceitos para capas no R2 (key = "<id>.<ext>"). */
-const COVER_TYPES = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp' };
 const SESSION_TTL = 7 * 24 * 60 * 60; // 7 dias, em segundos
 
 /* ---------------- helpers de resposta/CORS ---------------- */
@@ -233,40 +230,12 @@ export default {
     if (req.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: corsHeaders(env) });
     }
-    const url = new URL(req.url);
-    const { pathname } = url;
-
-    /* -------- GET /covers/:id (R2, público) -------- */
-    const coverMatch = pathname.match(/^\/covers\/(\d+)$/);
-    if (req.method === 'GET' && coverMatch) {
-      if (!env.COVERS) {
-        return fail(env, 500, 'R2 bucket não configurado (binding COVERS)');
-      }
-      for (const ext of Object.keys(COVER_TYPES)) {
-        const obj = await env.COVERS.get(`${coverMatch[1]}.${ext}`);
-        if (obj) {
-          return new Response(obj.body, {
-            headers: {
-              'content-type': COVER_TYPES[ext],
-              'cache-control': 'public, max-age=86400',
-              etag: obj.httpEtag,
-            },
-          });
-        }
-      }
-      return new Response('sem capa', {
-        status: 404,
-        headers: {
-          'content-type': 'text/plain; charset=utf-8',
-          'cache-control': 'public, max-age=600',
-        },
-      });
-    }
-
     if (!env.DATABASE_URL) {
       return fail(env, 500, 'DATABASE_URL não configurada no Worker');
     }
     const sql = neon(env.DATABASE_URL);
+    const url = new URL(req.url);
+    const { pathname } = url;
 
     try {
       /* -------- GET /api/health -------- */
