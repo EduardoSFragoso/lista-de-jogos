@@ -43,6 +43,8 @@ lista_jogos/
 - `title_pt` — opcional: título que saiu no **Brasil**, exibido quando o idioma é PT-BR
 - `year`, `platform`, `engine`, `rating` (1–5, estrelas), `company`, `genre`, `mode`
 - `review` — opcional: seu review escrito do jogo, exibido no modal ao clicar no card
+- `cover` — não fica no banco: é um arquivo `<id>.jpg`/`.png`/`.webp` no bucket R2
+  da Cloudflare (`worker/README.md` → _Capas em R2_); sem capa, o card fica sem imagem
 - Qualquer campo `null` simplesmente não aparece na página (mostra "_a preencher_" quando não há nada).
 
 ## ✍️ Como editar os dados
@@ -64,6 +66,7 @@ lista_jogos/
 | `/api/games`     | GET    | pública        | lista completa de jogos (JSON)         |
 | `/api/games/:id` | PATCH  | `Bearer token` | atualiza campos de um jogo (whitelist) |
 | `/api/games`     | POST   | `Bearer token` | cria um jogo novo (id = max+1)         |
+| `/covers/:id`    | GET    | pública        | capa do jogo em R2 (jpg/png/webp)      |
 
 Escritas exigem uma sessão aberta via `POST /api/login` (senha = secret
 `ADMIN_PASSWORD` do Worker, comparada em tempo constante, devolvida como

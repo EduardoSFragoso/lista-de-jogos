@@ -18,6 +18,7 @@ GitHub Pages (front estático)  →  Cloudflare Worker (esta API)  →  Neon (Po
 | `/api/logout`    | POST   | —             | encerra a sessão                      |
 | `/api/games/:id` | PATCH  | sessão/bearer | atualiza campos (whitelist validada)  |
 | `/api/games`     | POST   | sessão/bearer | cria um jogo novo (id = max + 1)      |
+| `/covers/:id`    | GET    | pública       | capa do jogo em R2 (jpg/png/webp)     |
 
 Campos aceitos em PATCH/POST: `title`, `title_pt`, `year`, `platform`, `engine`,
 `rating` (1–5), `company`, `genre`, `mode`, `review` (≤ 4000). Qualquer outra
@@ -109,6 +110,26 @@ Anote a URL final (ex.: `https://lista-api.seu-usuario.workers.dev`).
 
 Só a **URL da API** (pública por natureza) fica no `localStorage`; visitantes
 veem a lista via `GET /api/games`, que é aberto e só lê.
+
+### 4. Capas em R2 (opcional)
+
+As capas ficam num bucket R2, servidas pelo próprio Worker em `GET /covers/:id`
+(público, cache de 1 dia). O card mostra a capa quando `<id>.jpg`, `<id>.png` ou
+`<id>.webp` existe no bucket; jogos sem capa ficam como são hoje, sem placeholder.
+
+Uma vez, criar o bucket (nome igual ao `bucket_name` do `wrangler.toml`):
+
+```bash
+npx wrangler r2 bucket create lista-covers
+```
+
+Subir uma capa manualmente (id do jogo no banco):
+
+```bash
+npx wrangler r2 object put lista-covers/12.jpg --file capa.jpg --remote
+```
+
+Depois `npx wrangler deploy` para ativar o binding `COVERS`.
 
 ### Testar
 

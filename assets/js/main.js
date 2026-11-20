@@ -577,6 +577,18 @@ function renderList(query = '') {
       num.textContent = String(seq).padStart(3, '0');
       li.appendChild(num);
 
+      /* Capa do R2 via Worker (GET /covers/:id). Sem capa em jogo
+         nenhum no bucket, o onerror remove a thumb da DOM. */
+      if (apiConfigured()) {
+        const cover = document.createElement('img');
+        cover.className = 'cover';
+        cover.loading = 'lazy';
+        cover.alt = '';
+        cover.src = `${getApiUrl()}/covers/${eff.id}`;
+        cover.addEventListener('error', () => cover.remove());
+        li.appendChild(cover);
+      }
+
       const body = document.createElement('div');
       body.className = 'game-body';
 

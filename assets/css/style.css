@@ -288,6 +288,17 @@ main {
   flex-shrink: 0;
 }
 
+.game-item .cover {
+  align-self: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  box-shadow: 0 0 12px rgb(0 233 155 / 10%);
+}
+
 .game-item .title {
   font-size: 1.02rem;
   font-weight: 600;
