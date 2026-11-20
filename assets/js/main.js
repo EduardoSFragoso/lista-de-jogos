@@ -159,11 +159,18 @@ function metaLine(game) {
 /* linha secundária: gênero · empresa · engine · modo (com tooltip da legenda) */
 const SUB_SEGMENTS = ['Genre', 'Company', 'Engine', 'Mode'];
 
-function renderSubLine(body, game) {
+function renderSubLine(body, game, pre) {
   const dict = I18N[LANG];
   const subLine = document.createElement('span');
   subLine.className = 'sub';
   let first = true;
+  if (pre && pre.length) {
+    const preSpan = document.createElement('span');
+    preSpan.className = 'sub-meta';
+    preSpan.textContent = pre.join(' · ');
+    subLine.appendChild(preSpan);
+    first = false;
+  }
   SUB_SEGMENTS.forEach((seg) => {
     const key = seg.toLowerCase();
     if (!game[key]) return;
@@ -573,36 +580,35 @@ function renderList(query = '') {
       const body = document.createElement('div');
       body.className = 'game-body';
 
+      const metaParts = metaLine(eff);
+
+      /* título + estrelas na mesma linha */
+      const titleRow = document.createElement('span');
+      titleRow.className = 'title-row';
       const title = document.createElement('span');
       title.className = 'title';
       title.textContent = gameTitle(eff);
-      body.appendChild(title);
+      titleRow.appendChild(title);
 
-      const sub = renderSubLine(body, eff);
-      li.appendChild(body);
-
-      if (eff.review) li.classList.add('has-review');
-
-      const meta = document.createElement('span');
-      meta.className = 'meta';
-      const parts = metaLine(eff);
-      if (parts.length) {
-        const line = document.createElement('span');
-        line.textContent = parts.join(' · ');
-        meta.appendChild(line);
-      }
       if (eff.rating) {
         const r = document.createElement('span');
         r.className = 'rating';
         r.textContent = '★'.repeat(eff.rating) + '☆'.repeat(5 - eff.rating);
-        meta.appendChild(r);
-      } else if (!parts.length && !sub && !hasEdits(game)) {
+        titleRow.appendChild(r);
+      }
+      body.appendChild(titleRow);
+
+      const sub = renderSubLine(body, eff, metaParts);
+      li.appendChild(body);
+
+      if (eff.review) li.classList.add('has-review');
+
+      if (!eff.rating && !metaParts.length && !sub && !hasEdits(game)) {
         const miss = document.createElement('span');
         miss.className = 'missing';
         miss.textContent = dict.missing;
-        meta.appendChild(miss);
+        titleRow.appendChild(miss);
       }
-      li.appendChild(meta);
 
       if (hasEdits(game)) li.classList.add('edited');
       list.appendChild(li);

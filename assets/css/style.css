@@ -303,25 +303,23 @@ main {
   word-break: break-word;
 }
 
-.game-item .meta {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: var(--muted);
-  margin-left: auto;
-  text-align: right;
+.game-item .title-row {
   display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  align-items: flex-end;
-  flex-shrink: 0;
+  align-items: baseline;
+  gap: 0.6rem;
+  min-width: 0;
 }
 
 .game-item .rating {
+  margin-left: auto;
+  font-size: 0.78rem;
   color: var(--yellow);
   text-shadow: 0 0 10px rgb(253 224 71 / 40%);
+  flex-shrink: 0;
 }
 
-.game-item .missing {
+.game-item .title-row .missing {
+  margin-left: auto;
   font-size: 0.8rem;
   color: var(--muted);
   font-style: italic;
@@ -548,10 +546,8 @@ main {
   cursor: pointer;
 }
 
-.game-item.has-review .title::after {
-  content: ' ✎';
-  color: var(--yellow);
-  font-size: 0.85em;
+.game-item .sub .sub-meta {
+  color: var(--muted);
 }
 
 /* --------- página de revisão --------- */
