@@ -43,12 +43,12 @@ Dica: `rating` admite casas decimais se quiser depois; hoje ele mostra estrelas 
 
 O projeto tem verificação automática de estilo a cada push, via [GitHub Actions](.github/workflows/lint.yml):
 
-| Ferramenta | O que faz | Config |
-|---|---|---|
-| [Prettier](https://prettier.io) | formata HTML, CSS, JS, JSON e Markdown (indentação, aspas, quebras) | `.prettierrc.json` |
-| [ESLint](https://eslint.org) | lint de JavaScript (erros, variáveis não usadas, boas práticas) | `eslint.config.js` |
-| [Stylelint](https://stylelint.io) | lint de CSS (notação de cores, seletores duplicados, ordem) | `stylelint.config.mjs` |
-| [EditorConfig](https://editorconfig.org) | indentação, charset e fim de linha em qualquer editor | `.editorconfig` |
+| Ferramenta                               | O que faz                                                           | Config                 |
+| ---------------------------------------- | ------------------------------------------------------------------- | ---------------------- |
+| [Prettier](https://prettier.io)          | formata HTML, CSS, JS, JSON e Markdown (indentação, aspas, quebras) | `.prettierrc.json`     |
+| [ESLint](https://eslint.org)             | lint de JavaScript (erros, variáveis não usadas, boas práticas)     | `eslint.config.js`     |
+| [Stylelint](https://stylelint.io)        | lint de CSS (notação de cores, seletores duplicados, ordem)         | `stylelint.config.mjs` |
+| [EditorConfig](https://editorconfig.org) | indentação, charset e fim de linha em qualquer editor               | `.editorconfig`        |
 
 ### Rodando localmente
 
