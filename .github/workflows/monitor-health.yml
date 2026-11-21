@@ -1,0 +1,42 @@
+# ============================================================
+# Monitor de saúde — bate no /api/health do Worker a cada
+# hora nos minutos 8 e 58 (UTC). O endpoint valida Worker
+# e banco (Neon) de uma vez: ele roda um `select count(*)`.
+#
+# Falha no job = e-mail automático do GitHub para quem
+# criou o commit mais recente da ação agendada.
+#
+# Observação: o agendador do GitHub pode atrasar alguns
+# minutos em horários de pico; nunca pula o disparo.
+# Rodar manualmente: aba Actions → Monitor de saúde → Run.
+# ============================================================
+name: Monitor de saúde
+on:
+  schedule:
+    - cron: '8,58 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  health:
+    name: GET /api/health
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verifica Worker + Neon
+        run: |
+          for i in 1 2 3; do
+            if body=$(curl -sS --max-time 15 https://lista-api.eduardosfragoso.workers.dev/api/health); then
+              break
+            fi
+            if [ "$i" = 3 ]; then
+              echo "Worker não respondeu após 3 tentativas"
+              exit 1
+            fi
+            echo "Tentativa $i falhou; repetindo em 20s"
+            sleep 20
+          done
+          echo "Resposta: $body"
+          echo "$body" | grep -q '"ok":true' || {
+            echo "Health não retornou ok:true"
+            exit 1
+          }
