@@ -341,6 +341,17 @@ main {
   padding: 2rem;
 }
 
+/* estado vazio da busca: ocupa a linha inteira da grade, centralizado */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--red);
+  padding: 3.5rem 1rem;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+}
+
 /* --------- modal de detalhes --------- */
 .modal-overlay {
   position: fixed;

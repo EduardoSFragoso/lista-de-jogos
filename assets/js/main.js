@@ -551,7 +551,7 @@ function renderList(query = '') {
 
   if (filtered.length === 0) {
     const li = document.createElement('li');
-    li.className = 'noscript';
+    li.className = 'empty-state';
     li.textContent = dict.noResults;
     list.appendChild(li);
     $('#count').textContent = dict.count(0);
