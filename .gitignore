@@ -8,3 +8,9 @@ tools/.lists/
 covers-run.log
 covers-report.txt
 covers-audit.txt
+tools/.sgdb-key
+*.sgdb-key
+*.dev.vars
+.env
+tools/.igdb.json
+tools/.igdb-token.json

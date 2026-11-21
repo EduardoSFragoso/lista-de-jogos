@@ -254,9 +254,7 @@ async function coverFromSteam(title, id) {
   return null;
 }
 
-/* Capa da infobox da Wikipédia (PageImages, original = alta resolução).
-   Último recurso pra clássicos fora do Steam (Diablo, AoE, Monkey Island...).
-   Throttle de 400ms + retry no 429: a API da Wikipédia corta cliente veloz. */
+/* Throttle compartilhado das fontes (SGDB/IGDB: 250ms entre downloads). */
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 function safeParse(text) {
@@ -267,57 +265,151 @@ function safeParse(text) {
   }
 }
 
-async function wikiSearchUrl(t, wantThumb) {
-  const piprop = wantThumb ? 'thumbnail&pithumbsize=640' : 'original';
-  const url =
-    'https://en.wikipedia.org/w/api.php?action=query&format=json&redirects=1' +
-    '&prop=pageimages&piprop=' +
-    piprop +
-    '&titles=' +
-    encodeURIComponent(t);
-  for (let attempt = 0; attempt < 3; attempt++) {
-    const ctl = new AbortController();
-    const timer = setTimeout(() => ctl.abort(), 10000);
+/* ---------------- SteamGridDB (arte vertical comunitária) ----------------
+   Precisa da API key (gratuita): steamgriddb.com → Preferences → API.
+   Lê de SGDB_API_KEY no ambiente ou do arquivo tools/.sgdb-key (gitignored). */
+function sgdbKey() {
+  if (process.env.SGDB_API_KEY) return process.env.SGDB_API_KEY;
+  const keyPath = new URL('./.sgdb-key', import.meta.url);
+  if (fs.existsSync(keyPath)) return fs.readFileSync(keyPath, 'utf8').trim();
+  return null;
+}
+
+/* ---------------- IGDB (cobertura ampla, capas 2:3 de alta qualidade) ----------------
+   Credenciais do Twitch em tools/.igdb.json ou env IGDB_CLIENT_ID/IGDB_CLIENT_SECRET. */
+function igdbCreds() {
+  if (process.env.IGDB_CLIENT_ID && process.env.IGDB_CLIENT_SECRET) {
+    return { id: process.env.IGDB_CLIENT_ID, secret: process.env.IGDB_CLIENT_SECRET };
+  }
+  const p = new URL('./.igdb.json', import.meta.url);
+  if (fs.existsSync(p)) {
     try {
-      const res = await fetch(url, { signal: ctl.signal, headers: { 'User-Agent': UA } });
-      if (res.status === 429) {
-        await sleep(3000);
-        continue;
-      }
-      if (!res.ok || !(res.headers.get('content-type') || '').includes('json')) return null;
-      const j = safeParse(await res.text());
-      const page = Object.values(j?.query?.pages || {})[0];
-      return page?.original?.source || page?.thumbnail?.source || null;
+      return JSON.parse(fs.readFileSync(p, 'utf8'));
     } catch {
       return null;
-    } finally {
-      clearTimeout(timer);
     }
   }
   return null;
 }
 
-async function coverFromWikipedia(title, year) {
-  const candidates = [title];
-  if (!/\(video game\)/i.test(title)) candidates.push(`${title} (video game)`);
-  if (year) candidates.push(`${title} (${year} video game)`);
-  for (const t of candidates) {
-    await sleep(800);
-    const src = await wikiSearchUrl(t, false);
-    if (!src) continue;
-    const img = await fetchBin(src, 20000);
-    /* cover de verdade costuma ter dezenas de KB; < 8KB eh logo/icone */
-    if (img && img.size >= 8000) return { ...img, via: `wikipedia/${t}` };
+let igdbToken = null;
+async function getIgdbToken() {
+  if (igdbToken) return igdbToken;
+  const tokenPath = new URL('./.igdb-token.json', import.meta.url);
+  if (fs.existsSync(tokenPath)) {
+    const cached = safeParse(fs.readFileSync(tokenPath, 'utf8'));
+    if (cached?.token && cached.expires > Date.now()) return (igdbToken = cached.token);
   }
-  /* segunda passada: thumbnail 640px (quando o artigo só tem pageimage pequena) */
-  for (const t of candidates) {
-    await sleep(800);
-    const src = await wikiSearchUrl(t, true);
-    if (!src) continue;
-    const img = await fetchBin(src, 20000);
-    if (img && img.size >= 6000) return { ...img, via: `wikipedia-thumb/${t}` };
+  const creds = igdbCreds();
+  if (!creds) return null;
+  const res = await fetch(
+    `https://id.twitch.tv/oauth2/token?client_id=${creds.id}&client_secret=${creds.secret}&grant_type=client_credentials`,
+    { method: 'POST' }
+  );
+  const j = await safeParse(await res.text());
+  if (!j?.access_token) return null;
+  igdbToken = j.access_token;
+  fs.writeFileSync(
+    tokenPath,
+    JSON.stringify({ token: igdbToken, expires: Date.now() + (j.expires_in - 3600) * 1000 })
+  );
+  return igdbToken;
+}
+
+async function coverFromIGDB(title, year) {
+  const token = await getIgdbToken().catch(() => null);
+  if (!token) return null;
+  const norm = (s) =>
+    s
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '')
+      .trim();
+  const target = norm(title);
+  const h = { 'Client-ID': igdbCreds().id, Authorization: `Bearer ${token}` };
+  try {
+    const res = await fetch('https://api.igdb.com/v4/games', {
+      method: 'POST',
+      headers: h,
+      body: `f name,cover.image_id,first_release_date; l 10; w name ~ "${title.replace(/"/g, '')}" & version_title = null;`,
+      signal: AbortSignal.timeout(12000),
+    });
+    if (!res.ok) return null;
+    const hits = await safeParse(await res.text());
+    if (!Array.isArray(hits)) return null;
+    const withCover = hits.filter((g) => g.cover?.image_id && g.name);
+    const exact = withCover.filter((g) => norm(g.name) === target);
+    const pool = exact.length ? exact : withCover;
+    if (!pool.length) return null;
+    let best = pool[0];
+    if (year) {
+      const y = year;
+      best = pool.sort((a, b) => {
+        const ya = a.first_release_date
+          ? new Date(a.first_release_date * 1000).getUTCFullYear()
+          : 9999;
+        const yb = b.first_release_date
+          ? new Date(b.first_release_date * 1000).getUTCFullYear()
+          : 9999;
+        return Math.abs(ya - y) - Math.abs(yb - y);
+      })[0];
+    }
+    /* t_720p: até 720px de altura, proporção 2:3 preservada */
+    const url = `https://images.igdb.com/igdb/image/upload/t_720p/${best.cover.image_id}.jpg`;
+    await sleep(250);
+    const img = await fetchBin(url, 20000);
+    if (img && img.size >= 6000) return { ...img, via: `igdb/${best.id}` };
+    return null;
+  } catch {
+    return null;
   }
-  return null;
+}
+
+async function coverFromSGDB(title) {
+  const key = sgdbKey();
+  if (!key) return null;
+  const norm = (s) =>
+    s
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '')
+      .trim();
+  const target = norm(title);
+  const h = { Authorization: `Bearer ${key}`, 'User-Agent': 'listajogos/1.0' };
+  try {
+    const res = await fetch(
+      `https://www.steamgriddb.com/api/v2/search/autocomplete/${encodeURIComponent(title)}`,
+      { headers: h, signal: AbortSignal.timeout(10000) }
+    );
+    if (!res.ok) return null;
+    const j = await safeParse(await res.text());
+    const hits = j?.data || [];
+    if (!hits.length) return null;
+    const best =
+      hits.find((r) => norm(r.name) === target) ||
+      hits.find((r) => norm(r.name).startsWith(target)) ||
+      null;
+    if (!best) return null;
+    await sleep(250);
+    const gRes = await fetch(`https://www.steamgriddb.com/api/v2/grids/game/${best.id}`, {
+      headers: h,
+      signal: AbortSignal.timeout(12000),
+    });
+    if (!gRes.ok) return null;
+    const gj = await safeParse(await gRes.text());
+    const grids = (gj?.data || [])
+      .filter((r) => r.width && r.height && r.height > r.width) /* só verticais */
+      .sort(
+        (a, b) =>
+          Math.abs(a.width - 600) +
+          Math.abs(a.height - 900) -
+          (Math.abs(b.width - 600) + Math.abs(b.height - 900))
+      );
+    if (!grids.length) return null;
+    const img = await fetchBin(grids[0].url, 20000);
+    if (img && img.size >= 6000) return { ...img, via: `steamgriddb/${best.id}` };
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 async function main() {
@@ -384,7 +476,8 @@ async function main() {
     const isMapMod = /warcraft iii|mapa custom/i.test(plats);
     if (plats.includes('PC') && !isMapMod) got = await coverFromSteam(title, g.id);
     if (!got) got = await coverFromLibretro(libretroSystems(plats), title, libmaps);
-    if (!got) got = await coverFromWikipedia(title, g.year);
+    if (!got) got = await coverFromSGDB(title);
+    if (!got) got = await coverFromIGDB(title, g.year);
     if (got) {
       if (got.buf) {
         /* veio pronto (Steam) */
