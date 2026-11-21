@@ -326,7 +326,7 @@ main {
   line-height: 1.6;
   color: var(--cyan);
   opacity: 0.9;
-  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .game-item .title-row {
