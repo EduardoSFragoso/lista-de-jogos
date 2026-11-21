@@ -5,6 +5,29 @@ Thumbs.db
 # cache da caçada de capas
 tools/.lists/
 *_-_*.json
+# listas de pastas do xero/boxart
+/NES.json
+/SNES.json
+/SFC.json
+/MD.json
+/MS.json
+/SEGACD.json
+/GB.json
+/GBC.json
+/GBA.json
+/GG.json
+/PSX.json
+/ARCADE.json
+/NEOGEO.json
+/ATARI2600.json
+/ATARIST.json
+/PCE.json
+/THIRTYTWOX.json
+/VB.json
+/FDS.json
+/PICO8.json
+/GW.json
+/JAGUAR.json
 covers-run*.log
 covers-report*.txt
 covers-audit*.txt

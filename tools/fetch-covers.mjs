@@ -1,7 +1,9 @@
 /* Caçada de capas — preenche assets/covers/<id>.<ext>
-   Fontes: Steam CDN (jogos de PC) e Libretro Thumbnails (consoles retrô).
+   Fontes: Steam CDN (PC), Libretro Thumbnails e xero/boxart (consoles
+   retrô), SteamGridDB, IGDB e TheGamesDB (genéricos).
    Uso: node tools/fetch-covers.mjs [--only=1,49] */
 import fs from 'node:fs';
+import { pathToFileURL } from 'node:url';
 
 const OUT = 'assets/covers';
 const REPORT = 'covers-report.txt';
@@ -119,6 +121,54 @@ const SYSLIB = {
   Arcade: 'FBNeo - Arcade Games',
 };
 
+/* ---------------- xero/boxart (fonte extra retro, coleção no GitHub) ----------------
+   Pastas por sistema com nomes No-Intro (mesmo esquema do Libretro):
+   NES, SNES, MD, MS, SEGACD, GB, GBC, GBA, GG, PSX, ARCADE, NEOGEO…
+   Sem pastas para N64/GameCube/Wii/DS — esses só existem no Libretro. */
+const BOXART = {
+  NES: 'NES',
+  SNES: 'SNES',
+  PS1: 'PSX',
+  'Sega Genesis': 'MD',
+  'Mega Drive': 'MD',
+  'Master System': 'MS',
+  'Sega CD': 'SEGACD',
+  'Game Boy': 'GB',
+  'Game Boy Color': 'GBC',
+  'Game Boy Advance': 'GBA',
+  'Game Gear': 'GG',
+  Arcade: 'ARCADE',
+  'Neo Geo': 'NEOGEO',
+  'Atari 2600': 'ATARI2600',
+  'Atari ST': 'ATARIST',
+  'PC Engine': 'PCE',
+  'Sega 32X': 'THIRTYTWOX',
+  'Virtual Boy': 'VB',
+};
+
+function boxartFolders(platform) {
+  const p = platform || '';
+  const out = new Set();
+  if (/\bnes\b/i.test(p)) out.add(BOXART.NES); /* \b evita 'geNESis' */
+  if (/snes/i.test(p)) out.add(BOXART.SNES);
+  if (/ps1/i.test(p)) out.add(BOXART.PS1);
+  if (/(mega drive|genesis)/i.test(p)) out.add(BOXART['Sega Genesis']);
+  if (/master system/i.test(p)) out.add(BOXART['Master System']);
+  if (/(sega cd|mega-?cd)/i.test(p)) out.add(BOXART['Sega CD']);
+  if (/game boy advance/i.test(p)) out.add(BOXART['Game Boy Advance']);
+  else if (/game boy color/i.test(p)) out.add(BOXART['Game Boy Color']);
+  else if (/game boy/i.test(p)) out.add(BOXART['Game Boy']);
+  if (/game gear/i.test(p)) out.add(BOXART['Game Gear']);
+  if (/arcade/i.test(p)) out.add(BOXART.Arcade);
+  if (/neo-?geo/i.test(p)) out.add(BOXART['Neo Geo']);
+  if (/atari 2600/i.test(p)) out.add(BOXART['Atari 2600']);
+  if (/atari st/i.test(p)) out.add(BOXART['Atari ST']);
+  if (/pc engine/i.test(p)) out.add(BOXART['PC Engine']);
+  if (/32x/i.test(p)) out.add(BOXART['Sega 32X']);
+  if (/virtual boy/i.test(p)) out.add(BOXART['Virtual Boy']);
+  return [...out];
+}
+
 /* plataformas tolerantes: cada nome pode ter N sistemas libretro. */
 function libretroSystems(platform) {
   const p = platform || '';
@@ -193,62 +243,61 @@ async function steamSearch(title) {
   }
 }
 
-/* nome libretro: variantes de região + troca do artigo. */
-function libretroNames(title) {
-  const bases = [title, title.replace(/:\s*/g, ' - ')];
-  if (title.startsWith('Pokemon ')) bases.push(title.replace(/^Pokemon /, 'Pokemon - '));
-  if (title.startsWith('The ')) bases.push(`${title.slice(4)}, The`);
-  const suffixes = [
-    ' (USA, Europe)',
-    ' (USA)',
-    ' (Europe)',
-    ' (World)',
-    ' (Japan, USA)',
-    ' (Japan)',
-    ' (En,Ja,Fr,De,Es,It)',
-    ' (En,Fr,De,Es,It)',
-    ' (EU)',
-    ' (US)',
-    '',
-  ];
-  const out = new Set();
-  for (const b of bases) for (const s of suffixes) out.add(b + s);
-  return [...out];
+/* Variantes de título para o match (dois-pontos → traço, artigo pro fim). */
+function titleBases(title) {
+  const bases = new Set([
+    title,
+    title.replace(/:\s*/g, ' - '),
+    title.endsWith('.') ? title.slice(0, -1) : title,
+  ]);
+  if (title.startsWith('The ')) bases.add(`${title.slice(4)}, The`);
+  if (title.startsWith('Pokemon ')) bases.add(title.replace(/^Pokemon /, 'Pokemon - '));
+  return bases;
+}
+
+/* Match por nome em 3 estágios: 1) exato por nome normalizado;
+   2) prefixo (pegando o mais curto — tende a ser o jogo em vez de
+   hack/remake); 3) prefixo com espaço (jogo VS edição, ex. 'Mario
+   Kart 8' em 'Mario Kart 8 Deluxe'). Serve p/ Libretro e xero/boxart,
+   cujos arquivos usam o mesmo padrão No-Intro. */
+function matchNamed(map, bases) {
+  for (const base of bases) {
+    const n = norm(base);
+    if (map.has(n)) return map.get(n);
+  }
+  for (const base of bases) {
+    const n = norm(base);
+    let best = null;
+    for (const key of map.keys()) {
+      if (key.startsWith(n) && (best === null || key.length < best.length)) best = key;
+    }
+    if (best) return map.get(best);
+  }
+  for (const base of bases) {
+    const n = norm(base);
+    for (const key of map.keys()) {
+      if (key.startsWith(`${n} `)) return map.get(key);
+    }
+  }
+  return null;
 }
 
 async function coverFromLibretro(systems, title, maps) {
   for (const sys of systems) {
     const map = maps.get(sys);
     if (!map) continue;
-    const bases = new Set([
-      title,
-      title.replace(/:\s*/g, ' - '),
-      title.endsWith('.') ? title.slice(0, -1) : title,
-    ]);
-    if (title.startsWith('The ')) bases.add(`${title.slice(4)}, The`);
-    if (title.startsWith('Pokemon ')) bases.add(title.replace(/^Pokemon /, 'Pokemon - '));
-    /* 1) match exato por nome normalizado; 2) prefixo (pegando o mais
-       curto, que tende a ser o jogo em vez de hack/remake); 3) prefixo
-       com espaço (jogo VS edição, ex. 'Mario Kart 8' em 'Mario Kart 8
-       Deluxe'). */
-    for (const base of bases) {
-      const n = norm(base);
-      if (map.has(n)) return { ...map.get(n), via: `libretro/${sys}` };
-    }
-    for (const base of bases) {
-      const n = norm(base);
-      let best = null;
-      for (const key of map.keys()) {
-        if (key.startsWith(n) && (best === null || key.length < best.length)) best = key;
-      }
-      if (best) return { ...map.get(best), via: `libretro/${sys}` };
-    }
-    for (const base of bases) {
-      const n = norm(base);
-      for (const key of map.keys()) {
-        if (key.startsWith(`${n} `)) return { ...map.get(key), via: `libretro/${sys}` };
-      }
-    }
+    const hit = matchNamed(map, titleBases(title));
+    if (hit) return { ...hit, via: `libretro/${sys}` };
+  }
+  return null;
+}
+
+async function coverFromBoxart(folders, title, maps) {
+  for (const folder of folders) {
+    const map = maps.get(folder);
+    if (!map) continue;
+    const hit = matchNamed(map, titleBases(title));
+    if (hit) return { ...hit, via: `boxart/${folder}` };
   }
   return null;
 }
@@ -480,7 +529,7 @@ async function coverFromTGDB(title, year) {
   }
 }
 
-async function main() {
+export async function main() {
   const only = process.argv.find((a) => a.startsWith('--only='));
   const onlySet = only ? new Set(only.slice(7).split(',').map(Number)) : null;
   const data = JSON.parse(fs.readFileSync('data/games.json', 'utf8'));
@@ -531,6 +580,45 @@ async function main() {
     libmaps.set(sys, map);
   }
 
+  /* listagens das pastas do xero/boxart (1 request por pasta, cache json) */
+  const bxneeded = new Set();
+  for (const g of games) for (const f of boxartFolders(g.platform)) bxneeded.add(f);
+  const bxmaps = new Map();
+  for (const folder of bxneeded) {
+    let entries = null;
+    if (fs.existsSync(`${folder}.json`)) {
+      entries = JSON.parse(fs.readFileSync(`${folder}.json`, 'utf8'));
+      console.log(`boxart lista (cache) ${folder}: ${entries.length} arquivos`);
+    } else {
+      try {
+        const r = await fetch(`https://api.github.com/repos/xero/boxart/git/trees/main:${folder}`);
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const j = await r.json();
+        entries = (j.tree || []).filter((f) => f.path.endsWith('.png'));
+        fs.writeFileSync(`${folder}.json`, JSON.stringify(entries));
+        console.log(`boxart lista ${folder}: ${entries.length} capas`);
+      } catch (e) {
+        console.log(`boxart sem lista ${folder}: ${e.message}`);
+        continue;
+      }
+    }
+    const map = new Map();
+    for (const f of entries) {
+      const normName = norm(f.path.replace(/\.png$/, ''));
+      if (!map.has(normName) || f.path.length < map.get(normName).path.length) {
+        map.set(normName, {
+          path: f.path,
+          get() {
+            return fetchBin(
+              `https://raw.githubusercontent.com/xero/boxart/main/${folder}/${encodeURIComponent(f.path)}`
+            );
+          },
+        });
+      }
+    }
+    bxmaps.set(folder, map);
+  }
+
   const missing = [];
   let done = 0;
   const queue = games.filter(
@@ -544,6 +632,7 @@ async function main() {
     const isMapMod = /warcraft iii|mapa custom/i.test(plats);
     if (plats.includes('PC') && !isMapMod) got = await coverFromSteam(title, g.id);
     if (!got) got = await coverFromLibretro(libretroSystems(plats), title, libmaps);
+    if (!got) got = await coverFromBoxart(boxartFolders(plats), title, bxmaps);
     if (!got) got = await coverFromSGDB(title, g.year);
     if (!got) got = await coverFromIGDB(title, g.year);
     if (!got) got = await coverFromTGDB(title, g.year);
@@ -578,4 +667,10 @@ async function main() {
   console.log(`FIM: ${queue.length - missing.length} capas, ${missing.length} sem capa.`);
 }
 
-main();
+/* exportado para os testes (vitest) — vars puras, sem rede */
+export { norm, normKey, libretroSystems, boxartFolders, titleBases, matchNamed };
+
+/* executado direto? roda; importado (tests/vitest)? fica em standby */
+if (import.meta.url === pathToFileURL(process.argv[1] || '').href) {
+  await main();
+}
