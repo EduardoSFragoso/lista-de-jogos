@@ -18,5 +18,8 @@
     "stylelint-config-standard": "^36.0.0",
     "vitest": "^5.1.1"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@neondatabase/serverless": "^1.2.1"
+  }
 }

@@ -55,6 +55,10 @@ function corsHeaders(env) {
     'access-control-allow-credentials': 'true',
     'access-control-max-age': '86400',
     vary: 'Origin',
+    /* cabeçalhos de segurança — vão em TODA resposta */
+    'x-content-type-options': 'nosniff',
+    'x-frame-options': 'DENY',
+    'referrer-policy': 'strict-origin-when-cross-origin',
   };
 }
 

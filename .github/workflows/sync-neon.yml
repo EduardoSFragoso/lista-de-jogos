@@ -14,6 +14,10 @@ on:
       - '.github/workflows/sync-neon.yml'
   workflow_dispatch:
 
+concurrency:
+  group: sync-neon-main
+  cancel-in-progress: false
+
 permissions:
   contents: read
 
