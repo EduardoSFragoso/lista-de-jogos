@@ -11,7 +11,7 @@
     "sync-db": "node sync-db.mjs"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^0.10.0"
+    "@neondatabase/serverless": "^1.2.1"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"
