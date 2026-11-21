@@ -148,12 +148,3 @@ The detailed walkthrough is in [`worker/README.md`](worker/README.md). Summary:
 
 Without an API configured, the site still works in **local mode** (reads `data/games.json`,
 saves edits to the browser's `localStorage`). Reason for the fallback: the frontend is static.
-
-## 🙅 Repository name suggestions
-
-- `lista-de-jogos` — straightforward, matches the project ("game list" in Portuguese)
-- `my-played-games` — English
-- `game-shelf` — more "personal brand"
-- `jogos-que-joguei` — informal ("games I have played")
-
-The name only affects the URL (last segment) — the looks are independent.

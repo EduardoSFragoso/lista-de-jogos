@@ -148,12 +148,3 @@ O passo a passo detalhado está em [`worker/README.md`](worker/README.md). Resum
 
 Sem API configurada, o site continua funcionando em **modo local** (lê `data/games.json`,
 salva edições no `localStorage` do navegador). Motivo do fallback: o front é estático.
-
-## 🙅 Sugestões de nome para o repositório
-
-- `lista-de-jogos` — direto, combina com o projeto
-- `my-played-games` — se quiser em inglês
-- `game-shelf` / `estante-de-jogos` — mais "marca pessoal"
-- `jogos-que-joguei` — informal
-
-O nome só afeta a URL (última parte) — o visual é independente.
