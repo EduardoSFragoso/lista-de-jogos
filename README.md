@@ -40,6 +40,7 @@ lista_jogos/
 └── tools/
     ├── generate-seed.mjs regenera o seed.sql a partir de data/games.json
     ├── fetch-covers.mjs  caça capas (Steam → Libretro → xero/boxart → SGDB → IGDB → TheGamesDB)
+    ├── make-thumbs.mjs   gera thumbs das capas para os cards (npm run thumbs)
     └── audit-covers.mjs  auditoria das capas baixadas
 ```
 
@@ -71,6 +72,8 @@ Uma capa por jogo em `assets/covers/<id>.jpg`/`.png`, povoada por `tools/fetch-c
 (`SGDB_API_KEY`, `IGDB_CLIENT_ID`/`IGDB_CLIENT_SECRET`, `TGDB_API_KEY`). A Wikipédia foi
 dispensada (baixa qualidade). Os 4 jogos sem capa são conteúdos de comunidade (mapas custom)
 ou webgames sem arte oficial — capa será de screenshot/art própria.
+Cards carregam **thumbs** (`assets/covers/thumbs/<id>.webp`, ~9 KB; regenerados
+com `npm run thumbs`) — o modal carrega o original, zoom sem perda.
 
 Detalhes em [assets/covers/README.md](assets/covers/README.md).
 

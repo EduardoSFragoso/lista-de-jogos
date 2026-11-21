@@ -40,6 +40,7 @@ lista_jogos/
 └── tools/
     ├── generate-seed.mjs regenerates seed.sql from data/games.json
     ├── fetch-covers.mjs  fetches covers (Steam → Libretro → xero/boxart → SGDB → IGDB → TheGamesDB)
+    ├── make-thumbs.mjs   generates cover thumbs for the cards (npm run thumbs)
     └── audit-covers.mjs  audit of downloaded covers
 ```
 
@@ -72,6 +73,8 @@ files: `tools/.sgdb-key`, `tools/.igdb.json`, `tools/.tgdb-key` — or in enviro
 variables (`SGDB_API_KEY`, `IGDB_CLIENT_ID`/`IGDB_CLIENT_SECRET`, `TGDB_API_KEY`).
 Wikipedia was dropped (low quality). The 4 games without covers are community-made content
 (custom maps) or web games with no official art — they will get a custom screenshot/art.
+Cards load **thumbs** (`assets/covers/thumbs/<id>.webp`, ~9 KB; regenerate with
+`npm run thumbs`) — the modal loads the original, so zoom never loses quality.
 
 Details in [assets/covers/README.md](assets/covers/README.md).
 
