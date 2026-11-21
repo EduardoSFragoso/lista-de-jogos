@@ -8,13 +8,15 @@
     "lint:fix": "eslint . --fix && stylelint \"assets/css/**/*.css\" --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "npm run format:check && npm run lint"
+    "check": "npm run format:check && npm run lint",
+    "test": "vitest run"
   },
   "devDependencies": {
     "eslint": "^9.0.0",
     "prettier": "^3.3.0",
     "stylelint": "^16.0.0",
-    "stylelint-config-standard": "^36.0.0"
+    "stylelint-config-standard": "^36.0.0",
+    "vitest": "^5.1.1"
   },
   "type": "module"
 }

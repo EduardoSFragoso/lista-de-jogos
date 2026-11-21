@@ -4,16 +4,19 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   quality:
-    name: ESLint + Stylelint + Prettier
+    name: ESLint + Stylelint + Prettier + testes
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - name: Instalar dependências
@@ -27,3 +30,6 @@ jobs:
 
       - name: Lint de CSS (Stylelint)
         run: npx stylelint "assets/css/**/*.css"
+
+      - name: Testes (vitest)
+        run: npm test

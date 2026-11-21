@@ -5,9 +5,9 @@ Thumbs.db
 # cache da caçada de capas
 tools/.lists/
 *_-_*.json
-covers-run.log
-covers-report.txt
-covers-audit.txt
+covers-run*.log
+covers-report*.txt
+covers-audit*.txt
 tools/.sgdb-key
 *.sgdb-key
 *.dev.vars
