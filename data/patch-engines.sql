@@ -41,3 +41,10 @@ UPDATE games SET
   genre = 'Dungeon crawler',
   mode = 'Co-op'
 WHERE id = 174;
+
+-- Middle-earth separado em dois jogos (192 = Mordor; 286 = Shadow of War, novo)
+INSERT INTO games (id, title, title_pt, year, platform, engine, company, genre, mode)
+VALUES (286, 'Middle-earth: Shadow of War', null, 2017, 'PC / Console', null, 'Monolith Productions', 'Ação / mundo aberto', 'Single-player / Co-op')
+ON CONFLICT (id) DO UPDATE SET title = excluded.title, year = excluded.year, platform = excluded.platform, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
+
+UPDATE games SET title = 'Middle-earth: Shadow of Mordor', year = 2014, company = 'Monolith Productions' WHERE id = 192;

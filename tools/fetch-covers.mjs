@@ -21,7 +21,8 @@ const APPID_FIX = {
   162: 57300, // Amnesia: The Dark Descent
   164: 729040, // Borderlands GOTY Enhanced
   186: null, // Injustice: Gods Among Us — pegava Injustice 2
-  192: null, // Middle-earth — busca ambígua, decidir o jogo certo
+  192: 241930, // Middle-earth: Shadow of Mordor (jogo separado do Shadow of War, id 286)
+  286: 356190, // Middle-earth: Shadow of War
   197: 261570, // Ori and the Blind Forest
   210: 20900, // The Witcher: Enhanced Edition
   215: null, // Gears of War (2006) — pegava E-Day

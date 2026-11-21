@@ -388,7 +388,7 @@ insert into games (id, title, title_pt, year, platform, engine, company, genre, 
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
 insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (191, 'Metro 2033', null, 2010, 'PC / Xbox 360', '4A Engine', '4A Games', 'FPS horror', 'Single-player')
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
-insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (192, 'Middle-earth', null, 2014, 'PC / Console', null, 'Monolith', 'Ação / mundo aberto', 'Single-player')
+insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (192, 'Middle-earth: Shadow of Mordor', null, 2014, 'PC / Console', null, 'Monolith Productions', 'Ação / mundo aberto', 'Single-player')
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
 insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (193, 'Minion Master', null, 2016, 'PC', 'Unity', 'BetaDwarf', 'Card / RTS', 'Multiplayer / Single')
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
@@ -575,6 +575,8 @@ insert into games (id, title, title_pt, year, platform, engine, company, genre, 
 insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (284, 'Aion', null, 2008, 'PC', null, 'NCsoft', 'MMORPG', 'Multiplayer')
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
 insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (285, 'Metin 2', null, 2005, 'PC', null, 'Ymir Entertainment', 'MMORPG', 'Multiplayer')
+  on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
+insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (286, 'Middle-earth: Shadow of War', null, 2017, 'PC / Console', null, 'Monolith Productions', 'Ação / mundo aberto', 'Single-player / Co-op')
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
 
 commit;

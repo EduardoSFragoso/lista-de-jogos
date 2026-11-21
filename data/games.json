@@ -2404,16 +2404,15 @@
     },
     {
       "id": 192,
-      "title": "Middle-earth",
+      "title": "Middle-earth: Shadow of Mordor",
       "year": 2014,
       "platform": "PC / Console",
       "engine": null,
       "rating": null,
-      "company": "Monolith",
+      "company": "Monolith Productions",
       "genre": "Ação / mundo aberto",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Assumi Shadow of Mordor — confirme"
+      "title_pt": null
     },
     {
       "id": 193,
@@ -3584,6 +3583,18 @@
       "company": "Ymir Entertainment",
       "genre": "MMORPG",
       "mode": "Multiplayer",
+      "title_pt": null
+    },
+    {
+      "id": 286,
+      "title": "Middle-earth: Shadow of War",
+      "year": 2017,
+      "platform": "PC / Console",
+      "engine": null,
+      "rating": null,
+      "company": "Monolith Productions",
+      "genre": "Ação / mundo aberto",
+      "mode": "Single-player / Co-op",
       "title_pt": null
     }
   ]
