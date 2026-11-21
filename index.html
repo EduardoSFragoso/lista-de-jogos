@@ -31,6 +31,13 @@
       <h1 data-i18n="title">LISTA DE JOGOS</h1>
       <p class="subtitle" data-i18n="subtitle">os jogos que eu já joguei</p>
 
+      <div class="top-actions">
+        <button id="lang-toggle" type="button" aria-label="Switch language">EN</button>
+        <button id="config-btn" type="button" class="btn-ghost" aria-label="Configuração da API">
+          ⚙
+        </button>
+      </div>
+
       <div class="controls">
         <input
           type="search"
@@ -38,13 +45,8 @@
           data-i18n-placeholder="search"
           placeholder="Buscar jogo..."
         />
-        <button id="lang-toggle" type="button" aria-label="Switch language">EN</button>
-        <button id="config-btn" type="button" class="btn-ghost" aria-label="Configuração da API">
-          ⚙
-        </button>
       </div>
 
-      <p id="status-line" class="count"></p>
       <nav id="letter-nav" class="letter-nav" aria-label="Índice A-Z"></nav>
 
       <p id="count" class="count"></p>

@@ -38,8 +38,6 @@ const I18N = {
     copyNotes: 'COPIAR NOTAS SALVAS',
     copied: 'COPIADO ✓',
     close: 'Fechar (Esc)',
-    readOnly: 'modo local (somente leitura) — edite com ⚙',
-    apiMode: 'API conectada — salvas vão direto no banco',
     saveFailed: '✖ falhou na API — salvo local',
     apiTitle: 'Configuração da API',
     apiHint:
@@ -77,8 +75,6 @@ const I18N = {
     copyNotes: 'COPY SAVED NOTES',
     copied: 'COPIED ✓',
     close: 'Close (Esc)',
-    readOnly: 'local mode (read-only) — edit via ⚙',
-    apiMode: 'API connected — saves go straight to the database',
     saveFailed: '✖ API failed — saved locally',
     apiTitle: 'API configuration',
     apiHint:
@@ -338,7 +334,6 @@ function openConfig() {
       await login(urlInput.value, passInput.value);
       passInput.value = '';
       saveBtn.textContent = dict.apiConnected;
-      updateStatus();
       setTimeout(() => {
         closeModals();
         loadGames(); /* recarrega os dados do banco */
@@ -361,19 +356,12 @@ function openConfig() {
     setApiUrl('');
     urlInput.value = '';
     passInput.value = '';
-    updateStatus();
     loadGames();
   });
   actions.append(saveBtn, clearBtn);
   panel.appendChild(actions);
 
   urlInput.focus({ preventScroll: true });
-}
-
-/** Linha de status no hero: modo local x API conectada. */
-function updateStatus() {
-  const status = $('#status-line');
-  if (status) status.textContent = apiConfigured() ? I18N[LANG].apiMode : I18N[LANG].readOnly;
 }
 
 function openModal(game) {
@@ -675,7 +663,6 @@ async function loadGames() {
       return;
     }
   }
-  updateStatus();
   renderList($('#search').value);
 }
 
@@ -686,7 +673,6 @@ $('#lang-toggle').addEventListener('click', () => {
   LANG = LANG === 'pt-br' ? 'en' : 'pt-br';
   localStorage.setItem('lang', LANG);
   applyI18n();
-  updateStatus();
   renderList($('#search').value);
 });
 
