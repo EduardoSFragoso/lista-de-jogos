@@ -221,6 +221,22 @@ function closeModals() {
   document.getElementById('config-modal')?.remove();
 }
 
+/* Capa estática: assets/covers/<id>.jpg|.png|.webp.
+   Tenta cada extensão com onerror; sem capa nenhuma, remove o <img>. */
+function attachCover(img, id) {
+  img.loading = 'lazy';
+  img.alt = '';
+  const tryCover = (exts) => {
+    if (!exts.length) {
+      img.remove();
+      return;
+    }
+    img.src = `assets/covers/${id}.${exts[0]}`;
+    img.onerror = () => tryCover(exts.slice(1));
+  };
+  tryCover(['jpg', 'png', 'webp']);
+}
+
 function modalShell(titleText, modalId) {
   const dict = I18N[LANG];
   const overlay = document.createElement('div');
@@ -367,6 +383,12 @@ function openModal(game) {
   closeModals();
   const eff = effGame(game);
   const panel = modalShell(gameTitle(eff), 'game-modal');
+
+  /* capa em destaque, versão grande */
+  const hero = document.createElement('img');
+  hero.className = 'modal-cover';
+  attachCover(hero, eff.id);
+  panel.appendChild(hero);
 
   /* metadados: somente-leitura (a avaliação pessoal é o que se edita) */
   const fields = document.createElement('div');
@@ -581,22 +603,11 @@ function renderList(query = '') {
       num.textContent = String(seq).padStart(3, '0');
       body.appendChild(num);
 
-      /* Capa do jogo: arquivo estático assets/covers/<id>.jpg|.png|.webp.
-         Sem capa, o onerror tenta a próxima extensão e por fim remove. */
+      /* Capa do jogo: arquivo estático assets/covers/<id>.jpg|.png|.webp. */
       {
         const cover = document.createElement('img');
         cover.className = 'cover';
-        cover.loading = 'lazy';
-        cover.alt = '';
-        const tryCover = (exts) => {
-          if (!exts.length) {
-            cover.remove();
-            return;
-          }
-          cover.src = `assets/covers/${eff.id}.${exts[0]}`;
-          cover.onerror = () => tryCover(exts.slice(1));
-        };
-        tryCover(['jpg', 'png', 'webp']);
+        attachCover(cover, eff.id);
         li.appendChild(cover);
       }
 

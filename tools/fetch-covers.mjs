@@ -7,6 +7,38 @@ const OUT = 'assets/covers';
 const REPORT = 'covers-report.txt';
 
 /* Correções manuais de título por id (melhoram o match nas fontes). */
+/* Appid correto do Steam quando a busca genérica erra (auditoria: tools/audit-covers.mjs).
+   null = jogo não existe no Steam — não busca (evita pegar uma sequência/remake errado). */
+const APPID_FIX = {
+  24: null, // Diablo (1996) — busca estava pegando Diablo IV
+  34: 1017900, // Age of Empires: Definitive Edition
+  40: 2280, // DOOM (1993)
+  47: null, // The Sims (2000) — pegava Sims 4
+  51: null, // TERA (delistada) — pegava Teravit
+  54: 570940, // Dark Souls Remastered
+  96: null, // Ragnarok Online — pegava RO2
+  101: null, // Rayman (1995) — pegava Legends
+  162: 57300, // Amnesia: The Dark Descent
+  164: 729040, // Borderlands GOTY Enhanced
+  186: null, // Injustice: Gods Among Us — pegava Injustice 2
+  192: null, // Middle-earth — busca ambígua, decidir o jogo certo
+  197: 261570, // Ori and the Blind Forest
+  210: 20900, // The Witcher: Enhanced Edition
+  215: null, // Gears of War (2006) — pegava E-Day
+  216: null, // Overwatch (2016) — pegava OW2
+  218: null, // Call of Duty (2003) — pegava MW2 2022
+  219: null, // Assassin's Creed (2007) — pegava Odyssey
+  220: null, // Titanfall (2014) — pegava Titanfall 2
+  222: 47810, // Dragon Age: Origins Ultimate
+  225: null, // Need for Speed (1994) — pegava NFS 2020
+  231: null, // Corsairs (1999) — pegava Corsairs Legacy
+  243: null, // Maniac Mansion (1987) — versão de 2017 não oficial
+  262: null, // Alone in the Dark (1992) — pegava o remake 2024
+  277: null, // Commandos (1998) — pegava Origins
+  279: null, // White Day (2001) — pegava o remake 2017
+  283: null, // Perfect World (2006) — pegava versão 2024
+};
+
 const TITLE_FIX = {
   1: 'Final Fantasy',
   154: 'The Legend of Zelda',
@@ -190,8 +222,9 @@ async function coverFromLibretro(systems, title, maps) {
   return null;
 }
 
-async function coverFromSteam(title) {
-  const appid = await steamSearch(title);
+async function coverFromSteam(title, id) {
+  if (APPID_FIX[id] === null) return null;
+  const appid = APPID_FIX[id] || (await steamSearch(title));
   if (!appid) return null;
   for (const img of ['library_600x900.jpg', 'header.jpg']) {
     const got = await fetchBin(`https://cdn.cloudflare.steamstatic.com/steam/apps/${appid}/${img}`);
@@ -262,7 +295,7 @@ async function main() {
     let got = null;
     const plats = g.platform || '';
     const isMapMod = /warcraft iii|mapa custom/i.test(plats);
-    if (plats.includes('PC') && !isMapMod) got = await coverFromSteam(title);
+    if (plats.includes('PC') && !isMapMod) got = await coverFromSteam(title, g.id);
     if (!got) got = await coverFromLibretro(libretroSystems(plats), title, libmaps);
     if (got) {
       if (got.buf) {
