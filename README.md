@@ -20,13 +20,11 @@ Fluxo: `Pages (estático) → Worker (API REST) → Neon (PostgreSQL)`.
 ```text
 lista_jogos/
 ├── index.html            página principal
-├── revisar.html          página interna de revisão dos metadados (_obs)
 ├── assets/
 │   ├── css/style.css     tema dark/neon (Orbitron, Inter, JetBrains Mono)
 │   └── js/
 │       ├── main.js       render da lista, busca, modal, i18n PT-BR/EN
-│       ├── db.js         cliente da API (GET/PATCH no Worker)
-│       └── revisar.js    lógica da página de revisão
+│       └── db.js         cliente da API (GET/PATCH no Worker)
 ├── data/games.json       cópia estática dos jogos (fallback sem API)
 ├── worker/               Cloudflare Worker (a API)
 │   ├── src/index.js      rotas, validação, auth, CORS
