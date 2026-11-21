@@ -2083,16 +2083,15 @@
     },
     {
       "id": 166,
-      "title": "Chased By Darkness",
-      "year": null,
-      "platform": null,
+      "title": "Chased by Darkness",
+      "year": 2021,
+      "platform": "PC",
       "engine": "Unreal Engine",
       "rating": null,
-      "company": null,
-      "genre": "Horror?",
-      "mode": null,
-      "title_pt": null,
-      "_obs": "Não reconheço — confirme"
+      "company": "South Blue Moon",
+      "genre": "Horror",
+      "mode": "Single-player",
+      "title_pt": null
     },
     {
       "id": 167,
@@ -2157,15 +2156,14 @@
     {
       "id": 172,
       "title": "Fear Therapy",
-      "year": null,
-      "platform": null,
+      "year": 2021,
+      "platform": "PC",
       "engine": "Unreal Engine",
       "rating": null,
-      "company": null,
-      "genre": "Horror cooperativo?",
+      "company": "Black Flag Studios",
+      "genre": "Horror cooperativo",
       "mode": null,
-      "title_pt": null,
-      "_obs": "Não reconheço — confirme"
+      "title_pt": null
     },
     {
       "id": 173,
@@ -2268,16 +2266,15 @@
     },
     {
       "id": 181,
-      "title": "Half-dead",
-      "year": null,
-      "platform": null,
+      "title": "Half Dead",
+      "year": 2016,
+      "platform": "PC",
       "engine": "Unity",
       "rating": null,
-      "company": null,
-      "genre": null,
-      "mode": null,
-      "title_pt": null,
-      "_obs": "Half Dead 2? Confirme qual"
+      "company": "Room710Games",
+      "genre": "Puzzle / platform 3D",
+      "mode": "Single / Co-op",
+      "title_pt": null
     },
     {
       "id": 182,
@@ -2680,16 +2677,15 @@
     },
     {
       "id": 214,
-      "title": "Anvil",
-      "year": null,
-      "platform": null,
+      "title": "ANVIL",
+      "year": 2023,
+      "platform": "PC",
       "engine": null,
       "rating": null,
-      "company": null,
-      "genre": null,
-      "mode": null,
-      "title_pt": null,
-      "_obs": "ANVIL: Vault Breakers? Outro? Confirme"
+      "company": "Action Square",
+      "genre": "Action RPG (looter)",
+      "mode": "Co-op",
+      "title_pt": null
     },
     {
       "id": 215,
@@ -3082,16 +3078,15 @@
     },
     {
       "id": 246,
-      "title": "Dragonball",
-      "year": null,
-      "platform": null,
+      "title": "Dragon Ball Z: Kakarot",
+      "year": 2020,
+      "platform": "PC / Console",
       "engine": null,
       "rating": null,
-      "company": "Bandai",
-      "genre": null,
-      "mode": null,
-      "title_pt": null,
-      "_obs": "Série — qual jogo? Budokai? Kakarot? FighterZ?"
+      "company": "CyberConnect2",
+      "genre": "Action RPG",
+      "mode": "Single-player",
+      "title_pt": null
     },
     {
       "id": 247,
@@ -3595,6 +3590,30 @@
       "company": "Monolith Productions",
       "genre": "Ação / mundo aberto",
       "mode": "Single-player / Co-op",
+      "title_pt": null
+    },
+    {
+      "id": 287,
+      "title": "HALF DEAD 2",
+      "year": 2019,
+      "platform": "PC",
+      "engine": "Unity",
+      "rating": null,
+      "company": "Room710Games",
+      "genre": "Puzzle / platform 3D",
+      "mode": "Single / Co-op",
+      "title_pt": null
+    },
+    {
+      "id": 288,
+      "title": "HALF DEAD 3",
+      "year": 2022,
+      "platform": "PC",
+      "engine": "Unity",
+      "rating": null,
+      "company": "Room710Games",
+      "genre": "Puzzle / platform 3D",
+      "mode": "Single / Co-op",
       "title_pt": null
     }
   ]

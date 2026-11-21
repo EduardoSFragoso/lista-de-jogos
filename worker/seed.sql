@@ -336,7 +336,7 @@ insert into games (id, title, title_pt, year, platform, engine, company, genre, 
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
 insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (165, 'Broforce', null, 2015, 'PC', 'Unity', 'Free Lives', 'Run & gun', 'Co-op')
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
-insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (166, 'Chased By Darkness', null, null, null, 'Unreal Engine', null, 'Horror?', null)
+insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (166, 'Chased by Darkness', null, 2021, 'PC', 'Unreal Engine', 'South Blue Moon', 'Horror', 'Single-player')
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
 insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (167, 'Conan Exiles', null, 2017, 'PC', 'Unreal Engine 4', 'Funcom', 'Survival', 'Multiplayer')
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
@@ -348,7 +348,7 @@ insert into games (id, title, title_pt, year, platform, engine, company, genre, 
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
 insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (171, 'Fall Guys', null, 2020, 'PC / Console', 'Unity', 'Mediatonic', 'Battle royale party', 'Multiplayer')
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
-insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (172, 'Fear Therapy', null, null, null, 'Unreal Engine', null, 'Horror cooperativo?', null)
+insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (172, 'Fear Therapy', null, 2021, 'PC', 'Unreal Engine', 'Black Flag Studios', 'Horror cooperativo', null)
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
 insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (173, 'F.e.a.r', null, 2005, 'PC', 'LithTech', 'Monolith', 'FPS horror', 'Single-player')
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
@@ -366,7 +366,7 @@ insert into games (id, title, title_pt, year, platform, engine, company, genre, 
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
 insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (180, 'Hacknet', null, 2015, 'PC', 'MonoGame', 'Team Fractal Alligator', 'Hacking sim', 'Single-player')
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
-insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (181, 'Half-dead', null, null, null, 'Unity', null, null, null)
+insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (181, 'Half Dead', null, 2016, 'PC', 'Unity', 'Room710Games', 'Puzzle / platform 3D', 'Single / Co-op')
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
 insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (182, 'Hell yeah', null, 2012, 'PC / Console', 'XNA', 'Arkedo Studio', 'Platformer', 'Single-player')
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
@@ -432,7 +432,7 @@ insert into games (id, title, title_pt, year, platform, engine, company, genre, 
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
 insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (213, 'Solast', null, 2021, 'PC', 'Unity', 'Tactical Adventures', 'RPG (D&D 5e)', 'Single-player')
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
-insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (214, 'Anvil', null, null, null, null, null, null, null)
+insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (214, 'ANVIL', null, 2023, 'PC', null, 'Action Square', 'Action RPG (looter)', 'Co-op')
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
 insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (215, 'Gears of War', null, 2006, 'Xbox 360 / PC', 'Unreal Engine 3', 'Epic Games', 'TPS', 'Single / Co-op')
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
@@ -496,7 +496,7 @@ insert into games (id, title, title_pt, year, platform, engine, company, genre, 
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
 insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (245, 'Devil May Cry', null, 2001, 'PS2', null, 'Capcom', 'Hack & slash', 'Single-player')
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
-insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (246, 'Dragonball', null, null, null, null, 'Bandai', null, null)
+insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (246, 'Dragon Ball Z: Kakarot', null, 2020, 'PC / Console', null, 'CyberConnect2', 'Action RPG', 'Single-player')
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
 insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (247, 'Lord of the Rings', null, 2002, 'Console / PC', null, 'EA', 'Ação', 'Single / Co-op')
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
@@ -577,6 +577,10 @@ insert into games (id, title, title_pt, year, platform, engine, company, genre, 
 insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (285, 'Metin 2', null, 2005, 'PC', null, 'Ymir Entertainment', 'MMORPG', 'Multiplayer')
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
 insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (286, 'Middle-earth: Shadow of War', null, 2017, 'PC / Console', null, 'Monolith Productions', 'Ação / mundo aberto', 'Single-player / Co-op')
+  on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
+insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (287, 'HALF DEAD 2', null, 2019, 'PC', 'Unity', 'Room710Games', 'Puzzle / platform 3D', 'Single / Co-op')
+  on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
+insert into games (id, title, title_pt, year, platform, engine, company, genre, mode) values (288, 'HALF DEAD 3', null, 2022, 'PC', 'Unity', 'Room710Games', 'Puzzle / platform 3D', 'Single / Co-op')
   on conflict (id) do update set title = excluded.title, title_pt = excluded.title_pt, year = excluded.year, platform = excluded.platform, engine = excluded.engine, company = excluded.company, genre = excluded.genre, mode = excluded.mode;
 
 commit;

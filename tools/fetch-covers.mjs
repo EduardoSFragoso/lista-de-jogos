@@ -23,6 +23,11 @@ const APPID_FIX = {
   186: null, // Injustice: Gods Among Us — pegava Injustice 2
   192: 241930, // Middle-earth: Shadow of Mordor (jogo separado do Shadow of War, id 286)
   286: 356190, // Middle-earth: Shadow of War
+  181: 434730, // Half Dead (1)
+  287: 914260, // HALF DEAD 2
+  288: 1520380, // HALF DEAD 3
+  214: 1487390, // ANVIL
+  246: 851850, // Dragon Ball Z: Kakarot
   197: 261570, // Ori and the Blind Forest
   210: 20900, // The Witcher: Enhanced Edition
   215: null, // Gears of War (2006) — pegava E-Day
