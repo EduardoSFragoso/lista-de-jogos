@@ -28,6 +28,9 @@
 
 html {
   scrollbar-color: var(--border) var(--bg);
+
+  /* base 18px (112.5% de 16px): +2px em todo rem do site, legibilidade */
+  font-size: 112.5%;
 }
 
 body {
