@@ -144,11 +144,13 @@ const norm = (s) =>
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();
 
+const UA = 'lista-jogos-covers/1.0 (página pessoal; contato: github.com/EduardoSFragoso)';
+
 async function fetchBin(url, timeoutMs = 12000) {
   const ctl = new AbortController();
   const t = setTimeout(() => ctl.abort(), timeoutMs);
   try {
-    const res = await fetch(url, { signal: ctl.signal });
+    const res = await fetch(url, { signal: ctl.signal, headers: { 'User-Agent': UA } });
     if (!res.ok) return null;
     const buf = Buffer.from(await res.arrayBuffer());
     const type = res.headers.get('content-type') || '';
@@ -252,6 +254,71 @@ async function coverFromSteam(title, id) {
   return null;
 }
 
+/* Capa da infobox da Wikipédia (PageImages, original = alta resolução).
+   Último recurso pra clássicos fora do Steam (Diablo, AoE, Monkey Island...).
+   Throttle de 400ms + retry no 429: a API da Wikipédia corta cliente veloz. */
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+function safeParse(text) {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
+
+async function wikiSearchUrl(t, wantThumb) {
+  const piprop = wantThumb ? 'thumbnail&pithumbsize=640' : 'original';
+  const url =
+    'https://en.wikipedia.org/w/api.php?action=query&format=json&redirects=1' +
+    '&prop=pageimages&piprop=' +
+    piprop +
+    '&titles=' +
+    encodeURIComponent(t);
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), 10000);
+    try {
+      const res = await fetch(url, { signal: ctl.signal, headers: { 'User-Agent': UA } });
+      if (res.status === 429) {
+        await sleep(3000);
+        continue;
+      }
+      if (!res.ok || !(res.headers.get('content-type') || '').includes('json')) return null;
+      const j = safeParse(await res.text());
+      const page = Object.values(j?.query?.pages || {})[0];
+      return page?.original?.source || page?.thumbnail?.source || null;
+    } catch {
+      return null;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+  return null;
+}
+
+async function coverFromWikipedia(title, year) {
+  const candidates = [title];
+  if (!/\(video game\)/i.test(title)) candidates.push(`${title} (video game)`);
+  if (year) candidates.push(`${title} (${year} video game)`);
+  for (const t of candidates) {
+    await sleep(800);
+    const src = await wikiSearchUrl(t, false);
+    if (!src) continue;
+    const img = await fetchBin(src, 20000);
+    if (img) return { ...img, via: `wikipedia/${t}` };
+  }
+  /* segunda passada: thumbnail 640px (quando o artigo só tem pageimage pequena) */
+  for (const t of candidates) {
+    await sleep(800);
+    const src = await wikiSearchUrl(t, true);
+    if (!src) continue;
+    const img = await fetchBin(src, 20000);
+    if (img) return { ...img, via: `wikipedia-thumb/${t}` };
+  }
+  return null;
+}
+
 async function main() {
   const only = process.argv.find((a) => a.startsWith('--only='));
   const onlySet = only ? new Set(only.slice(7).split(',').map(Number)) : null;
@@ -316,6 +383,7 @@ async function main() {
     const isMapMod = /warcraft iii|mapa custom/i.test(plats);
     if (plats.includes('PC') && !isMapMod) got = await coverFromSteam(title, g.id);
     if (!got) got = await coverFromLibretro(libretroSystems(plats), title, libmaps);
+    if (!got) got = await coverFromWikipedia(title, g.year);
     if (got) {
       if (got.buf) {
         /* veio pronto (Steam) */

@@ -10,8 +10,7 @@
       "rating": null,
       "company": "Square",
       "genre": "JRPG",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 2,
@@ -23,8 +22,7 @@
       "rating": null,
       "company": "Square",
       "genre": "JRPG",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 3,
@@ -36,8 +34,7 @@
       "rating": null,
       "company": "Square",
       "genre": "JRPG",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 4,
@@ -49,8 +46,7 @@
       "rating": null,
       "company": "Square",
       "genre": "JRPG",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 5,
@@ -62,8 +58,7 @@
       "rating": null,
       "company": "Square",
       "genre": "JRPG",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 6,
@@ -75,8 +70,7 @@
       "rating": null,
       "company": "Square Enix",
       "genre": "JRPG",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 7,
@@ -88,8 +82,7 @@
       "rating": null,
       "company": "Square Enix",
       "genre": "JRPG",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 8,
@@ -101,8 +94,7 @@
       "rating": null,
       "company": "Blizzard Entertainment",
       "genre": "RTS",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 9,
@@ -114,8 +106,7 @@
       "rating": null,
       "company": "Blizzard Entertainment",
       "genre": "RTS",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 10,
@@ -127,8 +118,7 @@
       "rating": null,
       "company": "Blizzard Entertainment",
       "genre": "RTS",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 11,
@@ -140,8 +130,7 @@
       "rating": null,
       "company": "Blizzard Entertainment",
       "genre": "RTS",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 12,
@@ -249,8 +238,7 @@
       "rating": null,
       "company": "Blizzard Entertainment",
       "genre": "RTS",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 21,
@@ -262,8 +250,7 @@
       "rating": null,
       "company": "Blizzard Entertainment",
       "genre": "RTS",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 22,
@@ -275,8 +262,7 @@
       "rating": null,
       "company": "Blizzard Entertainment",
       "genre": "RTS",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 23,
@@ -300,8 +286,7 @@
       "rating": null,
       "company": "Blizzard North",
       "genre": "Action RPG",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 25,
@@ -313,8 +298,7 @@
       "rating": null,
       "company": "Blizzard North",
       "genre": "Action RPG",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 26,
@@ -326,8 +310,7 @@
       "rating": null,
       "company": "Blizzard Entertainment",
       "genre": "Action RPG",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 27,
@@ -339,8 +322,7 @@
       "rating": null,
       "company": "Blizzard Entertainment",
       "genre": "Action RPG",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 28,
@@ -376,8 +358,7 @@
       "rating": null,
       "company": "Lucasfilm Games",
       "genre": "Point-and-click",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 31,
@@ -389,8 +370,7 @@
       "rating": null,
       "company": "LucasArts",
       "genre": "Point-and-click",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 32,
@@ -402,8 +382,7 @@
       "rating": null,
       "company": "LucasArts",
       "genre": "Point-and-click",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 33,
@@ -427,8 +406,7 @@
       "rating": null,
       "company": "Ensemble Studios",
       "genre": "RTS",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 35,
@@ -440,8 +418,7 @@
       "rating": null,
       "company": "Ensemble Studios",
       "genre": "RTS",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 36,
@@ -453,8 +430,7 @@
       "rating": null,
       "company": "Forgotten Empires / World's Edge",
       "genre": "RTS",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 37,
@@ -466,8 +442,7 @@
       "rating": null,
       "company": "Ensemble Studios",
       "genre": "RTS",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 38,
@@ -503,8 +478,7 @@
       "rating": null,
       "company": "id Software",
       "genre": "FPS",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 41,
@@ -516,8 +490,7 @@
       "rating": null,
       "company": "id Software",
       "genre": "FPS",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 42,
@@ -529,8 +502,7 @@
       "rating": null,
       "company": "TeamTNT (id Software)",
       "genre": "FPS",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 43,
@@ -542,8 +514,7 @@
       "rating": null,
       "company": "The Casali Brothers (id Software)",
       "genre": "FPS",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 44,
@@ -555,8 +526,7 @@
       "rating": null,
       "company": "id Software",
       "genre": "FPS horror",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 45,
@@ -568,8 +538,7 @@
       "rating": null,
       "company": "id Software",
       "genre": "FPS",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 46,
@@ -581,8 +550,7 @@
       "rating": null,
       "company": "id Software",
       "genre": "FPS",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 47,
@@ -594,8 +562,7 @@
       "rating": null,
       "company": "Maxis",
       "genre": "Life sim",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 48,
@@ -607,8 +574,7 @@
       "rating": null,
       "company": "Maxis / The Sims Studio",
       "genre": "Life sim",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 49,
@@ -680,8 +646,7 @@
       "rating": null,
       "company": "FromSoftware",
       "genre": "Action RPG",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 55,
@@ -693,8 +658,7 @@
       "rating": null,
       "company": "FromSoftware",
       "genre": "Action RPG",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 56,
@@ -706,8 +670,7 @@
       "rating": null,
       "company": "FromSoftware",
       "genre": "Action RPG",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 57,
@@ -779,8 +742,7 @@
       "rating": null,
       "company": "Naughty Dog",
       "genre": "Platformer",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 63,
@@ -792,8 +754,7 @@
       "rating": null,
       "company": "Naughty Dog",
       "genre": "Platformer",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 64,
@@ -805,8 +766,7 @@
       "rating": null,
       "company": "Naughty Dog",
       "genre": "Platformer",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 65,
@@ -818,8 +778,7 @@
       "rating": null,
       "company": "Nintendo",
       "genre": "Platformer",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 66,
@@ -831,8 +790,7 @@
       "rating": null,
       "company": "Nintendo",
       "genre": "Platformer",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 67,
@@ -844,8 +802,7 @@
       "rating": null,
       "company": "Nintendo",
       "genre": "Platformer",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 68,
@@ -857,8 +814,7 @@
       "rating": null,
       "company": "Square / Nintendo",
       "genre": "JRPG",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 69,
@@ -870,8 +826,7 @@
       "rating": null,
       "company": "Nintendo",
       "genre": "Corrida",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 70,
@@ -883,8 +838,7 @@
       "rating": null,
       "company": "Nintendo",
       "genre": "Corrida",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 71,
@@ -920,8 +874,7 @@
       "rating": null,
       "company": "Santa Monica Studio",
       "genre": "Action-adventure",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 74,
@@ -933,8 +886,7 @@
       "rating": null,
       "company": "Santa Monica Studio",
       "genre": "Action-adventure",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 75,
@@ -946,8 +898,7 @@
       "rating": null,
       "company": "Ready at Dawn",
       "genre": "Action-adventure",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 76,
@@ -959,8 +910,7 @@
       "rating": null,
       "company": "Ready at Dawn",
       "genre": "Action-adventure",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 77,
@@ -972,8 +922,7 @@
       "rating": null,
       "company": "Santa Monica Studio",
       "genre": "Action-adventure",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 78,
@@ -985,8 +934,7 @@
       "rating": null,
       "company": "Santa Monica Studio",
       "genre": "Action-adventure",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 79,
@@ -998,8 +946,7 @@
       "rating": null,
       "company": "Santa Monica Studio",
       "genre": "Action-adventure",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 80,
@@ -1011,12 +958,11 @@
       "rating": null,
       "company": "Santa Monica Studio",
       "genre": "Action-adventure",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 81,
-      "title": "Underlords",
+      "title": "Dota Underlords",
       "year": 2020,
       "platform": "PC / Mobile",
       "engine": "Source 2",
@@ -1024,8 +970,7 @@
       "company": "Valve",
       "genre": "Auto-battler",
       "mode": "Multiplayer",
-      "title_pt": null,
-      "_obs": "Dota Underlords"
+      "title_pt": null
     },
     {
       "id": 82,
@@ -1037,8 +982,7 @@
       "rating": null,
       "company": "Valve",
       "genre": "FPS cooperativo",
-      "mode": "Co-op",
-      "_obs": null
+      "mode": "Co-op"
     },
     {
       "id": 83,
@@ -1050,8 +994,7 @@
       "rating": null,
       "company": "Valve",
       "genre": "FPS cooperativo",
-      "mode": "Co-op",
-      "_obs": null
+      "mode": "Co-op"
     },
     {
       "id": 84,
@@ -1123,8 +1066,7 @@
       "rating": null,
       "company": "Valve",
       "genre": "FPS tático",
-      "mode": "Multiplayer",
-      "_obs": null
+      "mode": "Multiplayer"
     },
     {
       "id": 90,
@@ -1136,8 +1078,7 @@
       "rating": null,
       "company": "Valve",
       "genre": "FPS tático",
-      "mode": "Multiplayer",
-      "_obs": null
+      "mode": "Multiplayer"
     },
     {
       "id": 91,
@@ -1149,8 +1090,7 @@
       "rating": null,
       "company": "Valve",
       "genre": "FPS tático",
-      "mode": "Multiplayer",
-      "_obs": null
+      "mode": "Multiplayer"
     },
     {
       "id": 92,
@@ -1162,8 +1102,7 @@
       "rating": null,
       "company": "Valve",
       "genre": "FPS tático",
-      "mode": "Multiplayer",
-      "_obs": null
+      "mode": "Multiplayer"
     },
     {
       "id": 93,
@@ -1175,8 +1114,7 @@
       "rating": null,
       "company": "Valve",
       "genre": "FPS",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 94,
@@ -1188,8 +1126,7 @@
       "rating": null,
       "company": "Valve",
       "genre": "FPS",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 95,
@@ -1297,8 +1234,7 @@
       "rating": null,
       "company": "Neversoft",
       "genre": "Skate (esporte)",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 104,
@@ -1310,8 +1246,7 @@
       "rating": null,
       "company": "Neversoft",
       "genre": "Skate (esporte)",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 105,
@@ -1431,8 +1366,7 @@
       "rating": null,
       "company": "Scott Cawthon",
       "genre": "Horror",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 115,
@@ -1444,8 +1378,7 @@
       "rating": null,
       "company": "Scott Cawthon",
       "genre": "Horror",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 116,
@@ -1457,8 +1390,7 @@
       "rating": null,
       "company": "Scott Cawthon",
       "genre": "Horror",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 117,
@@ -1470,8 +1402,7 @@
       "rating": null,
       "company": "Scott Cawthon",
       "genre": "Horror",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 118,
@@ -1483,8 +1414,7 @@
       "rating": null,
       "company": "Scott Cawthon",
       "genre": "Horror",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 119,
@@ -1496,8 +1426,7 @@
       "rating": null,
       "company": "Scott Cawthon",
       "genre": "Horror / management",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 120,
@@ -1509,8 +1438,7 @@
       "rating": null,
       "company": "Scott Cawthon",
       "genre": "RPG (spin-off)",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 121,
@@ -1522,8 +1450,7 @@
       "rating": null,
       "company": "Scott Cawthon",
       "genre": "Horror",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 122,
@@ -1535,8 +1462,7 @@
       "rating": null,
       "company": "Steel Wool Studios",
       "genre": "Horror (VR)",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 123,
@@ -1548,8 +1474,7 @@
       "rating": null,
       "company": "Steel Wool Studios",
       "genre": "Horror",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 124,
@@ -1561,8 +1486,7 @@
       "rating": null,
       "company": "Mega Cat Studios",
       "genre": "Horror (2D)",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 125,
@@ -1574,8 +1498,7 @@
       "rating": null,
       "company": "Steel Wool Studios",
       "genre": "Horror",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 126,
@@ -1623,8 +1546,7 @@
       "rating": null,
       "company": "Game Freak / Nintendo",
       "genre": "RPG de captura",
-      "mode": "Single / Multi (trocas)",
-      "_obs": null
+      "mode": "Single / Multi (trocas)"
     },
     {
       "id": 130,
@@ -1660,8 +1582,7 @@
       "rating": null,
       "company": "Game Freak / Nintendo",
       "genre": "RPG de captura",
-      "mode": "Single / Multi (trocas)",
-      "_obs": null
+      "mode": "Single / Multi (trocas)"
     },
     {
       "id": 133,
@@ -1793,8 +1714,7 @@
       "rating": null,
       "company": "Game Freak / Nintendo",
       "genre": "RPG de captura (mundo aberto)",
-      "mode": "Single-player",
-      "_obs": null
+      "mode": "Single-player"
     },
     {
       "id": 144,
@@ -1818,8 +1738,7 @@
       "rating": null,
       "company": "Game Freak / Nintendo",
       "genre": "RPG de captura",
-      "mode": "Single / Multi",
-      "_obs": null
+      "mode": "Single / Multi"
     },
     {
       "id": 146,
@@ -1919,7 +1838,7 @@
     },
     {
       "id": 154,
-      "title": "Zelda",
+      "title": "The Legend of Zelda",
       "year": 1986,
       "platform": "NES",
       "engine": "Proprietária (Nintendo)",
@@ -1927,8 +1846,7 @@
       "company": "Nintendo",
       "genre": "Action-adventure",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — qual? Ocarina? BotW?"
+      "title_pt": null
     },
     {
       "id": 155,
@@ -2016,7 +1934,7 @@
     },
     {
       "id": 162,
-      "title": "Amnesia",
+      "title": "Amnesia: The Dark Descent",
       "year": 2010,
       "platform": "PC",
       "engine": "HPL Engine",
@@ -2024,8 +1942,7 @@
       "company": "Frictional Games",
       "genre": "Horror",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "The Dark Descent — ou Rebirth?"
+      "title_pt": null
     },
     {
       "id": 163,
@@ -2149,7 +2066,7 @@
     },
     {
       "id": 173,
-      "title": "F.e.a.r",
+      "title": "F.E.A.R.",
       "year": 2005,
       "platform": "PC",
       "engine": "LithTech",
@@ -2157,8 +2074,7 @@
       "company": "Monolith",
       "genre": "FPS horror",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Título: F.E.A.R."
+      "title_pt": null
     },
     {
       "id": 174,
@@ -2186,7 +2102,7 @@
     },
     {
       "id": 176,
-      "title": "Guacamelee",
+      "title": "Guacamelee! Super Turbo Championship Edition",
       "year": 2013,
       "platform": "PC / Console",
       "engine": null,
@@ -2194,8 +2110,7 @@
       "company": "DrinkBox Studios",
       "genre": "Metroidvania",
       "mode": "Single / Co-op",
-      "title_pt": null,
-      "_obs": "Guacamelee! — ou Super Turbo?"
+      "title_pt": null
     },
     {
       "id": 177,
@@ -2211,7 +2126,7 @@
     },
     {
       "id": 178,
-      "title": "Ghost Exocism Inc",
+      "title": "Ghost Exorcism Inc",
       "year": 2021,
       "platform": "PC",
       "engine": "Unity",
@@ -2219,8 +2134,7 @@
       "company": null,
       "genre": "Horror cooperativo",
       "mode": "Co-op",
-      "title_pt": null,
-      "_obs": "Título: 'Ghost Exorcism Inc'"
+      "title_pt": null
     },
     {
       "id": 179,
@@ -2260,7 +2174,7 @@
     },
     {
       "id": 182,
-      "title": "Hell yeah",
+      "title": "Hell Yeah! Wrath of the Dead Rabbit",
       "year": 2012,
       "platform": "PC / Console",
       "engine": "XNA",
@@ -2268,8 +2182,7 @@
       "company": "Arkedo Studio",
       "genre": "Platformer",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Hell Yeah! Wrath of the Dead Rabbit"
+      "title_pt": null
     },
     {
       "id": 183,
@@ -2309,7 +2222,7 @@
     },
     {
       "id": 186,
-      "title": "Injustice",
+      "title": "Injustice: Gods Among Us",
       "year": 2013,
       "platform": "Console / PC",
       "engine": "Unreal Engine 3",
@@ -2317,8 +2230,7 @@
       "company": "NetherRealm Studios",
       "genre": "Fighting",
       "mode": "Single / Multi",
-      "title_pt": null,
-      "_obs": "Gods Among Us — ou Injustice 2?"
+      "title_pt": null
     },
     {
       "id": 187,
@@ -2358,7 +2270,7 @@
     },
     {
       "id": 190,
-      "title": "Legends of Idleon",
+      "title": "Legends of IdleOn",
       "year": 2021,
       "platform": "PC / Mobile",
       "engine": "Unity",
@@ -2366,8 +2278,7 @@
       "company": "LavaFlame2",
       "genre": "MMO idle",
       "mode": "Multiplayer",
-      "title_pt": null,
-      "_obs": "Título: 'Legends of Idleon'"
+      "title_pt": null
     },
     {
       "id": 191,
@@ -2395,7 +2306,7 @@
     },
     {
       "id": 193,
-      "title": "Minion Master",
+      "title": "Minion Masters",
       "year": 2016,
       "platform": "PC",
       "engine": "Unity",
@@ -2403,8 +2314,7 @@
       "company": "BetaDwarf",
       "genre": "Card / RTS",
       "mode": "Multiplayer / Single",
-      "title_pt": null,
-      "_obs": "Minion Masters"
+      "title_pt": null
     },
     {
       "id": 194,
@@ -2444,7 +2354,7 @@
     },
     {
       "id": 197,
-      "title": "Ori",
+      "title": "Ori and the Blind Forest: Definitive Edition",
       "year": 2015,
       "platform": "PC / Console",
       "engine": "Unity",
@@ -2452,8 +2362,7 @@
       "company": "Moon Studios",
       "genre": "Platformer",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Ori and the Blind Forest"
+      "title_pt": null
     },
     {
       "id": 198,
@@ -2501,21 +2410,19 @@
       "company": "id Software",
       "genre": "FPS",
       "mode": "Single / Multi",
-      "title_pt": null,
-      "_obs": "Série — qual?"
+      "title_pt": null
     },
     {
       "id": 202,
-      "title": "PUBG",
+      "title": "PUBG: Battlegrounds",
       "year": 2017,
-      "platform": "PC / Console / Mobile",
+      "platform": "PC",
       "engine": "Unreal Engine 4",
       "rating": null,
       "company": "KRAFTON",
       "genre": "Battle royale",
       "mode": "Multiplayer",
-      "title_pt": null,
-      "_obs": "PlayerUnknown's Battlegrounds"
+      "title_pt": null
     },
     {
       "id": 203,
@@ -2531,16 +2438,15 @@
     },
     {
       "id": 204,
-      "title": "Red Dead",
-      "year": 2004,
-      "platform": "Console",
-      "engine": null,
+      "title": "Red Dead Redemption 2",
+      "year": 2018,
+      "platform": "PC / Console",
+      "engine": "RAGE",
       "rating": null,
       "company": "Rockstar San Diego",
       "genre": "Ação / mundo aberto",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Revolver? Redemption 1? RDR2?"
+      "title_pt": null
     },
     {
       "id": 205,
@@ -2552,8 +2458,7 @@
       "company": "Capcom",
       "genre": "Survival horror",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — qual?"
+      "title_pt": null
     },
     {
       "id": 206,
@@ -2601,8 +2506,7 @@
       "company": "Total Mayhem Games",
       "genre": "Puzzle coop",
       "mode": "Co-op",
-      "title_pt": null,
-      "_obs": "Série — We Were Here, Too, Forever?"
+      "title_pt": null
     },
     {
       "id": 210,
@@ -2614,25 +2518,23 @@
       "company": "CD Projekt RED",
       "genre": "RPG",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — 1, 2 ou 3?"
+      "title_pt": null
     },
     {
       "id": 211,
-      "title": "Yu-Gi-Oh",
+      "title": "Yu-Gi-Oh! Forbidden Memories",
       "year": 1999,
-      "platform": "Navegador / Console / Cartas",
+      "platform": "PS1",
       "engine": null,
       "rating": null,
       "company": "Konami",
       "genre": "Card game",
       "mode": "Multiplayer / Single",
-      "title_pt": null,
-      "_obs": "Série — qual jogo? Duel Links? Master Duel?"
+      "title_pt": null
     },
     {
       "id": 212,
-      "title": "Soma",
+      "title": "SOMA",
       "year": 2015,
       "platform": "PC",
       "engine": "HPL Engine 3",
@@ -2640,8 +2542,7 @@
       "company": "Frictional Games",
       "genre": "Horror scifi",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Título: 'SOMA'"
+      "title_pt": null
     },
     {
       "id": 213,
@@ -2669,16 +2570,15 @@
     },
     {
       "id": 215,
-      "title": "Gears of War",
-      "year": 2006,
-      "platform": "Xbox 360 / PC",
+      "title": "Gears of War 3",
+      "year": 2011,
+      "platform": "Xbox 360",
       "engine": "Unreal Engine 3",
       "rating": null,
       "company": "Epic Games",
       "genre": "TPS",
       "mode": "Single / Co-op",
-      "title_pt": null,
-      "_obs": "Série — qual?"
+      "title_pt": null
     },
     {
       "id": 216,
@@ -2694,42 +2594,39 @@
     },
     {
       "id": 217,
-      "title": "Battlefield",
-      "year": 2002,
-      "platform": "PC",
-      "engine": "Refractor",
+      "title": "Battlefield 3",
+      "year": 2011,
+      "platform": "PC / Console",
+      "engine": "Frostbite 2",
       "rating": null,
       "company": "DICE / EA",
       "genre": "FPS",
       "mode": "Multiplayer",
-      "title_pt": null,
-      "_obs": "Série — 1942? BF3? V?"
+      "title_pt": null
     },
     {
       "id": 218,
-      "title": "Call of Duty",
-      "year": 2003,
+      "title": "Call of Duty 4: Modern Warfare",
+      "year": 2007,
       "platform": "PC / Console",
       "engine": "IW engine",
       "rating": null,
       "company": "Infinity Ward",
       "genre": "FPS",
       "mode": "Single / Multi",
-      "title_pt": null,
-      "_obs": "Série — qual?"
+      "title_pt": null
     },
     {
       "id": 219,
       "title": "Assassin's Creed",
       "year": 2007,
-      "platform": "Console / PC",
+      "platform": "PC / Console",
       "engine": "Anvil",
       "rating": null,
       "company": "Ubisoft Montreal",
       "genre": "Ação / stealth mundo aberto",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — qual?"
+      "title_pt": null
     },
     {
       "id": 220,
@@ -2745,7 +2642,7 @@
     },
     {
       "id": 221,
-      "title": "Deadspace",
+      "title": "Dead Space",
       "year": 2008,
       "platform": "PC / Console",
       "engine": null,
@@ -2753,12 +2650,11 @@
       "company": "EA Redwood Shores",
       "genre": "Horror sci-fi TPS",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Título: 'Dead Space' — 1, 2, 3 ou remake?"
+      "title_pt": null
     },
     {
       "id": 222,
-      "title": "Dragon Age",
+      "title": "Dragon Age: Origins",
       "year": 2009,
       "platform": "PC / Console",
       "engine": "Eclipse",
@@ -2766,8 +2662,7 @@
       "company": "BioWare",
       "genre": "RPG",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Origins — ou 2 / Inquisition? Engines variam"
+      "title_pt": null
     },
     {
       "id": 223,
@@ -2791,25 +2686,23 @@
       "company": "BioWare",
       "genre": "RPG sci-fi",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — qual?"
+      "title_pt": null
     },
     {
       "id": 225,
-      "title": "Need for Speed",
-      "year": 1994,
+      "title": "Need for Speed: Underground",
+      "year": 2003,
       "platform": "PC / Console",
       "engine": null,
       "rating": null,
       "company": "EA",
       "genre": "Corrida",
       "mode": "Single / Multi",
-      "title_pt": null,
-      "_obs": "Série — qual?"
+      "title_pt": null
     },
     {
       "id": 226,
-      "title": "Osu",
+      "title": "osu!",
       "year": 2007,
       "platform": "PC",
       "engine": null,
@@ -2817,8 +2710,7 @@
       "company": "ppy",
       "genre": "Rhythm",
       "mode": "Single / Multi",
-      "title_pt": null,
-      "_obs": "Título: 'osu!'"
+      "title_pt": null
     },
     {
       "id": 227,
@@ -2830,8 +2722,7 @@
       "company": "DreamWorks Interactive",
       "genre": "FPS",
       "mode": "Single / Multi",
-      "title_pt": null,
-      "_obs": "Série — qual? Allied Assault? 2010?"
+      "title_pt": null
     },
     {
       "id": 228,
@@ -2847,16 +2738,15 @@
     },
     {
       "id": 229,
-      "title": "Xenoblade",
-      "year": 2010,
-      "platform": "Wii",
+      "title": "Xenoblade Chronicles 3",
+      "year": 2022,
+      "platform": "Switch",
       "engine": null,
       "rating": null,
       "company": "Monolith Soft",
       "genre": "JRPG",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Xenoblade Chronicles — ou 2/3?"
+      "title_pt": null
     },
     {
       "id": 230,
@@ -2872,7 +2762,7 @@
     },
     {
       "id": 231,
-      "title": "Corsairs",
+      "title": "Corsairs Gold",
       "year": 1999,
       "platform": "PC",
       "engine": "Proprietária (não documentada)",
@@ -2880,8 +2770,7 @@
       "company": "Microïds",
       "genre": "Aventura naval",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Corsairs: Conquest at Sea — ou Sea Dogs? Confirme"
+      "title_pt": null
     },
     {
       "id": 232,
@@ -2897,29 +2786,27 @@
     },
     {
       "id": 233,
-      "title": "Kingdom Hearts",
-      "year": 2002,
-      "platform": "PS2",
-      "engine": null,
+      "title": "Kingdom Hearts III",
+      "year": 2019,
+      "platform": "PC / Console",
+      "engine": "Unreal Engine 4",
       "rating": null,
       "company": "Square",
       "genre": "Action RPG",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — qual?"
+      "title_pt": null
     },
     {
       "id": 234,
-      "title": "Sonic",
-      "year": 1991,
-      "platform": "Mega Drive",
+      "title": "Sonic Chaos",
+      "year": 1993,
+      "platform": "Master System",
       "engine": null,
       "rating": null,
       "company": "Sonic Team",
       "genre": "Platformer",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — qual?"
+      "title_pt": null
     },
     {
       "id": 235,
@@ -2935,7 +2822,7 @@
     },
     {
       "id": 236,
-      "title": "Spyro",
+      "title": "Spyro the Dragon",
       "year": 1998,
       "platform": "PS1",
       "engine": null,
@@ -2943,8 +2830,7 @@
       "company": "Insomniac Games",
       "genre": "Platformer",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — Spyro the Dragon?"
+      "title_pt": null
     },
     {
       "id": 237,
@@ -3008,7 +2894,7 @@
     },
     {
       "id": 242,
-      "title": "Disgaea",
+      "title": "Disgaea: Hour of Darkness",
       "year": 2003,
       "platform": "PS2",
       "engine": null,
@@ -3016,8 +2902,7 @@
       "company": "Nippon Ichi Software",
       "genre": "Tactical RPG",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Hour of Darkness — ou qual?"
+      "title_pt": null
     },
     {
       "id": 243,
@@ -3045,16 +2930,15 @@
     },
     {
       "id": 245,
-      "title": "Devil May Cry",
-      "year": 2001,
+      "title": "Devil May Cry 3: Dante's Awakening",
+      "year": 2005,
       "platform": "PS2",
       "engine": null,
       "rating": null,
       "company": "Capcom",
       "genre": "Hack & slash",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — qual?"
+      "title_pt": null
     },
     {
       "id": 246,
@@ -3070,16 +2954,15 @@
     },
     {
       "id": 247,
-      "title": "Lord of the Rings",
-      "year": 2002,
-      "platform": "Console / PC",
+      "title": "The Lord of the Rings: The Return of the King",
+      "year": 2003,
+      "platform": "PS2 / PC",
       "engine": null,
       "rating": null,
-      "company": "EA",
-      "genre": "Ação",
+      "company": "EA Redwood Shores",
+      "genre": "Hack and slash",
       "mode": "Single / Co-op",
-      "title_pt": null,
-      "_obs": "Assumi The Two Towers / ROTK da EA — confirme"
+      "title_pt": null
     },
     {
       "id": 248,
@@ -3107,29 +2990,27 @@
     },
     {
       "id": 250,
-      "title": "Deux Ex Machina",
-      "year": 2000,
-      "platform": "PC",
-      "engine": "Unreal Engine",
+      "title": "Deus Ex: Human Revolution",
+      "year": 2011,
+      "platform": "PS3 / PC",
+      "engine": "Crimson Engine",
       "rating": null,
-      "company": "Ion Storm",
+      "company": "Eidos-Montréal",
       "genre": "RPG / FPS stealth",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Nome no jogo: 'Deus Ex' (2000) — certo?"
+      "title_pt": null
     },
     {
       "id": 251,
       "title": "Metal Slug",
       "year": 1996,
-      "platform": "Arcade",
+      "platform": "Arcade / PS1",
       "engine": "Neo Geo",
       "rating": null,
       "company": "SNK",
       "genre": "Run & gun",
       "mode": "Single / Co-op",
-      "title_pt": null,
-      "_obs": "Série — qual?"
+      "title_pt": null
     },
     {
       "id": 252,
@@ -3141,21 +3022,19 @@
       "company": "Konami / Kojima Productions",
       "genre": "Stealth",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — qual? (engine/graphic MGS1)"
+      "title_pt": null
     },
     {
       "id": 253,
-      "title": "Marvel vs Capcom",
+      "title": "Marvel vs. Capcom: Clash of Super Heroes",
       "year": 1998,
-      "platform": "Arcade",
+      "platform": "Arcade / PS1",
       "engine": null,
       "rating": null,
       "company": "Capcom",
       "genre": "Fighting",
       "mode": "Multiplayer / Single",
-      "title_pt": null,
-      "_obs": "Clash of Super Heroes — ou MVC2/3?"
+      "title_pt": null
     },
     {
       "id": 254,
@@ -3183,7 +3062,7 @@
     },
     {
       "id": 256,
-      "title": "Nier",
+      "title": "NieR",
       "year": 2010,
       "platform": "PS3 / Xbox 360",
       "engine": null,
@@ -3191,8 +3070,7 @@
       "company": "Cavia",
       "genre": "Action RPG",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "NieR (Replicant/Gestalt) — ou Automata?"
+      "title_pt": null
     },
     {
       "id": 257,
@@ -3256,16 +3134,15 @@
     },
     {
       "id": 262,
-      "title": "Alone in the Dark",
-      "year": 1992,
-      "platform": "PC (DOS)",
+      "title": "Alone in the Dark: The New Nightmare",
+      "year": 2001,
+      "platform": "PS1 / PC",
       "engine": "Proprietária (não documentada)",
       "rating": null,
       "company": "Infogrames",
       "genre": "Survival horror (pioneiro 3D)",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — clássico 92 ou remake?"
+      "title_pt": null
     },
     {
       "id": 263,
@@ -3277,8 +3154,7 @@
       "company": "Neversoft",
       "genre": "Ação 3D",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "O do Bruce Willis — certo?"
+      "title_pt": null
     },
     {
       "id": 264,
@@ -3306,20 +3182,19 @@
     },
     {
       "id": 266,
-      "title": "King of Fighters",
-      "year": 1994,
-      "platform": "Arcade / Neo Geo",
+      "title": "The King of Fighters '95",
+      "year": 1995,
+      "platform": "Arcade / Neo Geo / PS1",
       "engine": null,
       "rating": null,
       "company": "SNK",
       "genre": "Fighting",
       "mode": "Multiplayer / Single",
-      "title_pt": null,
-      "_obs": "Série — qual? ('94, '98, XIII..."
+      "title_pt": null
     },
     {
       "id": 267,
-      "title": "Medievil",
+      "title": "MediEvil",
       "year": 1998,
       "platform": "PS1",
       "engine": null,
@@ -3327,8 +3202,7 @@
       "company": "SCE Cambridge",
       "genre": "Action-adventure",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Título: MediEvil"
+      "title_pt": null
     },
     {
       "id": 268,
@@ -3368,7 +3242,7 @@
     },
     {
       "id": 271,
-      "title": "Rival Schools",
+      "title": "Rival Schools: United by Fate",
       "year": 1997,
       "platform": "PS1",
       "engine": null,
@@ -3376,21 +3250,19 @@
       "company": "Capcom",
       "genre": "Fighting",
       "mode": "Multiplayer / Single",
-      "title_pt": null,
-      "_obs": "Rival Schools: United by Fate"
+      "title_pt": null
     },
     {
       "id": 272,
       "title": "Road Rash",
-      "year": 1991,
-      "platform": "Sega Genesis",
+      "year": 1995,
+      "platform": "PS1",
       "engine": "Proprietária (EA)",
       "rating": null,
       "company": "Electronic Arts",
       "genre": "Corrida (moto/briga)",
       "mode": "Single / Multi",
-      "title_pt": null,
-      "_obs": "Série — qual?"
+      "title_pt": null
     },
     {
       "id": 273,
@@ -3402,34 +3274,31 @@
       "company": "Konami",
       "genre": "Survival horror",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — qual?"
+      "title_pt": null
     },
     {
       "id": 274,
-      "title": "Samurai Showdown",
-      "year": 1993,
-      "platform": "Neo Geo / Arcade",
-      "engine": null,
+      "title": "Samurai Shodown III: Blades of Blood",
+      "year": 1995,
+      "platform": "Neo Geo / Arcade / PS1",
+      "engine": "SNK (proprietária)",
       "rating": null,
       "company": "SNK",
       "genre": "Fighting",
       "mode": "Multiplayer / Single",
-      "title_pt": null,
-      "_obs": "Título: 'Samurai Shodown' — qual?"
+      "title_pt": null
     },
     {
       "id": 275,
-      "title": "Spiderman",
+      "title": "Spider-Man",
       "year": 2000,
-      "platform": "PS1 / N64",
+      "platform": "PS1",
       "engine": "Proprietária (Neversoft)",
       "rating": null,
       "company": "Neversoft",
       "genre": "Action-adventure",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Série — o da Neversoft (2000)? Outro?"
+      "title_pt": null
     },
     {
       "id": 276,
@@ -3445,7 +3314,7 @@
     },
     {
       "id": 277,
-      "title": "Commandos",
+      "title": "Commandos: Behind Enemy Lines",
       "year": 1998,
       "platform": "PC",
       "engine": null,
@@ -3453,12 +3322,11 @@
       "company": "Pyro Studios",
       "genre": "Táticas em tempo real",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Behind Enemy Lines"
+      "title_pt": null
     },
     {
       "id": 278,
-      "title": "Valdis Story",
+      "title": "Valdis Story: Abyssal City",
       "year": 2013,
       "platform": "PC",
       "engine": "Unity",
@@ -3466,12 +3334,11 @@
       "company": "Endless Fluff Games",
       "genre": "Metroidvania",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Valdis Story: Abyssal City"
+      "title_pt": null
     },
     {
       "id": 279,
-      "title": "White Day",
+      "title": "White Day: A Labyrinth Named School",
       "year": 2001,
       "platform": "PC",
       "engine": "WangReal Engine",
@@ -3479,12 +3346,11 @@
       "company": "Sonnori",
       "genre": "Horror",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "'A Labyrinth Named School' — ou remake 2017?"
+      "title_pt": null
     },
     {
       "id": 280,
-      "title": "SCP - Contaiment Breach",
+      "title": "SCP - Containment Breach",
       "year": 2012,
       "platform": "PC",
       "engine": "Blitz3D",
@@ -3492,8 +3358,7 @@
       "company": "Joonas 'Regalis' Rikkonen",
       "genre": "Horror indie",
       "mode": "Single-player",
-      "title_pt": null,
-      "_obs": "Título: 'SCP – Containment Breach'"
+      "title_pt": null
     },
     {
       "id": 281,
@@ -3505,8 +3370,7 @@
       "company": "Team17",
       "genre": "Artilharia / estratégia",
       "mode": "Multiplayer / Single",
-      "title_pt": null,
-      "_obs": "Série — qual?"
+      "title_pt": null
     },
     {
       "id": 282,
@@ -3522,16 +3386,15 @@
     },
     {
       "id": 283,
-      "title": "Perfect World",
-      "year": 2006,
+      "title": "Perfect World International",
+      "year": 2008,
       "platform": "PC",
       "engine": null,
       "rating": null,
       "company": "Beijing Perfect World",
       "genre": "MMORPG",
       "mode": "Multiplayer",
-      "title_pt": null,
-      "_obs": "Perfect World International?"
+      "title_pt": null
     },
     {
       "id": 284,
@@ -4126,6 +3989,340 @@
       "company": "Game Freak / Nintendo",
       "genre": "RPG de captura (mundo aberto)",
       "mode": "Single / Multi"
+    },
+    {
+      "id": 335,
+      "rating": null,
+      "title_pt": null,
+      "title": "Amnesia: A Machine for Pigs",
+      "year": 2013,
+      "platform": "PC",
+      "company": "The Chinese Room",
+      "genre": "Horror",
+      "mode": "Single-player"
+    },
+    {
+      "id": 336,
+      "rating": null,
+      "title_pt": null,
+      "title": "F.E.A.R. 2: Project Origin",
+      "year": 2009,
+      "platform": "PC / Console",
+      "company": "Monolith Productions",
+      "genre": "FPS / horror",
+      "mode": "Single-player"
+    },
+    {
+      "id": 337,
+      "rating": null,
+      "title_pt": null,
+      "title": "F.E.A.R. 3",
+      "year": 2011,
+      "platform": "PC / Console",
+      "company": "Day 1 Studios",
+      "genre": "FPS / horror",
+      "mode": "Single / Co-op"
+    },
+    {
+      "id": 338,
+      "rating": null,
+      "title_pt": null,
+      "title": "Injustice 2",
+      "year": 2017,
+      "platform": "PC / Console",
+      "company": "NetherRealm Studios",
+      "genre": "Luta",
+      "mode": "Single / Multiplayer"
+    },
+    {
+      "id": 339,
+      "rating": null,
+      "title_pt": null,
+      "title": "Quake III Arena",
+      "year": 1999,
+      "platform": "PC",
+      "company": "id Software",
+      "genre": "FPS",
+      "mode": "Multiplayer"
+    },
+    {
+      "id": 340,
+      "rating": null,
+      "title_pt": null,
+      "title": "Red Dead Online",
+      "year": 2019,
+      "platform": "PC / Console",
+      "engine": "RAGE",
+      "company": "Rockstar Games",
+      "genre": "Mundo aberto / online",
+      "mode": "Multiplayer"
+    },
+    {
+      "id": 341,
+      "rating": null,
+      "title_pt": null,
+      "title": "Yu-Gi-Oh! Duel Links",
+      "year": 2016,
+      "platform": "PC / Mobile",
+      "company": "Konami",
+      "genre": "Cartas",
+      "mode": "Multiplayer"
+    },
+    {
+      "id": 342,
+      "rating": null,
+      "title_pt": null,
+      "title": "Yu-Gi-Oh! Master Duel",
+      "year": 2022,
+      "platform": "PC / Console / Mobile",
+      "company": "Konami",
+      "genre": "Cartas",
+      "mode": "Multiplayer"
+    },
+    {
+      "id": 343,
+      "rating": null,
+      "title_pt": null,
+      "title": "Battlefield 1942",
+      "year": 2002,
+      "platform": "PC",
+      "engine": "Refractor 2",
+      "company": "DICE",
+      "genre": "FPS",
+      "mode": "Multiplayer"
+    },
+    {
+      "id": 344,
+      "rating": null,
+      "title_pt": null,
+      "title": "Call of Duty: Modern Warfare 2",
+      "year": 2009,
+      "platform": "PC / Console",
+      "company": "Infinity Ward",
+      "genre": "FPS",
+      "mode": "Single / Multiplayer"
+    },
+    {
+      "id": 345,
+      "rating": null,
+      "title_pt": null,
+      "title": "Call of Duty: Black Ops",
+      "year": 2010,
+      "platform": "PC / Console",
+      "company": "Treyarch",
+      "genre": "FPS",
+      "mode": "Single / Multiplayer"
+    },
+    {
+      "id": 346,
+      "rating": null,
+      "title_pt": null,
+      "title": "Dead Space 2",
+      "year": 2011,
+      "platform": "PC / Console",
+      "company": "Visceral Games",
+      "genre": "Survival horror",
+      "mode": "Single-player"
+    },
+    {
+      "id": 347,
+      "rating": null,
+      "title_pt": null,
+      "title": "Dead Space 3",
+      "year": 2013,
+      "platform": "PC / Console",
+      "company": "Visceral Games",
+      "genre": "Survival horror",
+      "mode": "Single / Co-op"
+    },
+    {
+      "id": 348,
+      "rating": null,
+      "title_pt": null,
+      "title": "Mass Effect 2",
+      "year": 2010,
+      "platform": "PC / Console",
+      "company": "BioWare",
+      "genre": "Action RPG",
+      "mode": "Single-player"
+    },
+    {
+      "id": 349,
+      "rating": null,
+      "title_pt": null,
+      "title": "Midnight Club: Los Angeles",
+      "year": 2008,
+      "platform": "PS3 / Xbox 360",
+      "company": "Rockstar San Diego",
+      "genre": "Corrida (mundo aberto)",
+      "mode": "Single / Multiplayer"
+    },
+    {
+      "id": 350,
+      "rating": null,
+      "title_pt": null,
+      "title": "DmC: Devil May Cry",
+      "year": 2013,
+      "platform": "PC / Console",
+      "engine": "Unreal Engine 3",
+      "company": "Ninja Theory",
+      "genre": "Hack and slash",
+      "mode": "Single-player"
+    },
+    {
+      "id": 351,
+      "rating": null,
+      "title_pt": null,
+      "title": "Deus Ex: Mankind Divided",
+      "year": 2016,
+      "platform": "PS4 / PC",
+      "engine": "Dawn Engine",
+      "company": "Eidos-Montréal",
+      "genre": "FPS / RPG (imersivo)",
+      "mode": "Single-player"
+    },
+    {
+      "id": 352,
+      "rating": null,
+      "title_pt": null,
+      "title": "Metal Gear Solid 4: Guns of the Patriots",
+      "year": 2008,
+      "platform": "PS3",
+      "company": "Kojima Productions",
+      "genre": "Stealth",
+      "mode": "Single-player"
+    },
+    {
+      "id": 353,
+      "rating": null,
+      "title_pt": null,
+      "title": "Marvel vs. Capcom 3: Fate of Two Worlds",
+      "year": 2011,
+      "platform": "PS3 / Xbox 360",
+      "company": "Capcom",
+      "genre": "Luta (crossover)",
+      "mode": "Single / Multiplayer"
+    },
+    {
+      "id": 354,
+      "rating": null,
+      "title_pt": null,
+      "title": "Marvel vs. Capcom: Infinite",
+      "year": 2017,
+      "platform": "PC / Console",
+      "company": "Capcom",
+      "genre": "Luta (crossover)",
+      "mode": "Single / Multiplayer"
+    },
+    {
+      "id": 355,
+      "rating": null,
+      "title_pt": null,
+      "title": "NieR: Automata",
+      "year": 2017,
+      "platform": "PC / Console",
+      "company": "PlatinumGames",
+      "genre": "Action RPG",
+      "mode": "Single-player"
+    },
+    {
+      "id": 356,
+      "rating": null,
+      "title_pt": null,
+      "title": "The King of Fighters '96",
+      "year": 1996,
+      "platform": "Arcade / Neo Geo / PS1",
+      "company": "SNK",
+      "genre": "Luta",
+      "mode": "Single / Multiplayer"
+    },
+    {
+      "id": 357,
+      "rating": null,
+      "title_pt": null,
+      "title": "The King of Fighters '97",
+      "year": 1997,
+      "platform": "Arcade / Neo Geo / PS1",
+      "company": "SNK",
+      "genre": "Luta",
+      "mode": "Single / Multiplayer"
+    },
+    {
+      "id": 358,
+      "rating": null,
+      "title_pt": null,
+      "title": "The King of Fighters '98",
+      "year": 1998,
+      "platform": "Arcade / Neo Geo / PS1",
+      "company": "SNK",
+      "genre": "Luta",
+      "mode": "Single / Multiplayer"
+    },
+    {
+      "id": 359,
+      "rating": null,
+      "title_pt": null,
+      "title": "The King of Fighters '99",
+      "year": 1999,
+      "platform": "Arcade / Neo Geo",
+      "company": "SNK",
+      "genre": "Luta",
+      "mode": "Single / Multiplayer"
+    },
+    {
+      "id": 360,
+      "rating": null,
+      "title_pt": null,
+      "title": "Spider-Man 2: Enter: Electro",
+      "year": 2001,
+      "platform": "PS1",
+      "company": "Vicarious Visions",
+      "genre": "Ação (super-herói)",
+      "mode": "Single-player"
+    },
+    {
+      "id": 361,
+      "rating": null,
+      "title_pt": null,
+      "title": "Commandos: Beyond the Call of Duty",
+      "year": 1999,
+      "platform": "PC",
+      "company": "Pyro Studios",
+      "genre": "Tática em tempo real",
+      "mode": "Single-player"
+    },
+    {
+      "id": 362,
+      "rating": null,
+      "title_pt": null,
+      "title": "White Day: A Labyrinth Named School",
+      "year": 2017,
+      "platform": "PC / Console / Mobile",
+      "company": "Sonnori",
+      "genre": "Horror",
+      "mode": "Single-player"
+    },
+    {
+      "id": 363,
+      "rating": null,
+      "title_pt": null,
+      "title": "Worms 2",
+      "year": 1996,
+      "platform": "PC",
+      "company": "Team17",
+      "genre": "Estratégia / humor",
+      "mode": "Hot-seat / Online"
+    },
+    {
+      "id": 364,
+      "rating": null,
+      "title_pt": null,
+      "title": "Worms Armageddon",
+      "year": 1999,
+      "platform": "PC",
+      "company": "Team17",
+      "genre": "Estratégia / humor",
+      "mode": "Hot-seat / Online"
     }
   ]
 }
