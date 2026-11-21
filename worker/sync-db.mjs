@@ -61,11 +61,27 @@ export async function main({ sql, games } = {}) {
     console.log(`upsert: ${done}/${list.length}`);
   }
 
+  /* Tombstone: jogos que saíram do JSON saem da base. Proteção contra
+     JSON truncado acidental: se a lista caiu a menos da metade do que
+     já existe na base (ou está vazia), pula a remoção e avisa. */
+  const ids = list.map((g) => g.id).filter((v) => v !== null && v !== undefined);
+  let removed = 0;
+  const [before] = await db`select count(*)::int as n from games`;
+  if (ids.length && ids.length >= Math.floor(before.n / 2)) {
+    const gone = await db`delete from games where not (id = any(${ids})) returning id`;
+    removed = (gone || []).length;
+    if (removed) console.log(`tombstone: ${removed} jogo(s) removido(s) da base`);
+  } else {
+    console.log(`tombstone: pulado (${ids.length} ids vs ${before.n} na base)`);
+  }
+
   const [count] = await db`select count(*)::int as n from games`;
   const [unset] =
     await db`select count(*)::int as n from games where engine is null and platform is null`;
-  console.log(`pronto — total na base: ${count.n} | sem engine e sem platform: ${unset.n}`);
-  return { chunks: Math.ceil(list.length / CHUNK), total: count.n };
+  console.log(
+    `pronto — total na base: ${count.n} (tombstone: ${removed}) | sem engine e sem platform: ${unset.n}`
+  );
+  return { chunks: Math.ceil(list.length / CHUNK), total: count.n, removed };
 }
 
 /* executado direto? roda; importado (tests/vitest)? fica em standby */
