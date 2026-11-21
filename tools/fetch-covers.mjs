@@ -50,6 +50,7 @@ const APPID_FIX = {
   277: null, // Commandos (1998) — pegava Origins
   279: null, // White Day (2001) — pegava o remake 2017
   283: null, // Perfect World (2006) — pegava versão 2024
+  88: null, // Wolfenstein (2009) — busca no Steam pegava Youngblood; SGDB resolve
 };
 
 const TITLE_FIX = {
@@ -61,6 +62,15 @@ const TITLE_FIX = {
   290: 'Mega Man X6',
   234: 'Sonic the Hedgehog',
   315: 'Legend of Zelda, The - Ocarina of Time',
+  42: 'Final DOOM', // Evilution
+  43: 'Final DOOM', // Plutonia Experiment
+  45: 'DOOM', // (2016)
+  79: 'God of War', // (2018) — ano resolve contra o 2005
+  88: 'Wolfenstein', // (2009)
+  89: 'Counter-Strike', // 1.6
+  119: "Freddy Fazbear's Pizzeria Simulator", // Five Nights at Freddy's: PS é o nome no Steam/SGDB
+  152: 'Final Fantasy Record Keeper', // mobile; SGDB tem sob o nome exato
+  190: 'IdleOn: The Idle RPG', // Steam/SGDB não usam o "Legends of"
   316: 'Legend of Zelda, The - A Link to the Past',
   317: 'Legend of Zelda, The - Majoras Mask',
   318: 'Legend of Zelda, The - Breath of the Wild',
@@ -268,6 +278,15 @@ function safeParse(text) {
 /* ---------------- SteamGridDB (arte vertical comunitária) ----------------
    Precisa da API key (gratuita): steamgriddb.com → Preferences → API.
    Lê de SGDB_API_KEY no ambiente ou do arquivo tools/.sgdb-key (gitignored). */
+/* Normaliza p/ comparar nomes cross-fonte: minusculas, sem acentos nem nao-alfanumericos. */
+const normKey = (s) =>
+  s
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .replace(/[^a-z0-9]/g, '')
+    .trim();
+
 function sgdbKey() {
   if (process.env.SGDB_API_KEY) return process.env.SGDB_API_KEY;
   const keyPath = new URL('./.sgdb-key', import.meta.url);
@@ -319,12 +338,7 @@ async function getIgdbToken() {
 async function coverFromIGDB(title, year) {
   const token = await getIgdbToken().catch(() => null);
   if (!token) return null;
-  const norm = (s) =>
-    s
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, '')
-      .trim();
-  const target = norm(title);
+  const target = normKey(title);
   const h = { 'Client-ID': igdbCreds().id, Authorization: `Bearer ${token}` };
   try {
     const res = await fetch('https://api.igdb.com/v4/games', {
@@ -337,7 +351,7 @@ async function coverFromIGDB(title, year) {
     const hits = await safeParse(await res.text());
     if (!Array.isArray(hits)) return null;
     const withCover = hits.filter((g) => g.cover?.image_id && g.name);
-    const exact = withCover.filter((g) => norm(g.name) === target);
+    const exact = withCover.filter((g) => normKey(g.name) === target);
     const pool = exact.length ? exact : withCover;
     if (!pool.length) return null;
     let best = pool[0];
@@ -364,15 +378,10 @@ async function coverFromIGDB(title, year) {
   }
 }
 
-async function coverFromSGDB(title) {
+async function coverFromSGDB(title, year) {
   const key = sgdbKey();
   if (!key) return null;
-  const norm = (s) =>
-    s
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, '')
-      .trim();
-  const target = norm(title);
+  const target = normKey(title);
   const h = { Authorization: `Bearer ${key}`, 'User-Agent': 'listajogos/1.0' };
   try {
     const res = await fetch(
@@ -383,10 +392,12 @@ async function coverFromSGDB(title) {
     const j = await safeParse(await res.text());
     const hits = j?.data || [];
     if (!hits.length) return null;
+    const relYear = (r) =>
+      r.release_date ? new Date(r.release_date * 1000).getUTCFullYear() : null;
+    const exact = hits.filter((r) => normKey(r.name) === target);
+    const byYear = year ? exact.filter((r) => Math.abs((relYear(r) ?? 9999) - year) <= 1) : [];
     const best =
-      hits.find((r) => norm(r.name) === target) ||
-      hits.find((r) => norm(r.name).startsWith(target)) ||
-      null;
+      byYear[0] || exact[0] || hits.find((r) => normKey(r.name).startsWith(target)) || null;
     if (!best) return null;
     await sleep(250);
     const gRes = await fetch(`https://www.steamgriddb.com/api/v2/grids/game/${best.id}`, {
@@ -406,6 +417,63 @@ async function coverFromSGDB(title) {
     if (!grids.length) return null;
     const img = await fetchBin(grids[0].url, 20000);
     if (img && img.size >= 6000) return { ...img, via: `steamgriddb/${best.id}` };
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/* ---------------- TheGamesDB (último recurso — limite de 1000 req/mês) ----------------
+   Chave em tools/.tgdb-key ou env TGDB_API_KEY. 1 request por jogo (busca já traz boxart). */
+function tgdbKey() {
+  if (process.env.TGDB_API_KEY) return process.env.TGDB_API_KEY;
+  const keyPath = new URL('./.tgdb-key', import.meta.url);
+  if (fs.existsSync(keyPath)) return fs.readFileSync(keyPath, 'utf8').trim();
+  return null;
+}
+
+async function coverFromTGDB(title, year) {
+  const key = tgdbKey();
+  if (!key) return null;
+  const target = normKey(title);
+  try {
+    const res = await fetch(
+      `https://api.thegamesdb.net/v1/Games/ByGameName?apikey=${key}&name=${encodeURIComponent(title)}&include=boxart`,
+      { signal: AbortSignal.timeout(12000) }
+    );
+    if (!res.ok) return null;
+    const j = await safeParse(await res.text());
+    const games = j?.data?.games || [];
+    if (!games.length) return null;
+    const boxart = j.include?.boxart || {};
+    const base = boxart.base_url || {};
+    const relYear = (g) => (g.released ? new Date(g.released).getUTCFullYear() : null);
+    const scored = games
+      .map((g) => {
+        const nk = normKey(g.game_title || '');
+        let score = 99;
+        if (nk === target) score = 0;
+        else if (nk.startsWith(target)) score = 1;
+        else if (target.startsWith(nk)) score = 2;
+        if (year && relYear(g) !== null)
+          score = Math.min(score, Math.abs(relYear(g) - year) <= 1 ? 0 : 5);
+        return { g, score };
+      })
+      .sort((a, b) => a.score - b.score);
+    for (const { g } of scored) {
+      const arts = Object.values(boxart.data || {}).filter(
+        (a) => a.game === g.id && a.type === 'front' && a.width < a.height
+      );
+      if (!arts.length) continue;
+      for (const a of arts) {
+        for (const root of [base.original, base.small]) {
+          if (!root) continue;
+          await sleep(250);
+          const img = await fetchBin(root + a.filename, 20000);
+          if (img && img.size >= 6000) return { ...img, via: `thegamesdb/${g.id}` };
+        }
+      }
+    }
     return null;
   } catch {
     return null;
@@ -476,8 +544,9 @@ async function main() {
     const isMapMod = /warcraft iii|mapa custom/i.test(plats);
     if (plats.includes('PC') && !isMapMod) got = await coverFromSteam(title, g.id);
     if (!got) got = await coverFromLibretro(libretroSystems(plats), title, libmaps);
-    if (!got) got = await coverFromSGDB(title);
+    if (!got) got = await coverFromSGDB(title, g.year);
     if (!got) got = await coverFromIGDB(title, g.year);
+    if (!got) got = await coverFromTGDB(title, g.year);
     if (got) {
       if (got.buf) {
         /* veio pronto (Steam) */
