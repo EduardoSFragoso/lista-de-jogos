@@ -29,10 +29,17 @@ lista_jogos/
 ├── worker/               Cloudflare Worker (a API)
 │   ├── src/index.js      rotas, validação, auth, CORS
 │   ├── schema.sql        CREATE TABLE do Neon
-│   ├── seed.sql          os 285 jogos (gerado por tools/generate-seed.mjs)
+│   ├── seed.sql          os 364 jogos (gerado por tools/generate-seed.mjs)
+│   ├── sync-db.mjs       sincroniza data/games.json → Neon (upsert idempotente)
 │   ├── wrangler.toml     config do deploy (vars, Hyperdrive opcional)
 │   └── package.json
-└── tools/generate-seed.mjs  regenera o seed.sql a partir de data/games.json
+├── .github/workflows/
+│   ├── lint.yml          Prettier + ESLint + Stylelint a cada push
+│   └── sync-neon.yml     roda worker/sync-db.mjs no push que mexer em data/games.json
+└── tools/
+    ├── generate-seed.mjs regenera o seed.sql a partir de data/games.json
+    ├── fetch-covers.mjs  caça capas (Steam → Libretro → SGDB → IGDB → TheGamesDB)
+    └── audit-covers.mjs  auditoria das capas baixadas
 ```
 
 ### Campos de cada jogo
@@ -49,12 +56,20 @@ lista_jogos/
 
 - **Pelo site (recomendado)**: clique num jogo → preencha campos/estrelas/review → SALVAR.
   Com a API configurada (⚙), isso grava direto no PostgreSQL via `PATCH /api/games/:id`.
-- **Pelo JSON**: edite `data/games.json` (serve de fallback offline), depois regenere e re rode o seed:
+- **Pelo JSON**: edite `data/games.json` (serve de fallback offline). No push que mexe nele,
+  o workflow `sync-neon.yml` sobe tudo pro Neon sozinho (`cd worker && node sync-db.mjs`).
+  `node tools/generate-seed.mjs` regenera `worker/seed.sql` se precisar reconstruir do zero.
 
-  ```bash
-  node tools/generate-seed.mjs   # regenera worker/seed.sql
-  # rode worker/seed.sql no SQL Editor do Neon Novamente
-  ```
+## 🎨 Capas
+
+Uma capa por jogo em `assets/covers/<id>.jpg`/`.png`, povoada por `tools/fetch-covers.mjs`
+(361/365 hoje). Fontes, em ordem: **Steam CDN** (`library_600x900`), **Libretro Thumbnails**
+(consoles retrô), **SteamGridDB**, **IGDB** e **TheGamesDB** (última, por causa do limite
+mensal). As chaves ficam em arquivos gitignored: `tools/.sgdb-key`, `tools/.igdb.json`,
+`tools/.tgdb-key` — podem vir de variáveis de ambiente (`SGDB_API_KEY`, `IGDB_CLIENT_ID`/
+`IGDB_CLIENT_SECRET`, `TGDB_API_KEY`). A Wikipédia foi dispensada (baixa qualidade).
+
+Detalhes em [assets/covers/README.md](assets/covers/README.md).
 
 ## 🛠 API (Worker)
 
@@ -122,13 +137,14 @@ npm run check    # formatação + lints — o que o CI roda (exige 100% verde)
 
 O passo a passo detalhado está em [`worker/README.md`](worker/README.md). Resumo:
 
-1. **Neon**: crie o projeto, copie a connection string, rode `worker/schema.sql` e `worker/seed.sql` no SQL Editor.
+1. **Neon**: crie o projeto, copie a connection string, rode `worker/schema.sql` no SQL Editor
+   e `cd worker && DATABASE_URL=... node sync-db.mjs` (ou deixe o workflow `sync-neon.yml`
+   subir o seed no primeiro push).
 2. **Cloudflare**: `cd worker && npm install && npx wrangler login`, configure os secrets (`DATABASE_URL`, `ADMIN_PASSWORD`, `SESSION_SECRET`) e `npx wrangler deploy`.
 3. **Site**: no ⚙ da página, cole a URL do Worker e a senha — o login abre uma sessão de 7 dias (cookie HttpOnly) e o site passa a gravar no banco.
 
 Sem API configurada, o site continua funcionando em **modo local** (lê `data/games.json`,
-salva edições no `localStorage` do navegador). Motivo do fallback: o front é estático —
-a linha de status no topo avisa quando está nesse modo.
+salva edições no `localStorage` do navegador). Motivo do fallback: o front é estático.
 
 ## 🙅 Sugestões de nome para o repositório
 
