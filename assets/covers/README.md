@@ -12,6 +12,19 @@ Exemplo: `assets/covers/49.jpg` aparece no card de _Adventure Quest_ (id 49).
   e até 440px de altura no modal.
 - Deploy é o mesmo push para o GitHub Pages — nada de serviço externo.
 
+## Thumbs (cards)
+
+Cards carregam `assets/covers/thumbs/<id>.webp` (160px, q80, ~9 KB média) e
+caem pro original em cadeia se o thumb não existir. O **modal carrega só o
+original** — zoom nunca perde resolução. Regenerar (incremental, só o que
+mudou):
+
+```bash
+npm run thumbs
+```
+
+Rode depois de adicionar/substituir capas — é rápido e versiona junto.
+
 ## Como povoar / atualizar
 
 ```bash

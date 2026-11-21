@@ -215,20 +215,23 @@ function closeModals() {
   document.getElementById('config-modal')?.remove();
 }
 
-/* Capa estática: assets/covers/<id>.jpg|.png|.webp.
-   Tenta cada extensão com onerror; sem capa nenhuma, remove o <img>. */
-function attachCover(img, id) {
+/* Capa estática: assets/covers/<id>.jpg|.png|.webp e thumb
+   assets/covers/thumbs/<id>.webp (cards; cai pro original se não houver).
+   Tenta cada candidato com onerror; sem capa nenhuma, remove o <img>. */
+function attachCover(img, id, thumb = false) {
   img.loading = 'lazy';
   img.alt = '';
-  const tryCover = (exts) => {
-    if (!exts.length) {
+  const originals = ['jpg', 'png', 'webp'].map((ext) => `assets/covers/${id}.${ext}`);
+  const chain = thumb ? [`assets/covers/thumbs/${id}.webp`, ...originals] : originals;
+  const tryCover = (urls) => {
+    if (!urls.length) {
       img.remove();
       return;
     }
-    img.src = `assets/covers/${id}.${exts[0]}`;
-    img.onerror = () => tryCover(exts.slice(1));
+    img.src = urls[0];
+    img.onerror = () => tryCover(urls.slice(1));
   };
-  tryCover(['jpg', 'png', 'webp']);
+  tryCover(chain);
 }
 
 function modalShell(titleText, modalId) {
@@ -593,7 +596,7 @@ function renderList(query = '') {
       {
         const cover = document.createElement('img');
         cover.className = 'cover';
-        attachCover(cover, eff.id);
+        attachCover(cover, eff.id, /* thumb, só no card */ true);
         li.appendChild(cover);
       }
 
