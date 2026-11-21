@@ -10,16 +10,23 @@ const REPORT = 'covers-report.txt';
 /* Appid correto do Steam quando a busca genérica erra (auditoria: tools/audit-covers.mjs).
    null = jogo não existe no Steam — não busca (evita pegar uma sequência/remake errado). */
 const APPID_FIX = {
+  30: null, // The Secret of Monkey Island (1990) — só a SE no Steam; você não jogou a SE
+  34: null, // Age of Empires (1997) — só a DE no Steam; você não jogou a DE
+  40: null, // Doom (1993) — no Steam só o pack "DOOM + DOOM II"
+  54: null, // Dark Souls (2011) — original delistado; você não jogou o Remastered
+  264: null, // Croc (PS1) — pega via Libretro, não via Steam
+  164: 49520, // Borderlands 2 (você jogou o 2)
+  170: 236110, // Dungeon Defenders II
+  196: 582010, // Monster Hunter: World
+  292: 20920, // The Witcher 2: Assassins of Kings
+  293: 292030, // The Witcher 3: Wild Hunt
+  294: 50620, // Darksiders (original)
   24: null, // Diablo (1996) — busca estava pegando Diablo IV
-  34: 1017900, // Age of Empires: Definitive Edition
-  40: 2280, // DOOM (1993)
   47: null, // The Sims (2000) — pegava Sims 4
   51: null, // TERA (delistada) — pegava Teravit
-  54: 570940, // Dark Souls Remastered
   96: null, // Ragnarok Online — pegava RO2
   101: null, // Rayman (1995) — pegava Legends
   162: 57300, // Amnesia: The Dark Descent
-  164: 729040, // Borderlands GOTY Enhanced
   186: null, // Injustice: Gods Among Us — pegava Injustice 2
   192: 241930, // Middle-earth: Shadow of Mordor (jogo separado do Shadow of War, id 286)
   286: 356190, // Middle-earth: Shadow of War
@@ -50,8 +57,14 @@ const TITLE_FIX = {
   154: 'The Legend of Zelda',
   249: 'Shadow of the Colossus',
   101: 'Rayman',
-  248: 'Mega Man',
+  248: 'Mega Man X5',
+  290: 'Mega Man X6',
   234: 'Sonic the Hedgehog',
+  315: 'Legend of Zelda, The - Ocarina of Time',
+  316: 'Legend of Zelda, The - A Link to the Past',
+  317: 'Legend of Zelda, The - Majoras Mask',
+  318: 'Legend of Zelda, The - Breath of the Wild',
+  326: 'Pokemon White Version 2',
   126: 'Pokemon Red Version',
   127: 'Pokemon Gold Version',
   128: 'Pokemon Ruby Version',
