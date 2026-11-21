@@ -2,7 +2,7 @@
 
 **PT-BR** · página estática com a lista de jogos que já joguei, em tema dark/neon, bilíngue (PT-BR / EN). Front no [GitHub Pages](https://pages.github.com/), API no Cloudflare Workers e dados num PostgreSQL no [Neon](https://neon.tech).
 
-**EN** · Static page with the list of games I have played (dark/neon theme, PT-BR/EN). Front on GitHub Pages, API on Cloudflare Workers, data in a PostgreSQL database on Neon.
+🌐 **English version:** [README.en.md](README.en.md)
 
 ## 🏗 Arquitetura
 
@@ -34,11 +34,12 @@ lista_jogos/
 │   ├── wrangler.toml     config do deploy (vars, Hyperdrive opcional)
 │   └── package.json
 ├── .github/workflows/
-│   ├── lint.yml          Prettier + ESLint + Stylelint a cada push
-│   └── sync-neon.yml     roda worker/sync-db.mjs no push que mexer em data/games.json
+│   ├── lint.yml          Prettier + ESLint + Stylelint + testes a cada push
+│   ├── sync-neon.yml     roda worker/sync-db.mjs no push que mexer em data/games.json
+│   └── dependabot.yml    dependabot semanal
 └── tools/
     ├── generate-seed.mjs regenera o seed.sql a partir de data/games.json
-    ├── fetch-covers.mjs  caça capas (Steam → Libretro → SGDB → IGDB → TheGamesDB)
+    ├── fetch-covers.mjs  caça capas (Steam → Libretro → xero/boxart → SGDB → IGDB → TheGamesDB)
     └── audit-covers.mjs  auditoria das capas baixadas
 ```
 
@@ -63,11 +64,13 @@ lista_jogos/
 ## 🎨 Capas
 
 Uma capa por jogo em `assets/covers/<id>.jpg`/`.png`, povoada por `tools/fetch-covers.mjs`
-(361/365 hoje). Fontes, em ordem: **Steam CDN** (`library_600x900`), **Libretro Thumbnails**
-(consoles retrô), **SteamGridDB**, **IGDB** e **TheGamesDB** (última, por causa do limite
-mensal). As chaves ficam em arquivos gitignored: `tools/.sgdb-key`, `tools/.igdb.json`,
-`tools/.tgdb-key` — podem vir de variáveis de ambiente (`SGDB_API_KEY`, `IGDB_CLIENT_ID`/
-`IGDB_CLIENT_SECRET`, `TGDB_API_KEY`). A Wikipédia foi dispensada (baixa qualidade).
+(360/364 hoje). Fontes, em ordem: **Steam CDN** (`library_600x900`), **Libretro Thumbnails**
+(consoles retrô), **xero/boxart** (coleção retro no GitHub), **SteamGridDB**, **IGDB** e
+**TheGamesDB** (última, por causa do limite mensal). As chaves ficam em arquivos gitignored:
+`tools/.sgdb-key`, `tools/.igdb.json`, `tools/.tgdb-key` — ou em variáveis de ambiente
+(`SGDB_API_KEY`, `IGDB_CLIENT_ID`/`IGDB_CLIENT_SECRET`, `TGDB_API_KEY`). A Wikipédia foi
+dispensada (baixa qualidade). Os 4 jogos sem capa são conteúdos de comunidade (mapas custom)
+ou webgames sem arte oficial — capa será de screenshot/art própria.
 
 Detalhes em [assets/covers/README.md](assets/covers/README.md).
 
