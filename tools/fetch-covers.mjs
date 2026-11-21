@@ -154,8 +154,8 @@ async function fetchBin(url, timeoutMs = 12000) {
     if (!res.ok) return null;
     const buf = Buffer.from(await res.arrayBuffer());
     const type = res.headers.get('content-type') || '';
-    if (!type.startsWith('image/') || buf.length < 2000) return null;
-    return { buf, ext: type.includes('png') ? 'png' : 'jpg' };
+    if (!type.startsWith('image/') || type.includes('svg') || buf.length < 2000) return null;
+    return { buf, ext: type.includes('png') ? 'png' : 'jpg', size: buf.length };
   } catch {
     return null;
   } finally {
@@ -306,7 +306,8 @@ async function coverFromWikipedia(title, year) {
     const src = await wikiSearchUrl(t, false);
     if (!src) continue;
     const img = await fetchBin(src, 20000);
-    if (img) return { ...img, via: `wikipedia/${t}` };
+    /* cover de verdade costuma ter dezenas de KB; < 8KB eh logo/icone */
+    if (img && img.size >= 8000) return { ...img, via: `wikipedia/${t}` };
   }
   /* segunda passada: thumbnail 640px (quando o artigo só tem pageimage pequena) */
   for (const t of candidates) {
@@ -314,7 +315,7 @@ async function coverFromWikipedia(title, year) {
     const src = await wikiSearchUrl(t, true);
     if (!src) continue;
     const img = await fetchBin(src, 20000);
-    if (img) return { ...img, via: `wikipedia-thumb/${t}` };
+    if (img && img.size >= 6000) return { ...img, via: `wikipedia-thumb/${t}` };
   }
   return null;
 }
