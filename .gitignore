@@ -4,5 +4,6 @@ Thumbs.db
 
 # cache da caçada de capas
 tools/.lists/
+*_-_*.json
 covers-run.log
 covers-report.txt
