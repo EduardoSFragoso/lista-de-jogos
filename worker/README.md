@@ -10,14 +10,15 @@ GitHub Pages (front estático)  →  Cloudflare Worker (esta API)  →  Neon (Po
 
 ## Rotas
 
-| Rota             | Método | Auth          | Descrição                             |
-| ---------------- | ------ | ------------- | ------------------------------------- |
-| `/api/health`    | GET    | pública       | `{ ok: true, total: 285 }`            |
-| `/api/games`     | GET    | pública       | lista completa de jogos               |
-| `/api/login`     | POST   | senha         | abre sessão (cookie HttpOnly, 7 dias) |
-| `/api/logout`    | POST   | —             | encerra a sessão                      |
-| `/api/games/:id` | PATCH  | sessão/bearer | atualiza campos (whitelist validada)  |
-| `/api/games`     | POST   | sessão/bearer | cria um jogo novo (id = max + 1)      |
+| Rota             | Método | Auth          | Descrição                                                           |
+| ---------------- | ------ | ------------- | ------------------------------------------------------------------- |
+| `/api/health`    | GET    | pública       | `{ ok: true, total: 285 }` (toca o banco)                           |
+| `/api/ping`      | GET    | pública       | `{ ok: true, worker: "up" }` (sem banco — usado pelo monitor no CI) |
+| `/api/games`     | GET    | pública       | lista completa de jogos                                             |
+| `/api/login`     | POST   | senha         | abre sessão (cookie HttpOnly, 7 dias)                               |
+| `/api/logout`    | POST   | —             | encerra a sessão                                                    |
+| `/api/games/:id` | PATCH  | sessão/bearer | atualiza campos (whitelist validada)                                |
+| `/api/games`     | POST   | sessão/bearer | cria um jogo novo (id = max + 1)                                    |
 
 Campos aceitos em PATCH/POST: `title`, `title_pt`, `year`, `platform`, `engine`,
 `rating` (1–5), `company`, `genre`, `mode`, `review` (≤ 4000). Qualquer outra
