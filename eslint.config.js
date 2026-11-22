@@ -4,7 +4,7 @@ export default [
     ignores: ['node_modules/', 'dist/', 'eslint.config.js', 'stylelint.config.js'],
   },
   {
-    files: ['**/*.js'],
+    files: ['**/*.js', '**/*.mjs'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',

@@ -23,7 +23,7 @@ function lit(v) {
 
 const META = ['title', 'title_pt', 'year', 'platform', 'engine', 'company', 'genre', 'mode'];
 
-let out = [
+const out = [
   '-- ============================================================',
   '-- Lista de Jogos — seed inicial (gerado por tools/generate-seed.mjs)',
   '-- Rode no SQL Editor do Neon DEPOIS do schema.sql.',
