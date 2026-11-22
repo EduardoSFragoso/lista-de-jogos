@@ -2,7 +2,8 @@
    lista-api — Cloudflare Worker + Neon (PostgreSQL)
    ------------------------------------------------------------
    API REST da Lista de Jogos:
-     GET    /api/health      → status do serviço (público)
+     GET    /api/health      → status do serviço (público, toca o banco)
+     GET    /api/ping        → vida do Worker, sem banco (público)
      GET    /api/games       → lista completa de jogos (público)
      PATCH  /api/games/:id   → atualiza campos de um jogo (auth)
      POST   /api/games       → cria um jogo novo (auth)
@@ -234,12 +235,19 @@ export default {
     if (req.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: corsHeaders(env) });
     }
+    const { pathname } = new URL(req.url);
+
+    /* -------- GET /api/ping --------
+       Checa vida do Worker sem tocar no banco — o monitor no CI
+       usa esta rota para o Neon poder dormir (scale-to-zero). */
+    if (req.method === 'GET' && pathname === '/api/ping') {
+      return json(env, { ok: true, worker: 'up' });
+    }
+
     if (!env.DATABASE_URL) {
       return fail(env, 500, 'DATABASE_URL não configurada no Worker');
     }
     const sql = neon(env.DATABASE_URL);
-    const url = new URL(req.url);
-    const { pathname } = url;
 
     try {
       /* -------- GET /api/health -------- */

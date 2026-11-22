@@ -28,6 +28,14 @@ describe('GET/OPTIONS (públicas)', () => {
     expect(res.status).toBe(500);
     expect((await res.json()).error).toMatch(/DATABASE_URL/);
   });
+
+  it('/api/ping responde ok mesmo sem DATABASE_URL (não toca no banco)', async () => {
+    const res = await worker.fetch(new Request('http://x.test/api/ping'), {
+      ALLOWED_ORIGIN: '*',
+    });
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ ok: true, worker: 'up' });
+  });
 });
 
 describe('autenticação das rotas de escrita', () => {
