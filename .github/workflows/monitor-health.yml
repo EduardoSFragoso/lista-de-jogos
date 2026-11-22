@@ -3,6 +3,10 @@
 # hora nos minutos 8 e 58 (UTC). O endpoint valida Worker
 # e banco (Neon) de uma vez: ele roda um `select count(*)`.
 #
+# 5 tentativas com 20s de espera cobrem o cold start do Neon
+# (compute suspende por inatividade; a primeira query falha,
+# as seguintes passam).
+#
 # Falha no job = e-mail automático do GitHub para quem
 # criou o commit mais recente da ação agendada.
 #
@@ -24,19 +28,15 @@ jobs:
     steps:
       - name: Verifica Worker + Neon
         run: |
-          for i in 1 2 3; do
-            if body=$(curl -sS --max-time 15 https://lista-api.eduardosfragoso.workers.dev/api/health); then
-              break
+          body=""
+          for i in 1 2 3 4 5; do
+            if body=$(curl -sS --max-time 15 https://lista-api.eduardosfragoso.workers.dev/api/health) &&
+               echo "$body" | grep -q '"ok":true'; then
+              echo "Resposta: $body"
+              exit 0
             fi
-            if [ "$i" = 3 ]; then
-              echo "Worker não respondeu após 3 tentativas"
-              exit 1
-            fi
-            echo "Tentativa $i falhou; repetindo em 20s"
+            echo "Tentativa $i: ${body:-sem resposta}; repetindo em 20s"
             sleep 20
           done
-          echo "Resposta: $body"
-          echo "$body" | grep -q '"ok":true' || {
-            echo "Health não retornou ok:true"
-            exit 1
-          }
+          echo "Falhou após 5 tentativas. Última resposta: $body"
+          exit 1
