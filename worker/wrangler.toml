@@ -14,6 +14,13 @@ compatibility_date = "2024-09-23"
 # Origem do front (GitHub Pages) enviada no header CORS.
 ALLOWED_ORIGIN = "https://eduardosfragoso.github.io"
 
+# Observability ligada no dashboard (22/11/2026) — espelhada aqui para
+# o deploy via CI não desligar no próximo `wrangler deploy`.
+[observability.logs]
+enabled = true
+invocation_logs = true
+persist = true
+
 # ------------------------------------------------------------------
 # Capas dos jogos NÃO ficam no Worker/R2: são arquivos estáticos em
 # assets/covers/<id>.jpg no GitHub Pages (ver assets/covers/README.md).
