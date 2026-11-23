@@ -36,6 +36,20 @@ describe('GET/OPTIONS (públicas)', () => {
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ ok: true, worker: 'up' });
   });
+
+  it("ALLOWED_ORIGIN '*' NÃO envia allow-credentials (proibido pelo CORS)", async () => {
+    const res = await worker.fetch(new Request('http://x.test/api/ping'), {
+      ALLOWED_ORIGIN: '*',
+    });
+    expect(res.headers.get('access-control-allow-origin')).toBe('*');
+    expect(res.headers.get('access-control-allow-credentials')).toBeNull();
+  });
+
+  it('sem ALLOWED_ORIGIN também não envia allow-credentials', async () => {
+    const res = await worker.fetch(new Request('http://x.test/api/ping'), {});
+    expect(res.headers.get('access-control-allow-origin')).toBe('*');
+    expect(res.headers.get('access-control-allow-credentials')).toBeNull();
+  });
 });
 
 describe('autenticação das rotas de escrita', () => {
@@ -71,5 +85,23 @@ describe('autenticação das rotas de escrita', () => {
     });
     const res = await worker.fetch(req, ENV);
     expect(res.status).toBe(401);
+  });
+
+  it('mais de 5 tentativas de login no mesmo IP → 429 (rate limit)', async () => {
+    // janela de 60s é compartilhada entre o teste do 401 acima (mesmo IP de
+    // teste, sem cf-connecting-ip) e este — por isso as tentativas somam.
+    const login = () =>
+      worker.fetch(
+        new Request('http://x.test/api/login', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', origin: ENV.ALLOWED_ORIGIN },
+          body: JSON.stringify({ password: 'nah' }),
+        }),
+        ENV
+      );
+    const responses = [];
+    for (let i = 0; i < 8; i++) responses.push(await login());
+    expect(responses.slice(0, 4).every((res) => res.status === 401)).toBe(true);
+    expect(responses[7].status).toBe(429);
   });
 });
