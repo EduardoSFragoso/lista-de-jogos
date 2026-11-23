@@ -1,0 +1,87 @@
+# Handoff — Lista de Jogos
+
+Estado, comandos e contratos para quem continuar (pessoa ou agente).
+Regras de desenvolvimento: [AGENTS.md](AGENTS.md). Checklist de
+infraestrutura: [docs/auditoria-infra.md](docs/auditoria-infra.md).
+
+## O que é
+
+Site estático de lista de jogos (PT-BR/EN) no **GitHub Pages**, com API
+opcional em **Cloudflare Worker** (`worker/`) e banco **Neon PostgreSQL**
+(para rating/review persistidos). Capas versionadas em `assets/covers/`
+com thumbs WebP em `assets/covers/thumbs/` (cards) — originais só no
+modal (zoom sem perda).
+
+- Site: `https://eduardosfragoso.github.io/lista-de-jogos/`
+- API: `https://lista-api.eduardosfragoso.workers.dev` (`/api/ping`,
+  `/api/games`, `/api/login`, ...)
+- Dados: `data/games.json` (fonte da verdade para render) + Neon
+  (sincronizado por `tools/sync-db.mjs` / workflow `sync-neon`).
+
+## Estrutura
+
+```text
+assets/          frontend (css, js, covers, fonts)
+data/            games.json + sql pontuais
+worker/          Cloudflare Worker (src/index.js, schema.sql, seed.sql)
+tools/           scripts vivos: audit-covers, ci-status, fetch-covers,
+                 generate-seed, make-thumbs, sync-db, pr-status
+test/            vitest (covers, sync-db, worker)
+.github/         workflows (lint, deploy-worker, monitor-health, sync-neon)
+docs/            checklist de auditoria de infraestrutura
+```
+
+## Comandos
+
+```bash
+npm install        # setup (raiz); worker/ tem package próprio
+npm run check      # prettier --check + eslint + stylelint + vitest
+npm run thumbs     # gera thumbs WebP faltantes/atualizadas (sharp)
+npm run sync-db    # aplica games.json no Neon (usa DATABASE_URL local)
+npm test           # só os testes
+```
+
+Todos os comandos acima devem passar verde antes de qualquer commit.
+
+## Contratos que não podem quebrar
+
+- **Merge na main: apenas "Rebase and merge"** — configurado nas settings
+  do repo e reforçado pelo ruleset "protege main" (PR obrigatório, check
+  `ESLint + Stylelint + Prettier + testes`, linear history, block force
+  pushes). Nada de squash/merge commit.
+- Pasta pública do Pages = raiz da `main`. Nenhum arquivo com segredo
+  pode ser versionado (o histórico é público).
+- O Worker deve responder `/api/ping` **sem** tocar no banco (rota antes
+  do check de `DATABASE_URL`) — o monitor de saúde usa isso para o Neon
+  poder dormir (scale-to-zero).
+- `corsHeaders` deve exigir origem explícita para `allow-credentials` —
+  nunca `*` com credenciais.
+- Login (`/api/login`) tem rate limit em memória: 5 tentativas/min por
+  IP → 429.
+- Assunto do commit: até 70 caracteres; detalhe no corpo.
+
+## Armadilhas conhecidas
+
+- `grep -c` retorna exit 1 em contagem zero — cuidar em cadeias `&&`.
+- Smart approve do Vibe bloqueia cadeias de push+`gh pr create` e
+  `gh workflow run`: repetir/separar o comando, na 2ª tentativa costuma
+  pedir confirmação ao usuário.
+- O CI do `deploy-worker` dispara só em mudanças em `worker/*`.
+- O monitor de saúde (cron `8,58 * * * *`) usa retry 5×20s para cobrir
+  cold start do Neon e rede/redeploy; falha → e-mail automático do GitHub.
+- Exceções de lint históricas: permissões de workflow são `contents: read`
+  em todos os workflows; não afrouxar.
+- `main.js` (~690 linhas) é um monolito deliberado (i18n + render +
+  modais): não refatorar sem rede de segurança nova e pedido explícito.
+
+## Pendências
+
+- Confirmar no dashboard Cloudflare que `ALLOWED_ORIGIN` está definida no
+  Worker (sem ela, frontend perde login — CORS vira `*` sem credenciais).
+- Neon: role da aplicação com privilégio mínimo (≠ owner), `sslmode=require`.
+- ~142 jogos sem `engine` preenchida (aguardando lista).
+- 4 capas custom por screenshot (ids 14, 15, 49, 152).
+- Rotação de `ADMIN_PASSWORD`/`SESSION_SECRET` a cada 6–12 meses.
+- Detector de segredos no histórico (gitleaks/trufflehog) ainda não rodou.
+- Rate limit do login é best effort em memória de isolate; se virar
+  problema real, migrar para Cloudflare KV/DO (hoje seria YAGNI).
