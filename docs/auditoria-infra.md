@@ -1,6 +1,6 @@
 # Auditoria de infraestrutura
 
-Checklist para projetos com **frontend no GitHub Pages, backend em VM (Oracle) e Postgres no Neon**, tudo no mesmo repositório. É referenciado pelo `AGENTS.md`.
+Checklist para projetos com **frontend no GitHub Pages, backend em Cloudflare Worker e Postgres no Neon**, tudo no mesmo repositório. É referenciado pelo `AGENTS.md`.
 
 **Regra de ouro:** nunca cole segredos reais (senhas, tokens, chaves, `DATABASE_URL` completa). Mascare valores e hosts em qualquer saída enviada a uma IA.
 
@@ -35,7 +35,7 @@ git log --all --diff-filter=A --name-only --format= | grep -Ei '\.env|\.pem|\.ke
 
 ### Se achar um segredo
 
-1. **Rotacione primeiro**: resete a senha da role no Neon, gere uma nova chave SSH ou de API, regenere tokens de terceiros.
+1. **Rotacione primeiro**: resete a senha da role no Neon, rotacione ADMIN_PASSWORD e SESSION_SECRET no Worker, regenere tokens de terceiros (IGDB/Twitch etc.).
 2. Só depois decida se vale reescrever o histórico. A rotação é o que realmente protege; apagar do código não basta.
 
 ## 2. Neon (Postgres)
@@ -50,7 +50,7 @@ Regras:
 
 - `DATABASE_URL` só no servidor, com `sslmode=require`.
 - A aplicação usa uma **role com privilégios mínimos**, nunca a dona do banco (`neondb_owner`). As migrações usam outra role.
-- Migrações versionadas (Alembic, Prisma Migrate, Flyway, node-pg-migrate etc.), testadas do zero na CI com um Postgres de serviço e aplicadas primeiro numa **branch do Neon** criada a partir da produção.
+- Migrações versionadas — neste projeto, SQL puro (`worker/schema.sql`, sem ORM), aplicado via SQL Editor do Neon. Antes de mudar o esquema, aplicar primeiro numa **branch do Neon** criada a partir da produção, com plano de reversão e backup/ponto de restauração confirmados.
 
 Consultas de leitura, para rodar numa branch:
 
@@ -66,40 +66,37 @@ WHERE grantee = 'NOME_DA_ROLE_DA_APLICACAO'
 ORDER BY table_schema, table_name;
 ```
 
-## 3. VM Oracle
+## 3. Cloudflare Worker (API)
 
-Comandos de **leitura** para a pessoa executar na VM (mascare IPs e hostnames antes de devolver a saída):
+Comandos de **leitura** (a pessoa executa, ou o agente com wrangler autenticado localmente; mascare hosts e segredos em qualquer saída enviada a uma IA):
 
 ```bash
-ss -tlnp
-sudo ufw status verbose
-sudo sshd -T | grep -Ei 'passwordauthentication|permitrootlogin|pubkeyauthentication'
-systemctl list-units --type=service --state=running --no-pager
-stat -c '%a %U:%G %n' /etc/NOME_DO_APP/*.env
+npx wrangler deployments list
+npx wrangler secret list
 ```
 
-O último comando mostra só as permissões do arquivo de ambiente (o esperado é `600`), sem ler o conteúdo.
-
-No console da Oracle, confira a **Security List / NSG**: só 80 e 443 públicas e SSH restrito.
+- `secret list` mostra só os **nomes** dos secrets — os valores nunca aparecem no dashboard nem no CLI.
+- Segredos **não** ficam no `wrangler.toml` versionado; só `[vars]` não sensíveis (ex.: `ALLOWED_ORIGIN`).
+- **Armadilha**: secret editado só pelo dashboard fica como versão pendente e o deployment entra em descompasso. Fluxo comprovado: `npx wrangler versions secret put NOME < arquivo` + `npx wrangler versions deploy --version-id <id> --percentage 100 -y`.
 
 Verificações de HTTPS e CORS, a partir de qualquer máquina:
 
 ```bash
-curl -sI https://api.exemplo.com | head -n 5
-curl -s -D - -o /dev/null -H 'Origin: https://evil.example' https://api.exemplo.com/health
-curl -s -D - -o /dev/null -H 'Origin: https://USUARIO.github.io' https://api.exemplo.com/health
+curl -sI https://api.exemplo.com/api/health | head -n 5
+curl -s -D - -o /dev/null -H 'Origin: https://evil.example' https://api.exemplo.com/api/health
+curl -s -D - -o /dev/null -H 'Origin: https://USUARIO.github.io' https://api.exemplo.com/api/health
 ```
 
-- O Pages é https, então a API também precisa ser (domínio e certificado válidos, por exemplo Caddy ou nginx com certbot).
-- Para a origem estranha **não** deve voltar `Access-Control-Allow-Origin`. Para a origem do Pages deve voltar exatamente essa origem, nunca `*`.
-- Se o login usar cookies entre domínios, use `SameSite=None; Secure` e proteção contra CSRF.
+- O domínio `*.workers.dev` traz HTTPS automático; se usar domínio próprio, confira certificado.
+- Para a origem estranha **não** deve voltar `Access-Control-Allow-Origin`. Para a origem do Pages deve voltar exatamente essa origem, nunca `*` com credenciais.
+- Se o login usar cookies entre domínios, use `SameSite=None; Secure` e proteção contra CSRF. O cookie de sessão é `HttpOnly` e invisível para o JavaScript do site.
+- Rate limit nas rotas sensíveis (neste projeto: `/api/login`, limite em memória do isolate).
 
-Boas práticas:
+Diagnóstico de runtime:
 
-- aplicação rodando por `systemd`, com usuário sem privilégios;
-- segredos em arquivo de ambiente com permissão 600;
-- atualizações automáticas do sistema;
-- deploy com uma chave dedicada e de escopo restrito, guardada em GitHub Environments, e não a chave SSH pessoal.
+```bash
+npx wrangler tail --format pretty
+```
 
 ## 4. Backend
 
@@ -129,4 +126,4 @@ Confirme que cada teste novo **falha** no código antigo antes de confiar nele.
 
 ## O que o agente não deve fazer sem confirmação
 
-DROP, TRUNCATE, apagar volumes ou branches, alterar firewall ou Security List, reiniciar serviços, aplicar migração na produção, reescrever o histórico do Git ou fazer push forçado.
+DROP, TRUNCATE, DELETE sem WHERE, apagar branches ou secrets, mudar `ALLOWED_ORIGIN`, aplicar migração na produção, reescrever o histórico do Git e fazer push forçado — nada disso sem confirmação explícita.

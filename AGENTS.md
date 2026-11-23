@@ -90,13 +90,14 @@
 - Em repositório público, todo o histórico é público. No frontend só podem existir chaves feitas para serem públicas.
 - Configure CORS apenas com as origens necessárias (nunca `*` com credenciais) e faça o frontend chamar a API somente por HTTPS.
 
-## Projetos com frontend no GitHub Pages, backend em VM e banco no Neon
+## Projetos com frontend no GitHub Pages, backend em Cloudflare Worker e banco no Neon
 
 - Confirme o que o Pages publica: apenas a pasta do frontend. Nada do backend, `.env`, dumps ou código do servidor pode ficar acessível por URL.
-- O frontend chama a API somente por HTTPS, e o CORS aceita só a origem do Pages.
-- O banco só é acessado pelo servidor: `DATABASE_URL` fora do frontend e do repositório, com `sslmode=require`. A aplicação usa uma role com privilégios mínimos, nunca a dona do banco.
-- Migrações são versionadas, testadas do zero na CI com um Postgres efêmero e aplicadas primeiro numa branch do Neon, nunca direto na produção. Não mude o esquema sem plano de reversão e sem confirmar que existe backup ou ponto de restauração.
-- Na VM e no banco real, o agente só **sugere comandos de leitura**; a pessoa executa e devolve a saída com segredos e hosts mascarados. Nada destrutivo (DROP, TRUNCATE, apagar volumes, mudar firewall, reiniciar serviços) sem confirmação explícita.
+- O frontend chama a API somente por HTTPS (o `*.workers.dev` traz HTTPS automático), e o CORS aceita só a origem do Pages.
+- O banco só é acessado pelo Worker: `DATABASE_URL` somente como secret do Worker (nunca no `wrangler.toml` versionado, no frontend nem no repositório), com `sslmode=require`. A aplicação usa uma role com privilégios mínimos, nunca a dona do banco.
+- Segredos editados só pelo dashboard do Cloudflare ficam pendentes e descompassam o deploy: use `wrangler versions secret put` + `wrangler versions deploy`.
+- Migrações são SQL puro versionado (`worker/schema.sql`, sem ORM), aplicadas primeiro numa branch do Neon, nunca direto na produção. Não mude o esquema sem plano de reversão e sem confirmar que existe backup ou ponto de restauração.
+- No Worker e no banco real, o agente só **sugere comandos de leitura** (ex.: `wrangler deployments list`, `wrangler secret list`, queries SQL); a pessoa executa e devolve a saída com segredos e hosts mascarados. Nada destrutivo (DROP, TRUNCATE, DELETE sem WHERE, apagar secrets ou branches, trocar `ALLOWED_ORIGIN`) sem confirmação explícita.
 - Checklist e comandos de leitura: `docs/auditoria-infra.md`.
 
 ## Uso de assistentes de IA
