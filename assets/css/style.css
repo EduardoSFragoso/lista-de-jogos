@@ -184,6 +184,24 @@ body {
   font-size: 0.85rem;
 }
 
+/* badge "modo local" — só aparece sem API configurada */
+.mode-badge {
+  margin-right: 0.75rem;
+  padding: 0.1rem 0.55rem;
+  border: 1px solid var(--yellow);
+  border-radius: 999px;
+  color: var(--yellow);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  vertical-align: 0.1em;
+}
+
+#mode-badge[hidden] {
+  display: none;
+}
+
 /* --------- lista --------- */
 main {
   flex: 1;

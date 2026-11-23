@@ -48,6 +48,12 @@ const I18N = {
     apiConnected: 'CONECTADO ✓',
     connectFailed: '✖ falha ao conectar',
     apiClear: 'Sair e limpar URL',
+    modeLocal: '⊙ modo local',
+    modeLocalTitle: 'Salvo apenas neste navegador (API desconectada)',
+    localEditsConfirm: (n) =>
+      `Este navegador tem ${n} edição(ões) local(is) (feitas sem a API ` +
+      'conectada). Descartar agora e mostrar só os dados do banco? ' +
+      '"Cancelar" mantém as edições por cima dos dados do banco.',
   },
   en: {
     pageTitle: 'Games List',
@@ -85,6 +91,12 @@ const I18N = {
     apiConnected: 'CONNECTED ✓',
     connectFailed: '✖ failed to connect',
     apiClear: 'Sign out and clear URL',
+    modeLocal: '⊙ local mode',
+    modeLocalTitle: 'Saved in this browser only (API disconnected)',
+    localEditsConfirm: (n) =>
+      `This browser has ${n} local edit(s) (made with the API ` +
+      'disconnected). Discard them now and show only the database data? ' +
+      '"Cancel" keeps the edits overlaid on the database data.',
   },
 };
 
@@ -111,6 +123,18 @@ function applyI18n() {
     if (typeof dict[key] === 'string') el.setAttribute('placeholder', dict[key]);
   });
   $('#lang-toggle').textContent = LANG === 'pt-br' ? 'EN' : 'PT-BR';
+  updateModeBadge();
+}
+
+/* ---------- badge de modo (API vs local) ---------- */
+
+function updateModeBadge() {
+  const badge = $('#mode-badge');
+  if (!badge) return;
+  const dict = I18N[LANG];
+  badge.hidden = apiConfigured();
+  badge.textContent = dict.modeLocal;
+  badge.title = dict.modeLocalTitle;
 }
 
 /* ---------- edições locais (nota, review, correções) ---------- */
@@ -640,11 +664,26 @@ function renderList(query = '') {
 
 /* ---------- boot ---------- */
 
+/* pergunta sobre descartar edições locais no máximo 1x por sessão */
+let localEditsPromptShown = false;
+
+function maybeDiscardLocalEdits() {
+  if (localEditsPromptShown || EDITS.size === 0) return;
+  localEditsPromptShown = true;
+  if (confirm(I18N[LANG].localEditsConfirm(EDITS.size))) {
+    EDITS.clear();
+    persistEdits();
+    renderList($('#search').value);
+  }
+}
+
 async function loadGames() {
+  updateModeBadge();
   try {
     if (apiConfigured()) {
       /* API (Worker + Neon): dados sempre frescos do banco */
       GAMES = await fetchGames();
+      maybeDiscardLocalEdits();
     } else {
       /* modo local: JSON estático + edições do localStorage */
       const res = await fetch('data/games.json');
