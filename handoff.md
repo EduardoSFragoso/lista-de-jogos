@@ -73,15 +73,36 @@ Todos os comandos acima devem passar verde antes de qualquer commit.
   em todos os workflows; não afrouxar.
 - `main.js` (~690 linhas) é um monolito deliberado (i18n + render +
   modais): não refatorar sem rede de segurança nova e pedido explícito.
+- **Secrets no Cloudflare por dashboard criam versões pendentes** que
+  desafinam do deploy (`wrangler secret put` falha com "latest version
+  ... isn't currently deployed"). Caminho confiável, sem clipboard:
+  `wrangler versions secret put <NOME>` + `wrangler versions deploy
+--version-id <id> --percentage 100 -y`.
+- **Configuration-only settings do dashboard (ex.: Observability) podem
+  ser sobrescritas pelo próximo deploy**: manter o `wrangler.toml` do
+  repo espelhado (fecho do banner "Update your Wrangler configuration").
+- **500 "erro interno do Worker" com banco** normalmente é autenticação
+  (veja `wrangler tail`) — password velha na string, role errada; o log
+  do Events do dashboard costuma truncar a causa.
+
+## Banco: roles e recuperação
+
+- Worker e sync-neon conectam com a role **`lista_app`** (privilégio
+  mínimo: SELECT/INSERT/UPDATE/DELETE em `games`); a role dona (
+  `neondb_owner`) é só para DDL manual no SQL Editor (schema, grants).
+- Após **DROP/recriação da tabela**, refazer os `grant` da `lista_app` —
+  privilégios morrem com a tabela. Reconstrução completa: `schema.sql`
+  - `seed.sql` no SQL Editor (perde apenas rating/review).
 
 ## Pendências
 
-- Confirmar no dashboard Cloudflare que `ALLOWED_ORIGIN` está definida no
-  Worker (sem ela, frontend perde login — CORS vira `*` sem credenciais).
-- Neon: role da aplicação com privilégio mínimo (≠ owner), `sslmode=require`.
 - ~142 jogos sem `engine` preenchida (aguardando lista).
 - 4 capas custom por screenshot (ids 14, 15, 49, 152).
-- Rotação de `ADMIN_PASSWORD`/`SESSION_SECRET` a cada 6–12 meses.
+- Rotação de `ADMIN_PASSWORD`/`SESSION_SECRET` a cada 6–12 meses
+  (`DATABASE_URL` já rotacionou na migração para a `lista_app`).
 - Detector de segredos no histórico (gitleaks/trufflehog) ainda não rodou.
 - Rate limit do login é best effort em memória de isolate; se virar
   problema real, migrar para Cloudflare KV/DO (hoje seria YAGNI).
+- Restore point-in-time do Neon (plano free tem janela limitada): usar
+  apenas quando o banco tiver dados reais/valiosos; hoje o seed do repo
+  reconstrói tudo menos rating/review.
