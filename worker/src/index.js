@@ -49,11 +49,16 @@ const SESSION_TTL = 7 * 24 * 60 * 60; // 7 dias, em segundos
 /* ---------------- helpers de resposta/CORS ---------------- */
 
 function corsHeaders(env) {
-  return {
-    'access-control-allow-origin': env.ALLOWED_ORIGIN || '*',
+  /* Origem explícita (ALLOWED_ORIGIN) → ecoa a origem e permite credenciais
+     (login via cookie). Sem origem definida (ou '*') → só '*', SEM
+     allow-credentials: a combinação `*` + credenciais é rejeitada pelo
+     CORS e proibida pela nossa regra interna. */
+  const origin = env.ALLOWED_ORIGIN || '';
+  const explicit = origin !== '' && origin !== '*';
+  const headers = {
+    'access-control-allow-origin': explicit ? origin : '*',
     'access-control-allow-methods': 'GET, POST, PATCH, OPTIONS',
     'access-control-allow-headers': 'Content-Type, Authorization',
-    'access-control-allow-credentials': 'true',
     'access-control-max-age': '86400',
     vary: 'Origin',
     /* cabeçalhos de segurança — vão em TODA resposta */
@@ -61,6 +66,10 @@ function corsHeaders(env) {
     'x-frame-options': 'DENY',
     'referrer-policy': 'strict-origin-when-cross-origin',
   };
+  if (explicit) {
+    headers['access-control-allow-credentials'] = 'true';
+  }
+  return headers;
 }
 
 function json(env, data, status = 200, extraHeaders = {}) {
@@ -169,6 +178,33 @@ async function authorized(req, env) {
   return sessionValid(req, env);
 }
 
+/* ---------------- rate limit do /api/login ---------------- */
+
+/* Janela fixa em memória do isolate: o Cloudflare não garante um único
+   isolate, então é "best effort" (um atacante espalhado entre colos pode
+   passar de 5/min). Já mata tentativa ingênua de força bruta sem
+   dependência externa (KV/DO seriam nova infraestrutura — YAGNI). */
+const LOGIN_WINDOW_MS = 60_000;
+const LOGIN_MAX = 5;
+const loginAttempts = new Map(); // ip -> { windowStart: number, count: number }
+
+function loginRateLimited(ip) {
+  const now = Date.now();
+  const rec = loginAttempts.get(ip);
+  if (!rec || now - rec.windowStart > LOGIN_WINDOW_MS) {
+    loginAttempts.set(ip, { windowStart: now, count: 1 });
+    return false;
+  }
+  rec.count += 1;
+  /* poda para o Map não crescer indefinidamente */
+  if (loginAttempts.size > 1000) {
+    for (const [k, v] of loginAttempts) {
+      if (now - v.windowStart > LOGIN_WINDOW_MS) loginAttempts.delete(k);
+    }
+  }
+  return rec.count > LOGIN_MAX;
+}
+
 /** Em rotas de escrita autenticadas por cookie, exige Origin confiável. */
 function originAllowed(req, env) {
   if (!env.ALLOWED_ORIGIN || env.ALLOWED_ORIGIN === '*') return true; // dev/teste
@@ -268,6 +304,10 @@ export default {
 
       /* -------- POST /api/login (abre sessão) -------- */
       if (req.method === 'POST' && pathname === '/api/login') {
+        const ip = req.headers.get('cf-connecting-ip') || 'desconhecido';
+        if (loginRateLimited(ip)) {
+          return fail(env, 429, 'muitas tentativas — tente novamente em 1 minuto');
+        }
         if (!env.ADMIN_PASSWORD) {
           return fail(env, 500, 'ADMIN_PASSWORD não configurada no Worker');
         }
