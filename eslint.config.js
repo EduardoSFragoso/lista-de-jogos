@@ -16,6 +16,7 @@ export default [
         fetch: 'readonly',
         console: 'readonly',
         prompt: 'readonly',
+        confirm: 'readonly',
         URL: 'readonly',
       },
     },
