@@ -121,10 +121,12 @@ Todos os comandos acima devem passar verde antes de qualquer commit.
 - **Settings do GitHub a aplicar pelo dono** (auditoria de 2026-11-23):
   Dependabot security updates ligado ✅; Dependabot alerts ✅; malware
   alerts ligado ✅; "conversas resolvidas" na ruleset ✅; private
-  vulnerability reporting ✅; **trocar o Source do Pages para
-  "GitHub Actions"** (Settings → Pages) depois do merge do workflow
-  `deploy-pages.yml` — até lá a publicação antiga (raiz da main via
-  `pages-build-deployment`) continua valendo.
+  vulnerability reporting ✅; CodeQL com set-up default ligado ✅
+  (primeiro scan em 2026-11-23: **0 alertas**; virar check obrigatório
+  na ruleset só após ~2 semanas observando o ruído); **trocar o Source
+  do Pages para "GitHub Actions"** (Settings → Pages) depois do merge
+  do workflow `deploy-pages.yml` — até lá a publicação antiga (raiz da
+  main via `pages-build-deployment`) continua valendo.
 - Hook local de pre-commit com gitleaks (comando no
   `docs/configuracao-repositorio.md`); o histórico já foi varrido
   (70 commits, limpo) e `npm audit` está zerado.
