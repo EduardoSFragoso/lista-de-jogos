@@ -94,13 +94,31 @@ Todos os comandos acima devem passar verde antes de qualquer commit.
   privilégios morrem com a tabela. Reconstrução completa: `schema.sql`
   - `seed.sql` no SQL Editor (perde apenas rating/review).
 
+## Política de assinatura e autoria de commits
+
+- Commits são feitos pelo Vibe com o trailer `Co-Authored-By: Mistral Vibe
+<vibe@mistral.ai>`; **não há assinatura criptográfica exigida** hoje.
+- A ruleset **não** exige _Require signed commits_ — segundo
+  `docs/configuracao-repositorio.md`, a exigência deve ser testada num PR
+  descartável antes de ligada (armadilha do rebase/squash de commits do
+  agente).
+- Push direto na `main` é bloqueado pela ruleset; todo trabalho entra por
+  PR com merge **rebase only**.
+
 ## Pendências
 
 - ~142 jogos sem `engine` preenchida (aguardando lista).
 - 4 capas custom por screenshot (ids 14, 15, 49, 152).
-- Rotação de `ADMIN_PASSWORD`/`SESSION_SECRET` a cada 6–12 meses
-  (`DATABASE_URL` já rotacionou na migração para a `lista_app`).
-- Detector de segredos no histórico (gitleaks/trufflehog) ainda não rodou.
+- Rotação de `ADMIN_PASSWORD`/`SESSION_SECRET`: **sem força de pendência**
+  (decisão do dono: projeto pessoal, sem dados sensíveis no banco). É só
+  pedir em qualquer sessão que o fluxo do wrangler é guiado.
+- **Settings do GitHub a aplicar pelo dono** (auditoria de 2026-11-23):
+  Dependabot security updates ligado; "conversas resolvidas" na ruleset;
+  avaliar Pages publicando só o frontend (hoje sai a raiz inteira);
+  private vulnerability reporting.
+- Hook local de pre-commit com gitleaks (comando no
+  `docs/configuracao-repositorio.md`); o histórico já foi varrido
+  (70 commits, limpo) e `npm audit` está zerado.
 - Rate limit do login é best effort em memória de isolate; se virar
   problema real, migrar para Cloudflare KV/DO (hoje seria YAGNI).
 - Restore point-in-time do Neon (plano free tem janela limitada): usar
