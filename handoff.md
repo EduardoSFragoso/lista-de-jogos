@@ -119,11 +119,12 @@ Todos os comandos acima devem passar verde antes de qualquer commit.
   (decisão do dono: projeto pessoal, sem dados sensíveis no banco). É só
   pedir em qualquer sessão que o fluxo do wrangler é guiado.
 - **Settings do GitHub a aplicar pelo dono** (auditoria de 2026-11-23):
-  Dependabot security updates ligado ✅; "conversas resolvidas" na
-  ruleset ✅; private vulnerability reporting ✅; **trocar o Source do
-  Pages para "GitHub Actions"** (Settings → Pages) depois do merge do
-  workflow `deploy-pages.yml` — até lá a publicação antiga (raiz da
-  main via `pages-build-deployment`) continua valendo.
+  Dependabot security updates ligado ✅; Dependabot alerts ✅; malware
+  alerts ligado ✅; "conversas resolvidas" na ruleset ✅; private
+  vulnerability reporting ✅; **trocar o Source do Pages para
+  "GitHub Actions"** (Settings → Pages) depois do merge do workflow
+  `deploy-pages.yml` — até lá a publicação antiga (raiz da main via
+  `pages-build-deployment`) continua valendo.
 - Hook local de pre-commit com gitleaks (comando no
   `docs/configuracao-repositorio.md`); o histórico já foi varrido
   (70 commits, limpo) e `npm audit` está zerado.
