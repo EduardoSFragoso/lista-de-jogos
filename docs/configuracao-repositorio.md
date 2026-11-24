@@ -64,7 +64,7 @@ Por isso: **teste num PR descartável** antes de exigir assinatura, principalmen
   - _Allow GitHub Actions to create and approve pull requests_ só se um workflow realmente abrir PRs.
   - Aprovação obrigatória para workflows de colaboradores externos.
 - **Environments** (por exemplo `producao`) com revisores obrigatórios e segredos de deploy (ex.: `CLOUDFLARE_API_TOKEN`), quando houver equipe. Num projeto individual, secrets no nível do repositório (como os atuais `CLOUDFLARE_API_TOKEN` e `DATABASE_URL`) são aceitáveis.
-- **Pages:** em **Settings → Pages**, publique só a pasta do frontend e ative _Enforce HTTPS_.
+- **Pages:** em **Settings → Pages**, o Source deve ser **GitHub Actions** (workflow `deploy-pages.yml`), que publica só o frontend, com _Enforce HTTPS_ ativo.
 
 ## 4. Arquivos de apoio no repositório
 
