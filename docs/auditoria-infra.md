@@ -119,7 +119,7 @@ Confirme que cada teste novo **falha** no código antigo antes de confiar nele.
 
 ## 6. CI e deploy do Pages
 
-- A CI gera exatamente o que será publicado no Pages.
+- Publicação do Pages **via Actions** (`.github/workflows/deploy-pages.yml`): o workflow empacota só o frontend e é o único produtor do site — a CI gera exatamente o que será publicado.
 - `permissions` mínimas (`contents: read`); as GitHub Actions ficam atualizadas.
 - Proteção da branch principal: PR, check obrigatório e método de merge definido no `handoff.md`.
 - PRs abertos por workflows com o `GITHUB_TOKEN` (autor `github-actions[bot]`) ficam em _Action required_ e só rodam a CI depois de **Approve workflows to run**.

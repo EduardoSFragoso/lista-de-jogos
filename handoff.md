@@ -27,8 +27,10 @@ worker/          Cloudflare Worker (src/index.js, schema.sql, seed.sql)
 tools/           scripts vivos: audit-covers, ci-status, fetch-covers,
                  generate-seed, make-thumbs, sync-db, pr-status
 test/            vitest (covers, sync-db, worker)
-.github/         workflows (lint, deploy-worker, monitor-health, sync-neon)
-docs/            checklist de auditoria de infraestrutura
+.github/         workflows (lint, deploy-worker, deploy-pages,
+                 monitor-health, sync-neon)
+docs/            checklists: auditoria de infraestrutura e
+                 configuração do repositório
 ```
 
 ## Comandos
@@ -49,8 +51,12 @@ Todos os comandos acima devem passar verde antes de qualquer commit.
   do repo e reforçado pelo ruleset "protege main" (PR obrigatório, check
   `ESLint + Stylelint + Prettier + testes`, linear history, block force
   pushes). Nada de squash/merge commit.
-- Pasta pública do Pages = raiz da `main`. Nenhum arquivo com segredo
-  pode ser versionado (o histórico é público).
+- Publicação do Pages: **workflow `.github/workflows/deploy-pages.yml`**
+  empacota só o frontend (`index.html`, `assets/`, `data/games.json`);
+  Nada mais (worker/, docs/, dumps) fica acessível por URL. Qualquer
+  arquivo novo do frontend precisa entrar no passo "Monta o pacote" do
+  workflow. Nenhum arquivo com segredo pode ser versionado mesmo assim
+  (o histórico é público).
 - O Worker deve responder `/api/ping` **sem** tocar no banco (rota antes
   do check de `DATABASE_URL`) — o monitor de saúde usa isso para o Neon
   poder dormir (scale-to-zero).
@@ -113,9 +119,11 @@ Todos os comandos acima devem passar verde antes de qualquer commit.
   (decisão do dono: projeto pessoal, sem dados sensíveis no banco). É só
   pedir em qualquer sessão que o fluxo do wrangler é guiado.
 - **Settings do GitHub a aplicar pelo dono** (auditoria de 2026-11-23):
-  Dependabot security updates ligado; "conversas resolvidas" na ruleset;
-  avaliar Pages publicando só o frontend (hoje sai a raiz inteira);
-  private vulnerability reporting.
+  Dependabot security updates ligado ✅; "conversas resolvidas" na
+  ruleset ✅; private vulnerability reporting ✅; **trocar o Source do
+  Pages para "GitHub Actions"** (Settings → Pages) depois do merge do
+  workflow `deploy-pages.yml` — até lá a publicação antiga (raiz da
+  main via `pages-build-deployment`) continua valendo.
 - Hook local de pre-commit com gitleaks (comando no
   `docs/configuracao-repositorio.md`); o histórico já foi varrido
   (70 commits, limpo) e `npm audit` está zerado.
