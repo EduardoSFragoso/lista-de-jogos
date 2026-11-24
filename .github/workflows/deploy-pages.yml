@@ -44,5 +44,12 @@ jobs:
         with:
           path: _site
 
+      # O artefato (~120 MB de capas/thumbs) finaliza no blob storage
+      # antes de aparecer no índice consultado pelo deploy-pages —
+      # lag de consistência do backend de artefatos. A espera evita
+      # "No artifacts named github-pages".
+      - name: Espera o índice de artefatos
+        run: sleep 30
+
       - id: deployment
         uses: actions/deploy-pages@v4
