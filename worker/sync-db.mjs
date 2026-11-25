@@ -9,7 +9,7 @@
      (ou adicione DATABASE_URL ao ~/.bashrc / variáveis locais)
 
    Guardas de integridade (rating e review existem SÓ no Neon;
-   games.json não os tem — perdi uma nota se os ids mudarem):
+   games.json não os tem — a nota se perde ou muda de jogo se os ids mudarem):
      G1 — renumeração: se mais de 3 ids que existem dos dois lados
        mudaram de título (trim + minúsculas), não escreve nada e
        sai com erro: nota fica no id, título mudado com massa
@@ -58,7 +58,7 @@ export async function main({ sql, games } = {}) {
 
   /* G1 — guarda contra renumeração de ids: compara títulos de ids que
      existem na base E no JSON; mudança de título em massa sugere que a
-     nota (rating/review, que mora no id) fiaría no jogo errado. */
+     nota (rating/review, que mora no id) ficaria no jogo errado. */
   const banco = await db`select id, title from games`;
   const tituloDoJson = new Map(
     list
