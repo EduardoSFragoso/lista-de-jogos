@@ -3,8 +3,6 @@
    teste toca em rede ou banco. Rodar: npm test (vitest run).
 
    Índices dos parâmetros capturados, para leitura dos `values`:
-   - POST /api/games (insert): 0 title, 1 title_pt, 2 year, 3 platform,
-     4 engine, 5 rating, 6 company, 7 genre, 8 mode, 9 review.
    - PATCH /api/games/:id (update): pares flag/val na ordem title (0/1),
      title_pt (2/3), platform (4/5), engine (6/7), company (8/9),
      genre (10/11), mode (12/13), review (14/15), year (16/17),
@@ -169,52 +167,48 @@ describe('GET públicos e cabeçalhos de resposta', () => {
   });
 });
 
-describe('POST /api/games — criação com Bearer', () => {
-  it('Bearer e Origin certos → 201; campos ausentes viram null no SQL', async () => {
-    estado.fila = [[LINHA_JOGO]];
-    const res = await postComBearer({ title: 'Novo Jogo', rating: 5 });
-    expect(res.status).toBe(201);
-    expect(estado.chamadas).toHaveLength(1);
-    expect(estado.chamadas[0].strings.join(' ')).toContain('insert into games');
-    /* COMPORTAMENTO ATUAL (auditoria): campos ausentes chegam ao SQL como
-       `undefined` (o `f` do validate não tem a chave); o driver serializa
-       undefined → null no JSON da requisição HTTP para o Neon — não é o
-       texto SQL que garante null, é a serialização do driver. */
-    expect(estado.chamadas[0].values).toEqual([
-      'Novo Jogo',
-      undefined, // title_pt ausente
-      undefined, // year ausente
-      undefined, // platform ausente
-      undefined, // engine ausente
-      5, // rating
-      undefined, // company ausente
-      undefined, // genre ausente
-      undefined, // mode ausente
-      undefined, // review ausente
-    ]);
-  });
+describe('validate() do PATCH — normalização do corpo (migrado do POST removido)', () => {
+  /** PATCH com corpo cru (sem passar por JSON.stringify dos helpers). */
+  const patchRaw = (cru, env = ENV) =>
+    worker.fetch(
+      new Request('http://x.test/api/games/42', {
+        method: 'PATCH',
+        headers: {
+          'content-type': 'application/json',
+          'cf-connecting-ip': ipNovo(),
+          origin: ORIGEM,
+          authorization: BEARER,
+        },
+        body: cru,
+      }),
+      env
+    );
 
   it('title é aparado (trim) antes de ir ao SQL', async () => {
     estado.fila = [[LINHA_JOGO]];
-    const res = await postComBearer({ title: '  Com Espaços  ' });
-    expect(res.status).toBe(201);
-    expect(estado.chamadas[0].values[0]).toBe('Com Espaços');
+    const res = await patchComBearer(42, { title: '  Com Espaços  ' });
+    expect(res.status).toBe(200);
+    expect(estado.chamadas[0].values[0]).toBe(1); // flag do title
+    expect(estado.chamadas[0].values[1]).toBe('Com Espaços');
   });
 
   it('campos desconhecidos (id, updated_at, foo) não chegam aos values do SQL', async () => {
-    estado.fila = [[LINHA_JOGO.id, LINHA_JOGO.title]];
-    const res = await postComBearer({
+    estado.fila = [[LINHA_JOGO]];
+    const res = await patchComBearer(42, {
       id: 999,
       updated_at: 'hackeado',
       foo: 'batata',
-      title: 'Limpo',
+      rating: 3,
     });
-    expect(res.status).toBe(201);
+    expect(res.status).toBe(200);
     const { values } = estado.chamadas[0];
-    expect(values[0]).toBe('Limpo');
     expect(values).not.toContain(999);
     expect(values).not.toContain('hackeado');
     expect(values).not.toContain('batata');
+    /* o campo válido (rating) segue: flag 1 em values[18], valor em [19] */
+    expect(values[18]).toBe(1);
+    expect(values[19]).toBe(3);
+    expect(values[20]).toBe(42); // id do caminho, não do corpo
   });
 
   it('corpo de PATCH só com campos desconhecidos → 400 e nenhuma consulta SQL', async () => {
@@ -224,16 +218,9 @@ describe('POST /api/games — criação com Bearer', () => {
     expect(estado.chamadas).toHaveLength(0);
   });
 
-  it('POST sem title → 400 "title é obrigatório"', async () => {
-    const res = await postComBearer({ rating: 5 });
-    expect(res.status).toBe(400);
-    expect((await res.json()).error).toBe('title é obrigatório');
-    expect(estado.chamadas).toHaveLength(0);
-  });
-
   it('corpo que não é objeto JSON (string, null, número) → 400', async () => {
     for (const cru of ['"texto"', 'null', '42']) {
-      const res = await postFetch(cru, { origin: ORIGEM, authorization: BEARER });
+      const res = await patchRaw(cru);
       expect(res.status, `corpo ${cru}`).toBe(400);
       expect((await res.json()).error).toBe('corpo precisa ser um objeto JSON');
       expect(estado.chamadas).toHaveLength(0);
@@ -241,11 +228,12 @@ describe('POST /api/games — criação com Bearer', () => {
   });
 
   /* COMPORTAMENTO ATUAL (auditoria): array JSON passa no typeof === 'object'
-     e não é tratado como "corpo não-objeto"; cai na falta de title. */
-  it('corpo array JSON → 400 "title é obrigatório" (arrays não são rejeitados antes)', async () => {
-    const res = await postFetch('[1,2]', { origin: ORIGEM, authorization: BEARER });
+     do validate (arrays são objetos) e sobra sem campos válidos — quem
+     rejeita com "nenhum campo válido enviado" é a rota do PATCH. */
+  it('corpo array JSON → 400 "nenhum campo válido enviado"', async () => {
+    const res = await patchRaw('[1,2]');
     expect(res.status).toBe(400);
-    expect((await res.json()).error).toBe('title é obrigatório');
+    expect((await res.json()).error).toBe('nenhum campo válido enviado');
     expect(estado.chamadas).toHaveLength(0);
   });
 });
@@ -271,12 +259,6 @@ describe('limites de tamanho e intervalos (caracterização)', () => {
     expect(estado.chamadas[1].values[15]).toBe('a'.repeat(4000));
   });
 
-  it('no POST, título de 200 passa (201) e de 201 → 400', async () => {
-    estado.fila = [[LINHA_JOGO.id, LINHA_JOGO.title]];
-    expect((await postComBearer({ title: 'a'.repeat(200) })).status).toBe(201);
-    expect((await postComBearer({ title: 'a'.repeat(201) })).status).toBe(400);
-  });
-
   it('rating 1 e 5 passam; 0, 6, "5" (string) e 4.5 → 400', async () => {
     expect((await casoPATCH({ rating: 1 })).status).toBe(200);
     expect((await casoPATCH({ rating: 5 })).status).toBe(200);
@@ -292,14 +274,6 @@ describe('limites de tamanho e intervalos (caracterização)', () => {
     for (const year of [1949, 2101]) {
       expect((await casoPATCH({ year })).status).toBe(400);
     }
-  });
-
-  it('no POST, valor no limite também passa (201) e fora → 400', async () => {
-    estado.fila = [[LINHA_JOGO.id, LINHA_JOGO.title]];
-    expect((await postComBearer({ title: 'T', review: 'a'.repeat(4000) })).status).toBe(201);
-    expect((await postComBearer({ title: 'T', review: 'a'.repeat(4001) })).status).toBe(400);
-    expect((await postComBearer({ title: 'T', year: 1950 })).status).toBe(201);
-    expect((await postComBearer({ title: 'T', year: 1949 })).status).toBe(400);
   });
 });
 
@@ -368,12 +342,6 @@ describe('exigência de Origin nas escritas (COMPORTAMENTO ATUAL)', () => {
 
   it('PATCH com Bearer certo e Origin ERRADA → 403', async () => {
     const res = await patchComBearer(42, { rating: 3 }, { origin: 'http://inimigo.test' });
-    expect(res.status).toBe(403);
-    expect(estado.chamadas).toHaveLength(0);
-  });
-
-  it('POST /api/games com Bearer certo e Origin errada → 403', async () => {
-    const res = await postComBearer({ title: 'T' }, { origin: 'http://inimigo.test' });
     expect(res.status).toBe(403);
     expect(estado.chamadas).toHaveLength(0);
   });
@@ -524,5 +492,34 @@ describe('rotas diversas e erro do banco', () => {
     const cookie = res.headers.get('set-cookie');
     expect(cookie).toContain('lista_session=');
     expect(cookie).toContain('Max-Age=0');
+  });
+});
+
+describe('POST /api/games removida (rota sem uso)', () => {
+  it('POST /api/games com Bearer e Origin certos e corpo válido → 404 sem tocar no banco', async () => {
+    estado.fila = [[LINHA_JOGO.id, LINHA_JOGO.title]];
+    const res = await postComBearer({ title: 'Válido', rating: 5 });
+    expect(res.status).toBe(404);
+    expect(await res.json()).toEqual({ error: 'rota não encontrada' });
+    expect(estado.chamadas).toHaveLength(0);
+  });
+
+  it('POST /api/games sem autenticação → 404 (não 401)', async () => {
+    const res = await postFetch(JSON.stringify({ title: 'x' }));
+    expect(res.status).toBe(404);
+    expect(await res.json()).toEqual({ error: 'rota não encontrada' });
+    expect(estado.chamadas).toHaveLength(0);
+  });
+
+  it('OPTIONS /api/games continua respondendo 204 com CORS', async () => {
+    const res = await worker.fetch(
+      new Request('http://x.test/api/games', {
+        method: 'OPTIONS',
+        headers: { origin: ORIGEM, 'access-control-request-method': 'GET' },
+      }),
+      ENV
+    );
+    expect(res.status).toBe(204);
+    expect(res.headers.get('access-control-allow-origin')).toBe(ORIGEM);
   });
 });

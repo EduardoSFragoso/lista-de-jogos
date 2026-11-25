@@ -84,7 +84,6 @@ Detalhes em [assets/covers/README.md](assets/covers/README.md).
 | `/api/health`    | GET    | pública        | status + total de jogos                |
 | `/api/games`     | GET    | pública        | lista completa de jogos (JSON)         |
 | `/api/games/:id` | PATCH  | `Bearer token` | atualiza campos de um jogo (whitelist) |
-| `/api/games`     | POST   | `Bearer token` | cria um jogo novo (id = max+1)         |
 
 Escritas exigem uma sessão aberta via `POST /api/login` (senha = secret
 `ADMIN_PASSWORD` do Worker, comparada em tempo constante, devolvida como
