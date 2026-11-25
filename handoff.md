@@ -69,6 +69,9 @@ Todos os comandos acima devem passar verde antes de qualquer commit.
 
 ## Armadilhas conhecidas
 
+- `sync-neon` (e `sync-db` local) tem guardas G1/G2 (renumeração de ids e
+  tombstone com rating/review) que abortam com exit 1 — liberar de propósito
+  com `SYNC_FORCE=1`.
 - `grep -c` retorna exit 1 em contagem zero — cuidar em cadeias `&&`.
 - Smart approve do Vibe bloqueia cadeias de push+`gh pr create` e
   `gh workflow run`: repetir/separar o comando, na 2ª tentativa costuma
