@@ -9,16 +9,17 @@
      POST   /api/login       → abre sessão (cookie HttpOnly)
      POST   /api/logout      → encerra sessão
 
-   Autenticação nas rotas de escrita, de duas formas:
-   1. Site: POST /api/login valida a senha (secret ADMIN_PASSWORD,
-      comparada em tempo constante) e devolve um cookie de sessão
-      HttpOnly + Secure — HMAC-SHA256 do payload "iat.jti.exp"
-      assinado com SESSION_SECRET (7 dias, sem estado). O JS do
-      site NÃO consegue ler esse cookie. Trocar SESSION_SECRET
-      revoga todas as sessões abertas.
-   2. Terminal/scripts: header `Authorization: Bearer <senha>`.
+   Autenticação nas rotas de escrita: o login do site.
+   POST /api/login valida a senha (secret ADMIN_PASSWORD,
+   comparada em tempo constante) e devolve um cookie de sessão
+   HttpOnly + Secure — HMAC-SHA256 do payload "iat.jti.exp"
+   assinado com SESSION_SECRET (7 dias, sem estado). O JS do
+   site NÃO consegue ler esse cookie. Trocar SESSION_SECRET
+   revoga todas as sessões abertas. O Bearer foi removido:
+   senha crua no header não é mais aceita (e permitia tentativas
+   sem o rate limit do /api/login).
 
-   Em ambas, toda escrita também exige Origin igual a ALLOWED_ORIGIN
+   Toda escrita também exige Origin igual a ALLOWED_ORIGIN
    (via navegador) — isso bloqueia CSRF de outros sites.
 
    Banco: driver serverless do Neon via HTTP/fetch — não usa
@@ -57,7 +58,7 @@ function corsHeaders(env) {
   const headers = {
     'access-control-allow-origin': explicit ? origin : '*',
     'access-control-allow-methods': 'GET, POST, PATCH, OPTIONS',
-    'access-control-allow-headers': 'Content-Type, Authorization',
+    'access-control-allow-headers': 'Content-Type',
     'access-control-max-age': '86400',
     vary: 'Origin',
     /* cabeçalhos de segurança — vão em TODA resposta */
@@ -167,13 +168,10 @@ async function sessionValid(req, env) {
   return safeEqual(sig, expected);
 }
 
-/** Escritas: cookie de sessão (site) OU bearer password (terminal). */
+/** Escritas: só o cookie de sessão do site. O Bearer foi removido —
+ * senha crua no header permitia tentativas sem o rate limit do login. */
 async function authorized(req, env) {
   if (!env.ADMIN_PASSWORD) return false;
-  const header = req.headers.get('authorization') || '';
-  if (header.startsWith('Bearer ') && safeEqual(header.slice(7), env.ADMIN_PASSWORD)) {
-    return true;
-  }
   return sessionValid(req, env);
 }
 
@@ -332,7 +330,7 @@ export default {
       const patchMatch = pathname.match(/^\/api\/games\/(\d+)$/);
       if (req.method === 'PATCH' && patchMatch) {
         if (!(await authorized(req, env))) {
-          return fail(env, 401, 'não autenticado — faça login ou use Bearer');
+          return fail(env, 401, 'não autenticado — faça login');
         }
         if (!originAllowed(req, env)) {
           return fail(env, 403, 'origem não permitida');

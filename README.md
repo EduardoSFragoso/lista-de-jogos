@@ -79,17 +79,18 @@ Detalhes em [assets/covers/README.md](assets/covers/README.md).
 
 ## 🛠 API (Worker)
 
-| Rota             | Método | Auth           | O que faz                              |
-| ---------------- | ------ | -------------- | -------------------------------------- |
-| `/api/health`    | GET    | pública        | status + total de jogos                |
-| `/api/games`     | GET    | pública        | lista completa de jogos (JSON)         |
-| `/api/games/:id` | PATCH  | `Bearer token` | atualiza campos de um jogo (whitelist) |
+| Rota             | Método | Auth             | O que faz                              |
+| ---------------- | ------ | ---------------- | -------------------------------------- |
+| `/api/health`    | GET    | pública          | status + total de jogos                |
+| `/api/games`     | GET    | pública          | lista completa de jogos (JSON)         |
+| `/api/games/:id` | PATCH  | cookie de sessão | atualiza campos de um jogo (whitelist) |
 
 Escritas exigem uma sessão aberta via `POST /api/login` (senha = secret
 `ADMIN_PASSWORD` do Worker, comparada em tempo constante, devolvida como
 **cookie HttpOnly** assinado com `SESSION_SECRET` — payload `iat.jti.exp`,
 HMAC-SHA256 — que o JavaScript
-do site não lê) ou o header `Authorization: Bearer <senha>` no terminal.
+do site não lê). Não há mais header `Authorization: Bearer`: só o login
+passa a senha (com rate limit).
 Validação: `rating` 1–5, `year` plausível, textos ≤ 200 (review ≤ 4000) caracteres.
 
 ## 🧰 Qualidade de código (formatação, linters e CI)
