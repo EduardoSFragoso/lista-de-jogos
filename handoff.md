@@ -115,7 +115,7 @@ Todos os comandos acima devem passar verde antes de qualquer commit.
 ## Pendências
 
 - ~142 jogos sem `engine` preenchida (aguardando lista). O rascunho
-  `engine-faltando.txt` (na raiz, **não versionado**) está
+  `engine-faltando.txt` (na raiz, versionado) está
   desatualizado — regenerar a partir do `data/games.json` quando a
   lista for feita; não apagar, é material do dono.
 - 4 capas custom por screenshot (ids 14, 15, 49, 152).
@@ -130,8 +130,7 @@ Todos os comandos acima devem passar verde antes de qualquer commit.
   na ruleset só após ~2 semanas observando o ruído); **Source do Pages
   = "GitHub Actions"**: pendência **resolvida** — `build_type=workflow`
   confirmado via `gh api` em 2026-11-25; a publicação é pelo workflow
-  `deploy-pages.yml` (run verde com o `sleep 30` entre upload e deploy,
-  correção do erro "No artifacts named github-pages").
+  `deploy-pages.yml` (run verde comprovando: [45315958242](https://github.com/EduardoSFragoso/lista-de-jogos/actions/runs/45315958242)).
 - Hook local de pre-commit com gitleaks (comando no
   `docs/configuracao-repositorio.md`); o histórico já foi varrido
   (70 commits, limpo) e `npm audit` está zerado.
