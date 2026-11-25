@@ -16,16 +16,17 @@ modal (zoom sem perda).
 - API: `https://lista-api.eduardosfragoso.workers.dev` (`/api/ping`,
   `/api/games`, `/api/login`, ...)
 - Dados: `data/games.json` (fonte da verdade para render) + Neon
-  (sincronizado por `tools/sync-db.mjs` / workflow `sync-neon`).
+  (sincronizado por `worker/sync-db.mjs` / workflow `sync-neon`).
 
 ## Estrutura
 
 ```text
 assets/          frontend (css, js, covers, fonts)
 data/            games.json + sql pontuais
-worker/          Cloudflare Worker (src/index.js, schema.sql, seed.sql)
+worker/          Cloudflare Worker (src/index.js, sync-db.mjs, schema.sql,
+                 seed.sql)
 tools/           scripts vivos: audit-covers, ci-status, fetch-covers,
-                 generate-seed, make-thumbs, sync-db, pr-status
+                 generate-seed, make-thumbs, pr-status
 test/            vitest (covers, sync-db, worker)
 .github/         workflows (lint, deploy-worker, deploy-pages,
                  monitor-health, sync-neon)
@@ -37,10 +38,10 @@ docs/            checklists: auditoria de infraestrutura e
 
 ```bash
 npm install        # setup (raiz); worker/ tem package próprio
-npm run check      # prettier --check + eslint + stylelint + vitest
+npm run check      # prettier --check + eslint + stylelint (sem testes)
+npm test           # vitest — os testes; rode junto com o check
 npm run thumbs     # gera thumbs WebP faltantes/atualizadas (sharp)
-npm run sync-db    # aplica games.json no Neon (usa DATABASE_URL local)
-npm test           # só os testes
+cd worker && npm run sync-db  # aplica games.json no Neon (usa DATABASE_URL local)
 ```
 
 Todos os comandos acima devem passar verde antes de qualquer commit.
@@ -77,7 +78,7 @@ Todos os comandos acima devem passar verde antes de qualquer commit.
   cold start do Neon e rede/redeploy; falha → e-mail automático do GitHub.
 - Exceções de lint históricas: permissões de workflow são `contents: read`
   em todos os workflows; não afrouxar.
-- `main.js` (~690 linhas) é um monolito deliberado (i18n + render +
+- `main.js` (~728 linhas) é um monolito deliberado (i18n + render +
   modais): não refatorar sem rede de segurança nova e pedido explícito.
 - **Secrets no Cloudflare por dashboard criam versões pendentes** que
   desafinam do deploy (`wrangler secret put` falha com "latest version
@@ -113,7 +114,10 @@ Todos os comandos acima devem passar verde antes de qualquer commit.
 
 ## Pendências
 
-- ~142 jogos sem `engine` preenchida (aguardando lista).
+- ~142 jogos sem `engine` preenchida (aguardando lista). O rascunho
+  `engine-faltando.txt` (na raiz, **não versionado**) está
+  desatualizado — regenerar a partir do `data/games.json` quando a
+  lista for feita; não apagar, é material do dono.
 - 4 capas custom por screenshot (ids 14, 15, 49, 152).
 - Rotação de `ADMIN_PASSWORD`/`SESSION_SECRET`: **sem força de pendência**
   (decisão do dono: projeto pessoal, sem dados sensíveis no banco). É só
@@ -123,10 +127,11 @@ Todos os comandos acima devem passar verde antes de qualquer commit.
   alerts ligado ✅; "conversas resolvidas" na ruleset ✅; private
   vulnerability reporting ✅; CodeQL com set-up default ligado ✅
   (primeiro scan em 2026-11-23: **0 alertas**; virar check obrigatório
-  na ruleset só após ~2 semanas observando o ruído); **trocar o Source
-  do Pages para "GitHub Actions"** (Settings → Pages) depois do merge
-  do workflow `deploy-pages.yml` — até lá a publicação antiga (raiz da
-  main via `pages-build-deployment`) continua valendo.
+  na ruleset só após ~2 semanas observando o ruído); **Source do Pages
+  = "GitHub Actions"**: pendência **resolvida** — `build_type=workflow`
+  confirmado via `gh api` em 2026-11-25; a publicação é pelo workflow
+  `deploy-pages.yml` (run verde com o `sleep 30` entre upload e deploy,
+  correção do erro "No artifacts named github-pages").
 - Hook local de pre-commit com gitleaks (comando no
   `docs/configuracao-repositorio.md`); o histórico já foi varrido
   (70 commits, limpo) e `npm audit` está zerado.

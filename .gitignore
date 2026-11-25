@@ -35,6 +35,11 @@ tools/.sgdb-key
 *.sgdb-key
 *.dev.vars
 .env
+.env.*
+!.env.example
+*.pem
+*.key
+*.sql.gz
 tools/.igdb.json
 tools/.igdb-token.json
 tools/.tgdb-key
