@@ -100,7 +100,9 @@ export async function main({ sql, games } = {}) {
       })
       .join(', ');
 
-    await db(
+    /* Driver 1.x (≥1.2.1): chamada convencional db("SQL", params) foi
+       descontinuada — usar a função .query("SQL", params). */
+    await db.query(
       `insert into games (id, title, title_pt, year, platform, engine, company, genre, mode)
        values ${valuesSql}
        on conflict (id) do update set

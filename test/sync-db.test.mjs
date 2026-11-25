@@ -34,6 +34,13 @@ function fakeSql(responses, extras = {}) {
   };
   fn.calls = calls;
   fn.all = all;
+  fn.queryCalls = [];
+  /* o driver real (1.2.1) expõe .query para chamadas "SQL + array de
+     parâmetros"; a fake encaminha para fn, que registra como sempre. */
+  fn.query = (texto, params) => {
+    fn.queryCalls.push(texto);
+    return fn(texto, params);
+  };
   return fn;
 }
 
@@ -209,6 +216,17 @@ describe('G2 — tombstone não apaga jogo com rating/review', () => {
     const del = sql.all.find((c) => c.texto.includes('delete from games'));
     expect(del).toBeTruthy();
     expect(out.removed).toBe(2);
+  });
+});
+
+describe('chamadas SQL no formato aceito pelo driver 1.2.1', () => {
+  it('upsert usa db.query (a chamada convencional db("...", params) falha no driver real)', async () => {
+    const sql = fakeSql([{ n: 2 }]);
+    const out = await main({ sql, games: { games: [{ id: 1, title: 'A' }, { id: 2 }] } });
+    expect(sql.queryCalls).toHaveLength(1);
+    expect(String(sql.queryCalls[0])).toMatch(/on conflict \(id\) do update/);
+    expect(sql.all.filter((c) => c.texto.includes('insert'))).toHaveLength(1);
+    expect(out.chunks).toBe(1);
   });
 });
 
