@@ -15,10 +15,11 @@ jobs:
   quality:
     name: ESLint + Stylelint + Prettier + testes
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
           cache: npm
@@ -37,3 +38,21 @@ jobs:
 
       - name: Testes (vitest)
         run: npm test
+
+  auditoria-dependencias:
+    name: npm audit (raiz e worker/)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Auditoria de segurança na raiz
+        run: npm audit --audit-level=high
+
+      - name: Auditoria de segurança em worker/
+        working-directory: worker
+        run: npm audit --audit-level=high

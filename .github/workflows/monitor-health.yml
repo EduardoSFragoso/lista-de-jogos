@@ -26,6 +26,7 @@ jobs:
   ping:
     name: GET /api/ping
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Verifica Worker
         run: |

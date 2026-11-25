@@ -81,6 +81,17 @@ Todos os comandos acima devem passar verde antes de qualquer commit.
   cold start do Neon e rede/redeploy; falha → e-mail automático do GitHub.
 - Exceções de lint históricas: permissões de workflow são `contents: read`
   em todos os workflows; não afrouxar.
+- **Actions fixas por SHA**: toda `uses:` de terceiro é `@<40 hex>` com a
+  tag em comentário (ex.: `# v7.0.1`), vigiada por
+  `test/workflows.test.mjs` (que também exige `timeout-minutes` em todo
+  job e `permissions:` no topo, nunca `write-all`). Ao atualizar uma
+  action, resolva o novo SHA com `git ls-remote`
+  (tag anotada → linha `^{}`) e atualize o comentário junto.
+- `lint.yml` tem o job `quality` (check obrigatório da ruleset) e o
+  `auditoria-dependencias` (`npm audit --audit-level=high` na raiz e em
+  `worker/`); o sync-neon aceita input booleano `force`
+  (workflow_dispatch) que injeta `SYNC_FORCE=1` para liberar as guardas
+  do sync-db de propósito — em push o valor fica vazio.
 - `main.js` (~728 linhas) é um monolito deliberado (i18n + render +
   modais): não refatorar sem rede de segurança nova e pedido explícito.
 - **Secrets no Cloudflare por dashboard criam versões pendentes** que

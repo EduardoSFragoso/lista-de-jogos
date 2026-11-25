@@ -1,7 +1,9 @@
 # Sobe data/games.json pro Neon automaticamente em todo push
 # que alterar os dados. Requer o secret DATABASE_URL em
 # https://github.com/EduardoSFragoso/lista-de-jogos/settings/secrets/actions
-# Rodar também manualmente: aba Actions → sync-neon → Run workflow.
+# Rodar também manualmente: aba Actions → sync-neon → Run workflow
+# (input `force` sobe com SYNC_FORCE=1, liberando de propósito as
+# guardas G1/G2 do sync-db).
 
 name: sync-neon
 
@@ -13,6 +15,11 @@ on:
       - 'worker/sync-db.mjs'
       - '.github/workflows/sync-neon.yml'
   workflow_dispatch:
+    inputs:
+      force:
+        description: 'SYNC_FORCE=1 (libera as guardas G1/G2 de propósito)'
+        type: boolean
+        default: false
 
 concurrency:
   group: sync-neon-main
@@ -24,12 +31,13 @@ permissions:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     defaults:
       run:
         working-directory: worker
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
           cache: npm
@@ -38,3 +46,6 @@ jobs:
       - run: node sync-db.mjs
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          # no push, `inputs` fica vazio e SYNC_FORCE também
+          # (o `&&` só devolve '1' se o booleano do input for true)
+          SYNC_FORCE: ${{ inputs.force && '1' || '' }}
