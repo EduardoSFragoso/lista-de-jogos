@@ -117,13 +117,10 @@ const patchFetch = (id, body, cabec = {}, env = ENV) =>
     env
   );
 
-const patchComBearer = (id, body, cabec = {}, env = ENV) =>
-  patchFetch(
-    id,
-    body,
-    { origin: ORIGEM, authorization: `Bearer ${env.ADMIN_PASSWORD}`, ...cabec },
-    env
-  );
+/** PATCH autenticado com a sessão do site: abre login e manda o cookie
+    (o Bearer não existe mais — ver describe "Bearer removido"). */
+const patchComSessao = async (id, body, cabec = {}, env = ENV) =>
+  patchFetch(id, body, { origin: ORIGEM, cookie: await loginCookie(env), ...cabec }, env);
 
 const postFetch = (corpo, cabec = {}, env = ENV) =>
   worker.fetch(
@@ -139,12 +136,8 @@ const postFetch = (corpo, cabec = {}, env = ENV) =>
     env
   );
 
-const postComBearer = (obj, cabec = {}, env = ENV) =>
-  postFetch(
-    JSON.stringify(obj),
-    { origin: ORIGEM, authorization: `Bearer ${env.ADMIN_PASSWORD}`, ...cabec },
-    env
-  );
+const postComSessao = async (obj, cabec = {}, env = ENV) =>
+  postFetch(JSON.stringify(obj), { origin: ORIGEM, cookie: await loginCookie(env), ...cabec }, env);
 
 describe('GET públicos e cabeçalhos de resposta', () => {
   it('GET /api/games → 200 { games } com no-store, nosniff e CORS', async () => {
@@ -169,7 +162,7 @@ describe('GET públicos e cabeçalhos de resposta', () => {
 
 describe('validate() do PATCH — normalização do corpo (migrado do POST removido)', () => {
   /** PATCH com corpo cru (sem passar por JSON.stringify dos helpers). */
-  const patchRaw = (cru, env = ENV) =>
+  const patchRaw = async (cru, env = ENV) =>
     worker.fetch(
       new Request('http://x.test/api/games/42', {
         method: 'PATCH',
@@ -177,7 +170,7 @@ describe('validate() do PATCH — normalização do corpo (migrado do POST remov
           'content-type': 'application/json',
           'cf-connecting-ip': ipNovo(),
           origin: ORIGEM,
-          authorization: BEARER,
+          cookie: await loginCookie(env),
         },
         body: cru,
       }),
@@ -186,7 +179,7 @@ describe('validate() do PATCH — normalização do corpo (migrado do POST remov
 
   it('title é aparado (trim) antes de ir ao SQL', async () => {
     estado.fila = [[LINHA_JOGO]];
-    const res = await patchComBearer(42, { title: '  Com Espaços  ' });
+    const res = await patchComSessao(42, { title: '  Com Espaços  ' });
     expect(res.status).toBe(200);
     expect(estado.chamadas[0].values[0]).toBe(1); // flag do title
     expect(estado.chamadas[0].values[1]).toBe('Com Espaços');
@@ -194,7 +187,7 @@ describe('validate() do PATCH — normalização do corpo (migrado do POST remov
 
   it('campos desconhecidos (id, updated_at, foo) não chegam aos values do SQL', async () => {
     estado.fila = [[LINHA_JOGO]];
-    const res = await patchComBearer(42, {
+    const res = await patchComSessao(42, {
       id: 999,
       updated_at: 'hackeado',
       foo: 'batata',
@@ -212,7 +205,7 @@ describe('validate() do PATCH — normalização do corpo (migrado do POST remov
   });
 
   it('corpo de PATCH só com campos desconhecidos → 400 e nenhuma consulta SQL', async () => {
-    const res = await patchComBearer(42, { id: 999, foo: 'batata', updated_at: 'x' });
+    const res = await patchComSessao(42, { id: 999, foo: 'batata', updated_at: 'x' });
     expect(res.status).toBe(400);
     expect((await res.json()).error).toBe('nenhum campo válido enviado');
     expect(estado.chamadas).toHaveLength(0);
@@ -241,7 +234,7 @@ describe('validate() do PATCH — normalização do corpo (migrado do POST remov
 describe('limites de tamanho e intervalos (caracterização)', () => {
   const casoPATCH = async (obj) => {
     estado.fila = [[LINHA_JOGO]];
-    return patchComBearer(42, obj);
+    return patchComSessao(42, obj);
   };
 
   it('title/review no limite passam e 1 caractere além → 400', async () => {
@@ -278,9 +271,9 @@ describe('limites de tamanho e intervalos (caracterização)', () => {
 });
 
 describe('PATCH /api/games/:id — flags por coluna', () => {
-  it('Bearer certo → 200 { game }; só colunas enviadas têm flag 1', async () => {
+  it('Cookie de sessão → 200 { game }; só colunas enviadas têm flag 1', async () => {
     estado.fila = [[LINHA_JOGO]];
-    const res = await patchComBearer(42, { engine: 'Motor A', rating: 4 });
+    const res = await patchComSessao(42, { engine: 'Motor A', rating: 4 });
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ game: LINHA_JOGO });
     const { values } = estado.chamadas[0];
@@ -297,7 +290,7 @@ describe('PATCH /api/games/:id — flags por coluna', () => {
 
   it('{ review: null } zera: flag 1 com valor null no SQL', async () => {
     estado.fila = [[LINHA_JOGO]];
-    const res = await patchComBearer(42, { review: null });
+    const res = await patchComSessao(42, { review: null });
     expect(res.status).toBe(200);
     const { values } = estado.chamadas[0];
     expect(values[14]).toBe(1); // flag review enviada
@@ -305,7 +298,7 @@ describe('PATCH /api/games/:id — flags por coluna', () => {
   });
 
   it('{} → 400 "nenhum campo válido enviado" sem tocar o banco', async () => {
-    const res = await patchComBearer(42, {});
+    const res = await patchComSessao(42, {});
     expect(res.status).toBe(400);
     expect((await res.json()).error).toBe('nenhum campo válido enviado');
     expect(estado.chamadas).toHaveLength(0);
@@ -313,25 +306,25 @@ describe('PATCH /api/games/:id — flags por coluna', () => {
 
   it('banco devolve [] (id inexistente) → 404 com o id na mensagem', async () => {
     estado.fila = [[]];
-    const res = await patchComBearer(99, { rating: 3 });
+    const res = await patchComSessao(99, { rating: 3 });
     expect(res.status).toBe(404);
     expect((await res.json()).error).toContain('99');
   });
 });
 
 describe('exigência de Origin nas escritas (COMPORTAMENTO ATUAL)', () => {
-  /* COMPORTAMENTO ATUAL (auditoria): também a autenticação por Bearer
-     (terminal/scripts) exige Origin — rotas de escrita fazem
-     originAllowed independentemente do método de autenticação. Parece
-     intencional (defesa em profundidade anti-CSRF), então está
-     caracterizado aqui e não "corrigido". */
-  it('PATCH com Bearer certo MAS sem Origin → 403', async () => {
+  /* COMPORTAMENTO ATUAL (auditoria): também o cookie de sessão exige
+     Origin — rotas de escrita fazem originAllowed independentemente do
+     método de autenticação. Parece intencional (defesa em profundidade
+     anti-CSRF), então está caracterizado aqui e não "corrigido". */
+  it('PATCH com cookie válido MAS sem Origin → 403', async () => {
+    const cookie = await loginCookie();
     const req = new Request('http://x.test/api/games/42', {
       method: 'PATCH',
       headers: {
         'content-type': 'application/json',
         'cf-connecting-ip': ipNovo(),
-        authorization: BEARER,
+        cookie,
       },
       body: JSON.stringify({ rating: 3 }),
     });
@@ -340,8 +333,8 @@ describe('exigência de Origin nas escritas (COMPORTAMENTO ATUAL)', () => {
     expect(estado.chamadas).toHaveLength(0);
   });
 
-  it('PATCH com Bearer certo e Origin ERRADA → 403', async () => {
-    const res = await patchComBearer(42, { rating: 3 }, { origin: 'http://inimigo.test' });
+  it('PATCH com cookie válido e Origin ERRADA → 403', async () => {
+    const res = await patchComSessao(42, { rating: 3 }, { origin: 'http://inimigo.test' });
     expect(res.status).toBe(403);
     expect(estado.chamadas).toHaveLength(0);
   });
@@ -442,25 +435,7 @@ describe('rate limit (COMPORTAMENTO ATUAL)', () => {
     const resB = await postLogin(ENV, { ip: ipB, password: 'errada' });
     expect(resB.status).toBe(401);
   });
-
-  it('20 PATCH seguidos com Bearer errado → sempre 401, nunca 429', async () => {
-    const status = [];
-    for (let i = 0; i < 20; i++) {
-      const res = await patchComBearer(
-        42,
-        { rating: 3 },
-        {
-          authorization: 'Bearer senha-errada',
-        }
-      );
-      status.push(res.status);
-    }
-    expect(status.every((s) => s === 401)).toBe(true);
-    expect(status.some((s) => s === 429)).toBe(false);
-    expect(estado.chamadas).toHaveLength(0);
-  });
 });
-
 describe('rotas diversas e erro do banco', () => {
   it('rota desconhecida → 404 "rota não encontrada"', async () => {
     const res = await worker.fetch(new Request('http://x.test/api/naoexiste'), ENV);
@@ -498,7 +473,7 @@ describe('rotas diversas e erro do banco', () => {
 describe('POST /api/games removida (rota sem uso)', () => {
   it('POST /api/games com Bearer e Origin certos e corpo válido → 404 sem tocar no banco', async () => {
     estado.fila = [[LINHA_JOGO.id, LINHA_JOGO.title]];
-    const res = await postComBearer({ title: 'Válido', rating: 5 });
+    const res = await postComSessao({ title: 'Válido', rating: 5 });
     expect(res.status).toBe(404);
     expect(await res.json()).toEqual({ error: 'rota não encontrada' });
     expect(estado.chamadas).toHaveLength(0);
@@ -521,5 +496,35 @@ describe('POST /api/games removida (rota sem uso)', () => {
     );
     expect(res.status).toBe(204);
     expect(res.headers.get('access-control-allow-origin')).toBe(ORIGEM);
+  });
+});
+
+describe('Bearer removido — escrita só com cookie de sessão', () => {
+  it('a. PATCH com Bearer certo + Origin certa, SEM cookie → 401 sem tocar o banco', async () => {
+    estado.fila = [[LINHA_JOGO.id, LINHA_JOGO.title]];
+    const res = await patchFetch(
+      42,
+      { rating: 3 },
+      {
+        origin: ORIGEM,
+        authorization: BEARER,
+      }
+    );
+    expect(res.status).toBe(401);
+    expect((await res.json()).error).toBe('não autenticado — faça login');
+    expect(estado.chamadas).toHaveLength(0);
+  });
+
+  it('b. OPTIONS /api/games/1 não anuncia Authorization', async () => {
+    const res = await worker.fetch(
+      new Request('http://x.test/api/games/1', {
+        method: 'OPTIONS',
+        headers: { origin: ORIGEM, 'access-control-request-method': 'PATCH' },
+      }),
+      ENV
+    );
+    const cabec = res.headers.get('access-control-allow-headers');
+    expect(cabec).not.toBeNull();
+    expect(cabec).not.toContain('Authorization');
   });
 });

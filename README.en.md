@@ -84,12 +84,13 @@ Details in [assets/covers/README.md](assets/covers/README.md).
 | ---------------- | ------ | -------------- | ------------------------------------ |
 | `/api/health`    | GET    | public         | status + total game count            |
 | `/api/games`     | GET    | public         | full game list (JSON)                |
-| `/api/games/:id` | PATCH  | `Bearer token` | updates fields of a game (whitelist) |
+| `/api/games/:id` | PATCH  | session cookie | updates fields of a game (whitelist) |
 
 Write routes require a session opened via `POST /api/login` (password = the Worker's
 `ADMIN_PASSWORD` secret, compared in constant time, returned as an **HttpOnly cookie**
 signed with `SESSION_SECRET` — payload `iat.jti.exp`, HMAC-SHA256 — which the site's
-JavaScript cannot read) or the `Authorization: Bearer <password>` header from a terminal.
+JavaScript cannot read). The `Authorization: Bearer` header is gone: only the login
+accepts the password (and it is rate limited).
 Validation: `rating` 1–5, plausible `year`, texts ≤ 200 (review ≤ 4000) characters.
 
 ## 🧰 Code quality (formatting, linters and CI)

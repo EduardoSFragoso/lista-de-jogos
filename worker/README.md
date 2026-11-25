@@ -10,14 +10,14 @@ GitHub Pages (front estático)  →  Cloudflare Worker (esta API)  →  Neon (Po
 
 ## Rotas
 
-| Rota             | Método | Auth          | Descrição                                                           |
-| ---------------- | ------ | ------------- | ------------------------------------------------------------------- |
-| `/api/health`    | GET    | pública       | `{ ok: true, total: 285 }` (toca o banco)                           |
-| `/api/ping`      | GET    | pública       | `{ ok: true, worker: "up" }` (sem banco — usado pelo monitor no CI) |
-| `/api/games`     | GET    | pública       | lista completa de jogos                                             |
-| `/api/login`     | POST   | senha         | abre sessão (cookie HttpOnly, 7 dias)                               |
-| `/api/logout`    | POST   | —             | encerra a sessão                                                    |
-| `/api/games/:id` | PATCH  | sessão/bearer | atualiza campos (whitelist validada)                                |
+| Rota             | Método | Auth             | Descrição                                                           |
+| ---------------- | ------ | ---------------- | ------------------------------------------------------------------- |
+| `/api/health`    | GET    | pública          | `{ ok: true, total: 285 }` (toca o banco)                           |
+| `/api/ping`      | GET    | pública          | `{ ok: true, worker: "up" }` (sem banco — usado pelo monitor no CI) |
+| `/api/games`     | GET    | pública          | lista completa de jogos                                             |
+| `/api/login`     | POST   | senha            | abre sessão (cookie HttpOnly, 7 dias)                               |
+| `/api/logout`    | POST   | —                | encerra a sessão                                                    |
+| `/api/games/:id` | PATCH  | cookie de sessão | atualiza campos (whitelist validada)                                |
 
 Campos aceitos em PATCH: `title`, `title_pt`, `year`, `platform`, `engine`,
 `rating` (1–5), `company`, `genre`, `mode`, `review` (≤ 4000). Qualquer outra
@@ -32,15 +32,9 @@ chave é rejeitada.
    cookie. Trocar `SESSION_SECRET` revoga todas as sessões abertas.
 2. Toda escrita autenticada por cookie também confere o header `Origin`
    (deve ser exatamente `ALLOWED_ORIGIN`), o que bloqueia CSRF.
-3. No terminal, escreva com `Authorization: Bearer <senha>` — a senha nunca
-   toca o navegador por esse caminho. Exemplo:
-
-```bash
-curl -X PATCH "https://lista-api.SEU-SUBDOMINIO.workers.dev/api/games/137" \
-  -H "Authorization: Bearer $ADMIN_PASSWORD" \
-  -H "Content-Type: application/json" \
-  -d '{"rating": 5, "review": "Obra-prima."}'
-```
+3. A escrita exige o login do site (cookie de sessão) — o header
+   `Authorization: Bearer` foi removido: não há como escrever por
+   terminal sem abrir sessão via `POST /api/login` antes.
 
 > **Hyperdrive?** O driver `@neondatabase/serverless` conecta por HTTP/fetch,
 > então o binding do Hyperdrive fica **comentado** no `wrangler.toml` — só é
@@ -76,8 +70,7 @@ npx wrangler secret put DATABASE_URL
 # cole a connection string do Neon
 
 npx wrangler secret put ADMIN_PASSWORD
-# escolha uma senha FORTE e cole aqui (é ela que você usa no ⚙ do site
-# e no header Bearer do terminal)
+# escolha uma senha FORTE e cole aqui (é ela que você usa no ⚙ do site)
 
 npx wrangler secret put SESSION_SECRET
 # chave que assina os cookies de sessão — gere uma aleatória, ex.:
