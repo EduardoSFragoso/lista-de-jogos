@@ -64,17 +64,33 @@ jobs:
           BACKUP_ACEITAR_PERDA: ${{ inputs.aceitar_perda && '1' || '' }}
 
       # commit SOMENTE se o arquivo mudou; push apenas dessa branch
-      # (nunca da main) — a branch backup-notas não tem ruleset,
-      # confirmado via gh api rules/branches/backup-notas → []
+      # (nunca da main, nunca force) — a branch backup-notas não tem
+      # ruleset, confirmado via gh api rules/branches/backup-notas → []
+      # O commit é feito num clone SEPARADO da branch de backup: se a
+      # branch já existe, o backup novo vai POR CIMA dela
+      # (fast-forward); a branch órfã é só do primeiro run. Evita
+      # conflito com os arquivos não rastreados/da main do checkout.
       - name: Publica o backup (branch backup-notas)
         run: |
-          if git diff --no-index --quiet /tmp/backup-anterior/notas.json notas.json; then
+          if test ! -f notas.json; then
             echo "sem alteração — nada a commitar"
             exit 0
           fi
+          URL="$(git remote get-url origin)"
+          rm -rf /tmp/publicar
+          if git ls-remote --heads "$URL" backup-notas | grep -q backup-notas; then
+            git clone --depth 1 --branch backup-notas "$URL" /tmp/publicar
+          else
+            git init -b backup-notas /tmp/publicar
+          fi
+          cp notas.json /tmp/publicar/notas.json
+          cd /tmp/publicar
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git switch --orphan backup-notas
           git add notas.json
+          if git diff --cached --quiet; then
+            echo "sem alteração — nada a commitar"
+            exit 0
+          fi
           git commit -m "Backup: notas de rating/review do Neon"
-          git push origin backup-notas
+          git push "$URL" HEAD:backup-notas
