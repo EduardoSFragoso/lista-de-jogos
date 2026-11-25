@@ -140,6 +140,39 @@ describe('G1 — guarda contra renumeração de ids', () => {
     expect(escritas(sql).filter((c) => c.texto.includes('insert'))).toHaveLength(1);
     expect(out.removed).toBe(0);
   });
+
+  it('títulos que diferem só por caixa/espaços NÃO são divergência (5 ids): sync passa', async () => {
+    const sql = fakeSql([{ n: 66 }, { n: 5 }, [], { n: 5 }, { n: 0 }], {
+      titulos: [1, 2, 3, 4, 5].map((i) => ({ id: i, title: ` JOGO ${i} ` })),
+    });
+    const jogos = [1, 2, 3, 4, 5].map((i) => ({ id: i, title: `jogo ${i}` }));
+    const out = await main({ sql, games: jogos });
+    expect(out.chunks).toBe(1);
+    expect(escritas(sql).filter((c) => c.texto.includes('insert'))).toHaveLength(1);
+    expect(out.removed).toBe(0);
+  });
+
+  it('ids removidos do JSON sem nota não contam no G1; tombstone apaga 8', async () => {
+    const jogos = json60.slice(0, 52);
+    const sql = fakeSql(
+      [
+        { n: 52 }, // upsert 1 (52 jogos = 2 blocos)
+        { n: 52 }, // upsert 2
+        { n: 60 }, // count antes → 52 ≥ 30, tombstone autorizado
+        Array.from({ length: 8 }, (_, k) => ({ id: 53 + k })), // delete RETURNING
+        { n: 52 }, // count final
+        { n: 0 }, // sem engine/platform
+      ],
+      {
+        titulos: Array.from({ length: 60 }, (_, k) => ({ id: k + 1, title: `Jogo ${k + 1}` })),
+        notas: [],
+      }
+    );
+    const out = await main({ sql, games: jogos });
+    const del = sql.all.find((c) => c.texto.includes('delete from games'));
+    expect(del).toBeTruthy();
+    expect(out.removed).toBe(8);
+  });
 });
 
 describe('G2 — tombstone não apaga jogo com rating/review', () => {
