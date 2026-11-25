@@ -6,7 +6,6 @@
      GET    /api/ping        → vida do Worker, sem banco (público)
      GET    /api/games       → lista completa de jogos (público)
      PATCH  /api/games/:id   → atualiza campos de um jogo (auth)
-     POST   /api/games       → cria um jogo novo (auth)
      POST   /api/login       → abre sessão (cookie HttpOnly)
      POST   /api/logout      → encerra sessão
 
@@ -28,7 +27,7 @@
 
 import { neon } from '@neondatabase/serverless';
 
-/** Campos permitidos em PATCH/POST (whitelist). */
+/** Campos permitidos em PATCH (whitelist). */
 const EDITABLE_TEXT = [
   'title',
   'title_pt',
@@ -214,10 +213,10 @@ function originAllowed(req, env) {
 /* ---------------- validação ---------------- */
 
 /**
- * Valida e normaliza o corpo de PATCH/POST.
+ * Valida e normaliza o corpo de PATCH.
  * @returns {{ ok: true, fields: object } | { ok: false, error: string }}
  */
-function validate(body, { partial }) {
+function validate(body) {
   if (typeof body !== 'object' || body === null) {
     return { ok: false, error: 'corpo precisa ser um objeto JSON' };
   }
@@ -254,12 +253,6 @@ function validate(body, { partial }) {
     } else {
       return { ok: false, error: `${key} precisa ser inteiro ou null` };
     }
-  }
-  if (!partial && !fields.title) {
-    return { ok: false, error: 'title é obrigatório' };
-  }
-  if (!partial && Object.keys(fields).length === 0) {
-    return { ok: false, error: 'nenhum campo válido enviado' };
   }
   return { ok: true, fields };
 }
@@ -335,30 +328,6 @@ export default {
         return json(env, { ok: true }, 200, { 'set-cookie': clearCookie });
       }
 
-      /* -------- POST /api/games (novo jogo) -------- */
-      if (req.method === 'POST' && pathname === '/api/games') {
-        if (!(await authorized(req, env))) {
-          return fail(env, 401, 'não autenticado — faça login ou use Bearer');
-        }
-        if (!originAllowed(req, env)) {
-          return fail(env, 403, 'origem não permitida');
-        }
-        const body = await req.json().catch(() => null);
-        const check = validate(body, { partial: false });
-        if (!check.ok) return fail(env, 400, check.error);
-        const f = check.fields;
-        const [game] = await sql`
-          insert into games (id, title, title_pt, year, platform, engine,
-                             rating, company, genre, mode, review)
-          values ((select coalesce(max(id), 0) + 1 from games),
-                  ${f.title}, ${f.title_pt}, ${f.year}, ${f.platform},
-                  ${f.engine}, ${f.rating}, ${f.company}, ${f.genre},
-                  ${f.mode}, ${f.review})
-          returning id, title, title_pt, year, platform, engine,
-                    rating, company, genre, mode, review, updated_at`;
-        return json(env, { game }, 201);
-      }
-
       /* -------- PATCH /api/games/:id -------- */
       const patchMatch = pathname.match(/^\/api\/games\/(\d+)$/);
       if (req.method === 'PATCH' && patchMatch) {
@@ -370,7 +339,7 @@ export default {
         }
         const id = Number(patchMatch[1]);
         const body = await req.json().catch(() => null);
-        const check = validate(body, { partial: true });
+        const check = validate(body);
         if (!check.ok) return fail(env, 400, check.error);
         if (Object.keys(check.fields).length === 0) {
           return fail(env, 400, 'nenhum campo válido enviado');

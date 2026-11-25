@@ -18,9 +18,8 @@ GitHub Pages (front estático)  →  Cloudflare Worker (esta API)  →  Neon (Po
 | `/api/login`     | POST   | senha         | abre sessão (cookie HttpOnly, 7 dias)                               |
 | `/api/logout`    | POST   | —             | encerra a sessão                                                    |
 | `/api/games/:id` | PATCH  | sessão/bearer | atualiza campos (whitelist validada)                                |
-| `/api/games`     | POST   | sessão/bearer | cria um jogo novo (id = max + 1)                                    |
 
-Campos aceitos em PATCH/POST: `title`, `title_pt`, `year`, `platform`, `engine`,
+Campos aceitos em PATCH: `title`, `title_pt`, `year`, `platform`, `engine`,
 `rating` (1–5), `company`, `genre`, `mode`, `review` (≤ 4000). Qualquer outra
 chave é rejeitada.
 

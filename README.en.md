@@ -85,7 +85,6 @@ Details in [assets/covers/README.md](assets/covers/README.md).
 | `/api/health`    | GET    | public         | status + total game count            |
 | `/api/games`     | GET    | public         | full game list (JSON)                |
 | `/api/games/:id` | PATCH  | `Bearer token` | updates fields of a game (whitelist) |
-| `/api/games`     | POST   | `Bearer token` | creates a new game (id = max+1)      |
 
 Write routes require a session opened via `POST /api/login` (password = the Worker's
 `ADMIN_PASSWORD` secret, compared in constant time, returned as an **HttpOnly cookie**
