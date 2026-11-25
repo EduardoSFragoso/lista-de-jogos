@@ -27,9 +27,11 @@ const estado = vi.hoisted(() => ({
 
    O Worker resolve '@neondatabase/serverless' do node_modules do
    worker/ QUANDO ele existe (instalação local), e da raiz no CI
-   (aí só `npm install` da raiz). O mock precisa interceptar a
-   MESMA instância que o Worker importa: por isso o caminho pode ser
-   decidido aqui, antes do import dinâmico do módulo do Worker. */
+   (aí só `npm install` da raiz). Com o pacote instalado nos DOIS
+   lugares são dois módulos distintos, então mockamos OS DOIS
+   caminhos: o bare specifier (raiz) e a cópia do worker/ quando
+   existir. Mockar menos que isso deixa requisições vazarem para a
+   cópia real do driver (rede de verdade — ECONNREFUSED). */
 const fabricaDriver = () => ({
   neon: (url) => {
     estado.urls.push(url);
@@ -45,14 +47,14 @@ const fabricaDriver = () => ({
 const temNodeModulesNoWorker = existsSync(
   new URL('../worker/node_modules/@neondatabase/serverless/package.json', import.meta.url)
 );
+
+/* vi.doMock (não içado) para poder condicionar ao existsSync; o import
+   dinâmico do Worker vem depois, então os registros são respeitados.
+   O especificador do worker/ resolve pelo campo "exports" do pacote
+   (index.mjs), exatamente como o import do Worker resolve. */
+vi.doMock('@neondatabase/serverless', fabricaDriver);
 if (temNodeModulesNoWorker) {
-  /* vi.doMock (não içado) porque a decisão depende de existsSync; o import
-     dinâmico do Worker vem depois, então o registro é respeitado. O
-     especificador resolve pelo campo "exports" do pacote (index.mjs),
-     exatamente como o import do Worker resolve. */
   vi.doMock('../worker/node_modules/@neondatabase/serverless', fabricaDriver);
-} else {
-  vi.doMock('@neondatabase/serverless', fabricaDriver);
 }
 
 const worker = (await import('../worker/src/index.js')).default;
