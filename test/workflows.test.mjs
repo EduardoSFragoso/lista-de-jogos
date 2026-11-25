@@ -74,3 +74,28 @@ describe('workflows: permissions no topo, nunca write-all', () => {
     });
   }
 });
+
+/* (d) SYNC_FORCE — guardas G1/G2 do sync-db. A única atribuição
+   aceitável é a expressão que amarra o valor ao input booleano
+   `force` do workflow_dispatch (em push fica vazio). Um
+   `SYNC_FORCE: '1'` fixo desligaria as guardas em todo push
+   (rating/review sem proteção); apagar a linha também é regressão. */
+const SYNC_FORCE_EXATO = "SYNC_FORCE: ${{ inputs.force && '1' || '' }}";
+
+describe('workflows: SYNC_FORCE só no sync-neon e exatamente controlado', () => {
+  for (const { nome, texto } of arquivos) {
+    const atribuicoes = texto
+      .split(/\r?\n/)
+      .filter((l) => /SYNC_FORCE\s*:/.test(l))
+      .map((l) => l.trim());
+    if (nome === 'sync-neon.yml') {
+      it(`${nome}: SYNC_FORCE presente e exatamente via input force`, () => {
+        expect(atribuicoes, 'apagou ou reescreveu o SYNC_FORCE?').toEqual([SYNC_FORCE_EXATO]);
+      });
+    } else {
+      it(`${nome}: nenhum SYNC_FORCE`, () => {
+        expect(atribuicoes).toEqual([]);
+      });
+    }
+  }
+});
