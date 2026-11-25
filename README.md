@@ -93,6 +93,25 @@ do site não lê). Não há mais header `Authorization: Bearer`: só o login
 passa a senha (com rate limit).
 Validação: `rating` 1–5, `year` plausível, textos ≤ 200 (review ≤ 4000) caracteres.
 
+## 💾 Backup das notas (rating/review)
+
+`rating` e `review` existem **só no Neon** — e o plano Free guarda apenas
+6 h de _point-in-time recovery_, sem snapshots. O workflow
+[backup-notas](.github/workflows/backup-notas.yml) roda todo domingo
+06:17 UTC (Horário de Verão do Brasil = UTC-3), baixa
+`GET /api/games` e grava um `notas.json` estável (só os jogos com nota
+ou review, ordenado por id) na branch `backup-notas` (criada no
+primeiro run; arquivo `notas.json` na raiz da branch).
+
+- Como baixar: `git fetch origin backup-notas` e
+  `git show origin/backup-notas:notas.json > notas.json`
+  (ou pela interface do GitHub).
+- Guarda de perda: se o novo backup tiver mais de 3 notas a menos que
+  o anterior, o workflow falha e **não** sobrescreve. Perda de
+  propósito? rode com o input `aceitar_perda` marcado
+  (BACKUP_ACEITAR_PERDA=1, mesmo espírito do `SYNC_FORCE`).
+- Restauração no banco: ainda não existe (PR 8 pendente).
+
 ## 🧰 Qualidade de código (formatação, linters e CI)
 
 O projeto tem verificação automática de estilo a cada push, via [GitHub Actions](.github/workflows/lint.yml):

@@ -153,3 +153,12 @@ Todos os comandos acima devem passar verde antes de qualquer commit.
 - Restore point-in-time do Neon (plano free tem janela limitada): usar
   apenas quando o banco tiver dados reais/valiosos; hoje o seed do repo
   reconstrói tudo menos rating/review.
+- **Backup das notas**: `tools/backup-notas.mjs` + workflow
+  `backup-notas.yml` (domingo 06:17 UTC) grava `notas.json` na branch
+  `backup-notas` — rating/review existem só no Neon (plano free: 6 h de
+  point-in-time, 0 snapshots). Guarda de perda (> 3 notas a menos não
+  grava), liberável com input `aceitar_perda` (env
+  `BACKUP_ACEITAR_PERDA=1`); arquivo sem timestamp para não gerar
+  commit à toa. A branch `backup-notas` não tem ruleset (confirmado
+  em 2026-11-25 via `gh api rules/branches/backup-notas` → `[]`).
+  **Restauração dessas notas: PR 8, ainda não existe** — pendência.

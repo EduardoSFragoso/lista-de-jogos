@@ -1,0 +1,80 @@
+# Backup semanal das notas (rating/review) — elas existem SÓ no Neon
+# (games.json tem 0) e o plano Free guarda 6 h de point-in-time e
+# nenhum snapshot. Este workflow baixa GET /api/games (público) e
+# grava notas.json na branch `backup-notas` (git fetch origin
+# backup-notas para baixar). A guarda de perda é liberável de propósito
+# com o input `aceitar_perda` (BACKUP_ACEITAR_PERDA=1, mesmo espírito
+# do SYNC_FORCE do sync-db). Restauração: pendente (PR 8 ainda não
+# existe).
+#
+# Rodar manualmente: aba Actions → backup-notas → Run workflow.
+
+name: backup-notas
+
+on:
+  schedule:
+    # domingo 06:17 UTC (Horário de Verão do Brasil = UTC-3 → 03:17)
+    - cron: '17 6 * * 0'
+  workflow_dispatch:
+    inputs:
+      aceitar_perda:
+        description: 'BACKUP_ACEITAR_PERDA=1 (libera a guarda de perda de propósito)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backup-notas
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # commit e push APENAS na branch backup-notas
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      # backup anterior, se existir: alimenta a guarda de perda e a
+      # comparação de "sem alteração" (primeiro run: vazio)
+      - name: Baixa o backup anterior (se houver)
+        run: |
+          mkdir -p /tmp/backup-anterior
+          if git fetch --depth 1 origin backup-notas \
+             && git show FETCH_HEAD:notas.json > /tmp/backup-anterior/notas.json; then
+            echo "backup anterior obtido da branch backup-notas"
+          else
+            echo '{}' > /tmp/backup-anterior/notas.json
+            echo "sem backup anterior (primeiro run?)"
+          fi
+
+      - name: Roda o backup
+        run: node tools/backup-notas.mjs
+        env:
+          API: https://lista-api.eduardosfragoso.workers.dev
+          BACKUP_ANTERIOR: /tmp/backup-anterior/notas.json
+          # em agenda/push `inputs` fica vazio → guarda ativa
+          BACKUP_ACEITAR_PERDA: ${{ inputs.aceitar_perda && '1' || '' }}
+
+      # commit SOMENTE se o arquivo mudou; push apenas dessa branch
+      # (nunca da main) — a branch backup-notas não tem ruleset,
+      # confirmado via gh api rules/branches/backup-notas → []
+      - name: Publica o backup (branch backup-notas)
+        run: |
+          if git diff --no-index --quiet /tmp/backup-anterior/notas.json notas.json; then
+            echo "sem alteração — nada a commitar"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch --orphan backup-notas
+          git add notas.json
+          git commit -m "Backup: notas de rating/review do Neon"
+          git push origin backup-notas
