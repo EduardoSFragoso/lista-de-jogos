@@ -70,7 +70,14 @@ jobs:
       # branch já existe, o backup novo vai POR CIMA dela
       # (fast-forward); a branch órfã é só do primeiro run. Evita
       # conflito com os arquivos não rastreados/da main do checkout.
+      # A credencial do actions/checkout fica no git config do
+      # checkout e NÃO vale no clone separado (push: "could not read
+      # Username") — então o token do Actions viaja como http
+      # extraheader por comando, sem persistir em .git/config e sem
+      # aparecer na URL (o add-mask mascara o valor básico nos logs).
       - name: Publica o backup (branch backup-notas)
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           if test ! -f notas.json; then
             echo "sem alteração — nada a commitar"
@@ -78,8 +85,10 @@ jobs:
           fi
           URL="$(git remote get-url origin)"
           rm -rf /tmp/publicar
+          AUTH="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
+          echo "::add-mask::$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
           if git ls-remote --heads "$URL" backup-notas | grep -q backup-notas; then
-            git clone --depth 1 --branch backup-notas "$URL" /tmp/publicar
+            git -c "http.https://github.com/.extraheader=$AUTH" clone --depth 1 --branch backup-notas "$URL" /tmp/publicar
           else
             git init -b backup-notas /tmp/publicar
           fi
@@ -93,4 +102,4 @@ jobs:
             exit 0
           fi
           git commit -m "Backup: notas de rating/review do Neon"
-          git push "$URL" HEAD:backup-notas
+          git -c "http.https://github.com/.extraheader=$AUTH" push "$URL" HEAD:backup-notas
