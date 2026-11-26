@@ -109,6 +109,54 @@ describe('valida: arquivo com problemas → erro (exit 1 via CLI), zero escritas
   });
 });
 
+/* Gap de teste do PR 31: "banco vazio" é rating E review nulos. Se a
+   regra passar a olhar só UM dos campos, o script sobrescreveria um
+   valor que já existe (ex.: review antiga) sem --sobrescrever. */
+describe('banco com UM campo preenchido nunca é "vazio" — CONFLITO, não sobrescreve', () => {
+  const bancoMisto = [
+    { id: 6, rating: null, review: 'antiga' }, // rating vazio, review preenchida
+    { id: 7, rating: 2, review: null }, // review vazia, rating preenchido
+  ];
+  const notasMisto = [jogo(6, 4, 'boa'), jogo(7, 5, 'nova revisão')];
+  const rodarMisto = async (over = {}) => {
+    const sql = fakeSql({ linhas: bancoMisto, updateRetorno: { rowCount: 2 } });
+    const { arq, limpar } = tempNotas(dados(notasMisto));
+    try {
+      const { retorno, saidas } = await rodar({
+        arquivo: arq,
+        aplicar: true,
+        confirmoHost: HOST_LABEL,
+        sql,
+        ...over,
+      });
+      return { retorno, saidas, sql };
+    } finally {
+      limpar();
+    }
+  };
+  it('a. rating NULO + review preenchida → conflito, não escrito, id em "pulados"', async () => {
+    const { retorno, saidas, sql } = await rodarMisto();
+    expect(retorno.plano.conflitos.map((j) => j.id)).toContain(6);
+    expect(retorno.plano.aRestaurar.map((j) => j.id)).not.toContain(6);
+    expect(saidas.join('\n')).toMatch(/pulados por conflito \(só ids.*\): 6, 7/);
+    expect(sql.escritas()).toHaveLength(0); // só conflitos → nada é escrito
+  });
+  it('b. review NULA + rating preenchido → conflito, não escrito, id em "pulados"', async () => {
+    const { retorno, saidas, sql } = await rodarMisto();
+    expect(retorno.plano.conflitos.map((j) => j.id)).toContain(7);
+    expect(retorno.plano.aRestaurar.map((j) => j.id)).not.toContain(7);
+    expect(saidas.join('\n')).toMatch(/pulados por conflito \(só ids.*\): 6, 7/);
+    expect(sql.escritas()).toHaveLength(0);
+  });
+  it('c. com --sobrescrever, a e b são gravados (parâmetros exatos)', async () => {
+    const { retorno, sql } = await rodarMisto({ sobrescrever: true });
+    const escritas = sql.escritas();
+    expect(escritas).toHaveLength(1);
+    expect(escritas[0].params).toEqual([6, 4, 'boa', 7, 5, 'nova revisão']);
+    expect(retorno.pulados).toEqual([]);
+  });
+});
+
 describe('dry-run (padrão): contagens certas e ZERO escritas', () => {
   it('classifica 5 jogos: 2 idênticos, 1 a restaurar, 1 conflito, 1 faltante', async () => {
     const { retorno, saidas } = await rodar({ sql: fakeSql({ linhas: BANCO }) });
