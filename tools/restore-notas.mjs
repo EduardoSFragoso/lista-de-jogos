@@ -118,10 +118,14 @@ export function carregaNotas(caminho) {
 export async function planejar(db, notas) {
   const ids = notas.jogos.map((j) => j.id);
   const marcadores = ids.map((_, i) => `$${i + 1}`).join(', ');
-  const { rows } = await db.query(
+  const res = await db.query(
     `select id, rating, review from games where id in (${marcadores})`,
     ids
   );
+  /* fullResults do driver dá { rows }; clientes alternativos (ex.: PGlite
+     na prova com Postgres real) também dão { rows }; array puro é aceito
+     por robustez. */
+  const rows = Array.isArray(res) ? res : res.rows;
   const noBanco = new Map(rows.map((r) => [r.id, r]));
   const vazioNoBanco = (r) => (r.rating ?? null) === null && (r.review ?? null) === null;
   const temNota = (j) => j.rating !== null || j.review !== null;
@@ -161,7 +165,9 @@ export async function aplicar(db, linhas) {
     `from (values ${valores}) as v(id, rating, review) where g.id = v.id`;
   const params = linhas.flatMap((l) => [l.id, l.rating, l.review]);
   const res = await db.query(texto, params);
-  return res.rowCount ?? 0;
+  /* rowCount do driver com fullResults; affectedRows é o nome equivalente
+     no PGlite (prova com Postgres real). */
+  return res.rowCount ?? res.affectedRows ?? 0;
 }
 
 export function parseArgs(argv) {
@@ -187,6 +193,14 @@ export function parseArgs(argv) {
   return opcoes;
 }
 
+/* Cliente http do Neon — mesmo caminho de conexão do main() e dos
+   testes com o driver real. fullResults é OBRIGATÓRIO: sem ele, o
+   driver 1.x devolve de db.query() um ARRAY de linhas (sem .rows nem
+   .rowCount) e rowCount se perde; com ele, { rows, rowCount, fields }. */
+export function criaCliente(url) {
+  return neon(url, { fullResults: true });
+}
+
 /* main: retorna um resumo e imprime pelo canal `print` (injetável nos
    testes). Erros são lançados — o bloco CLI converte em exit 1. */
 export async function main({
@@ -196,7 +210,6 @@ export async function main({
   sobrescrever = false,
   env = process.env,
   sql = null,
-  fetchFunction = null,
   print = (l) => console.log(l),
 } = {}) {
   if (!arquivo) {
@@ -211,7 +224,17 @@ export async function main({
   const rotulo = url ? primRotulo(url) : '(sql injetado)';
   /* A validação veio sempre antes de qualquer consulta ao banco. */
   const notas = carregaNotas(arquivo);
-  const db = sql || neon(url, fetchFunction ? { fetchFunction } : undefined);
+  /* Backup sem nota nenhuma: nada a fazer (e um `where id in ()`
+     seria erro de sintaxe). Curto-circuito ANTES de qualquer consulta. */
+  if (notas.jogos.length === 0) {
+    print('nada a restaurar — o arquivo não tem jogos com nota/review');
+    return {
+      plano: { faltantes: [], identicos: [], aRestaurar: [], conflitos: [] },
+      restaurados: 0,
+      pulados: [],
+    };
+  }
+  const db = sql || criaCliente(url);
   print(`alvo do banco: ${rotulo} (primeiro rótulo do host)`);
   print(`backup: ${notas.jogos.length} jogo(s) com nota/review`);
   const plano = await planejar(db, notas);
