@@ -11,6 +11,7 @@ import { describe, expect, it } from 'vitest';
 
 const raiz = new URL('../', import.meta.url);
 const arquivos = [
+  'backup-notas.yml',
   'deploy-pages.yml',
   'deploy-worker.yml',
   'lint.yml',
@@ -98,4 +99,34 @@ describe('workflows: SYNC_FORCE só no sync-neon e exatamente controlado', () =>
       });
     }
   }
+});
+
+/* (e) Autenticação do push do backup: o commit é feito num clone
+   SEPARADO (/tmp/publicar), onde a credencial que o actions/checkout
+   grava no git config do checkout NÃO vale — sem token, o push falha
+   ("could not read Username"). O passo de publicação precisa do
+   GH_TOKEN do Actions, injetado como http extraheader por comando
+   (nunca persistido em .git/config) e nunca na URL (x-access-token@
+   vazaria o token em logs e na lista de processos). */
+const passoPublicaDe = (texto) => {
+  const linhas = texto.split(/\r?\n/);
+  const inicio = linhas.findIndex((l) => /^      - name: Publica o backup/.test(l));
+  expect(inicio, 'passo "Publica o backup" não encontrado').toBeGreaterThanOrEqual(0);
+  const fim = linhas.findIndex((l, i) => i > inicio && /^      - (name|uses):/.test(l));
+  return linhas.slice(inicio, fim === -1 ? linhas.length : fim).join('\n');
+};
+
+describe('workflows: backup-notas autentica o push com GH_TOKEN, sem persistir credencial', () => {
+  const bnf = arquivos.find(({ nome }) => nome === 'backup-notas.yml').texto;
+  const publica = passoPublicaDe(bnf);
+  it('passo "Publica o backup" define GH_TOKEN: ${{ github.token }}', () => {
+    expect(publica).toMatch(/GH_TOKEN: \$\{\{ github\.token \}\}/);
+  });
+  it('não persiste credenciais nem passa token na URL', () => {
+    expect(bnf, 'persist-credentials guarda token no .git/config do checkout').not.toMatch(
+      /persist-credentials/
+    );
+    expect(bnf, 'token na URL vaza em logs e processos').not.toMatch(/x-access-token:[^@\s]*@/i);
+    expect(bnf, 'senha/credentials embutidas em URL').not.toMatch(/https:\/\/[^/\s:@]+:[^@\s/]+@/);
+  });
 });
