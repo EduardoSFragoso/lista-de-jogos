@@ -1,0 +1,17 @@
+{
+  "total": 2,
+  "jogos": [
+    {
+      "id": 34,
+      "title": "Age of Empires",
+      "rating": 5,
+      "review": "Está funcionando?"
+    },
+    {
+      "id": 84,
+      "title": "Alien Swarm",
+      "rating": 5,
+      "review": null
+    }
+  ]
+}
