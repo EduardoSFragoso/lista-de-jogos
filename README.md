@@ -110,7 +110,28 @@ primeiro run; arquivo `notas.json` na raiz da branch).
   o anterior, o workflow falha e **não** sobrescreve. Perda de
   propósito? rode com o input `aceitar_perda` marcado
   (BACKUP_ACEITAR_PERDA=1, mesmo espírito do `SYNC_FORCE`).
-- Restauração no banco: ainda não existe (PR 8 pendente).
+- Para restaurar no banco, veja [Restaurar as notas](#-restaurar-as-notas-ratingreview).
+
+## 🔄 Restaurar as notas (rating/review)
+
+Caminho de volta do backup (a peça "PR 8" da divisão do projeto):
+`tools/restore-notas.mjs` lê o `notas.json` da branch `backup-notas`
+e repõe as notas no Neon — **dry-run por padrão** (só imprime
+contagens, nenhuma escrita):
+
+```bash
+git fetch origin backup-notas && git show origin/backup-notas:notas.json > notas.json
+DATABASE_URL="postgresql://..." node tools/restore-notas.mjs --arquivo notas.json
+```
+
+Para escrever de verdade: `--aplicar --confirmo-host <rótulo-do-host>`
+(onde `<rótulo-do-host>` é o primeiro rótulo do host da `DATABASE_URL`,
+ex.: `ep-xxxx` — impresso pelo próprio script para conferir o alvo).
+Por padrão só preenche linhas em que `rating` **e** `review` estão
+vazios; linhas em conflito são puladas e listadas — `--sobrescrever`
+as grava também. A gravação é uma única consulta atômica
+(`update ... from (values ...)`, tudo ou nada) e atualiza `updated_at`.
+A validação do arquivo acontece antes de qualquer consulta.
 
 ## 🧰 Qualidade de código (formatação, linters e CI)
 

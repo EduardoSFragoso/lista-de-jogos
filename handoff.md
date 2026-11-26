@@ -161,4 +161,20 @@ Todos os comandos acima devem passar verde antes de qualquer commit.
   `BACKUP_ACEITAR_PERDA=1`); arquivo sem timestamp para não gerar
   commit à toa. A branch `backup-notas` não tem ruleset (confirmado
   em 2026-11-25 via `gh api rules/branches/backup-notas` → `[]`).
-  **Restauração dessas notas: PR 8, ainda não existe** — pendência.
+  O push da branch de backup usa `GH_TOKEN: github.token` como
+  extraheader por `-c` (a credencial do checkout não vale no clone
+  separado `publicar/`; sem persistir em .git/config nem na URL).
+- **Restauração das notas (PR 8)**: `tools/restore-notas.mjs` +
+  `test/restore-notas.test.mjs`. Uso:
+  `DATABASE_URL="postgresql://..." node tools/restore-notas.mjs
+--arquivo notas.json [--aplicar --confirmo-host <rótulo>] [--sobrescrever]`.
+  Contratos que não podem quebrar: DRY-RUN é o padrão (sem `--aplicar`
+  nada é escrito); `--aplicar` exige `--confirmo-host` igual ao
+  primeiro rótulo do host da `DATABASE_URL` (ex.: `ep-xxxx`); por
+  padrão só preenche linhas com rating E review vazios, pulando
+  conflitos (listados; `--sobrescrever` os grava); a gravação é UMA
+  única consulta `update ... from (values ...)` (tudo ou nada, já que
+  o driver 1.x não faz multi-statement); a saída nunca mostra a URL,
+  a senha nem o host completo — só o primeiro rótulo. O driver
+  `@neondatabase/serverless` 1.x NÃO aceita `db("SQL", params)`: use
+  `db.query(...)` (testes + teste com o driver real cobrem isso).
