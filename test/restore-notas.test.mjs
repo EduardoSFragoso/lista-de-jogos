@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-const { aplicar, carregaNotas, main, parseArgs, planejar, primRotulo, valida } =
+const { aplicar, carregaNotas, criaCliente, main, parseArgs, planejar, primRotulo, valida } =
   await import('../tools/restore-notas.mjs');
 /* Driver real — usado no teste da lição do PR 26 (nenhum outro teste
    toca no driver; TODOS passam por fakeSql). */
@@ -241,6 +241,89 @@ describe('driver real 1.x: db("SQL", params) lança erro — o módulo deve usar
       await expect(aplicar(db, [jogo(1, 3)])).rejects.toThrow(/sem rede na prova/);
     } finally {
       neonConfig.fetchFunction = anterior;
+    }
+  });
+
+  /* Defeito achado no PR 31: sem fullResults, db.query() do driver 1.x
+     devolve um ARRAY de linhas (sem .rows/.rowCount) — planejar() quebrava
+     com TypeError. Aqui o driver REAL responde no formato do protocolo
+     HTTP do Neon (fields: [{name, dataTypeID}...], rows como arrays de
+     valores, rowCount) e o cliente é criado pelo MESMO caminho do main()
+     (criaCliente). Nenhuma rede de verdade: a resposta é simulada. */
+  describe('driver real com resposta do protocolo do Neon (ponta a ponta)', () => {
+    const cabecalhos = [
+      { name: 'id', dataTypeID: 23 }, // int4
+      { name: 'rating', dataTypeID: 21 }, // int2
+      { name: 'review', dataTypeID: 25 }, // text
+    ];
+    const resposta = (linhas, rowCount) =>
+      new Response(JSON.stringify({ fields: cabecalhos, rows: linhas, rowCount }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      });
+    it('planejar e aplicar funcionam com o cliente de criaCliente (fullResults)', async () => {
+      const anterior = neonConfig.fetchFunction;
+      let chamadas = 0;
+      neonConfig.fetchFunction = async () =>
+        ++chamadas === 1
+          ? resposta(
+              [
+                [1, 3, null],
+                [2, null, null],
+                [4, 2, null],
+              ],
+              3
+            )
+          : resposta([], 1);
+      try {
+        const db = criaCliente(URL_FALSA);
+        const plano = await planejar(
+          db,
+          dados([jogo(1, 3), jogo(2, null, null), jogo(4, 5, null)])
+        );
+        expect(plano.identicos).toEqual([1, 2]);
+        expect(plano.conflitos.map((j) => j.id)).toEqual([4]);
+        expect(await aplicar(db, [jogo(4, 5, null)])).toBe(1);
+      } finally {
+        neonConfig.fetchFunction = anterior;
+      }
+    });
+  });
+});
+
+describe('backup vazio (jogos: []): "nada a restaurar", NENHUMA consulta ao banco', () => {
+  function tempVazio() {
+    const { arq, limpar } = tempNotas(dados([]));
+    return { arq, limpar };
+  }
+  it('dry-run: mensagem e zero consultas', async () => {
+    const { arq, limpar } = tempVazio();
+    const sql = fakeSql();
+    try {
+      const { retorno, saidas } = await rodar({ arquivo: arq, sql });
+      expect(saidas.join('\n')).toMatch(/nada a restaurar/);
+      expect(sql.consultas).toHaveLength(0);
+      expect(retorno.restaurados).toBe(0);
+    } finally {
+      limpar();
+    }
+  });
+  it('mesmo com --aplicar e host certo: nada escrito, zero consultas', async () => {
+    const { arq, limpar } = tempVazio();
+    const sql = fakeSql();
+    try {
+      const { retorno, saidas } = await rodar({
+        arquivo: arq,
+        aplicar: true,
+        confirmoHost: HOST_LABEL,
+        sql,
+      });
+      expect(saidas.join('\n')).toMatch(/nada a restaurar/);
+      expect(sql.consultas).toHaveLength(0);
+      expect(retorno.restaurados).toBe(0);
+      expect(sql.escritas()).toHaveLength(0);
+    } finally {
+      limpar();
     }
   });
 });
