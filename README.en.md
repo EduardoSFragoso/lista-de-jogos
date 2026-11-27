@@ -93,6 +93,47 @@ JavaScript cannot read). The `Authorization: Bearer` header is gone: only the lo
 accepts the password (and it is rate limited).
 Validation: `rating` 1–5, plausible `year`, texts ≤ 200 (review ≤ 4000) characters.
 
+## 💾 Rating/review backup
+
+`rating` and `review` live **only in Neon** — the Free plan keeps just
+6 hours of point-in-time recovery, with no snapshots. The
+[backup-notas](.github/workflows/backup-notas.yml) workflow runs every
+Sunday 06:17 UTC, downloads `GET /api/games` and writes a stable
+`notas.json` (only games with a rating or review, sorted by id) to the
+`backup-notas` branch. File format:
+
+```json
+{
+  "total_com_nota": 12,
+  "total_jogos_na_base": 364,
+  "jogos": [{ "id": 1, "title": "...", "rating": 5, "review": "..." }]
+}
+```
+
+- Download: `git fetch origin backup-notas` and
+  `git show origin/backup-notas:notas.json > notas.json`.
+- Loss guard: if the new backup has more than 3 fewer notes than the
+  previous one, the workflow fails and does **not** overwrite.
+  Intentional loss? run it with the `aceitar_perda` input
+  (BACKUP_ACEITAR_PERDA=1).
+
+## 🔄 Restoring the notes
+
+`tools/restore-notas.mjs` reads that `notas.json` and restores the
+notes to Neon — **dry-run by default** (prints counts, no writes):
+
+```bash
+git fetch origin backup-notas && git show origin/backup-notas:notas.json > notas.json
+DATABASE_URL="postgresql://..." node tools/restore-notas.mjs --arquivo notas.json
+```
+
+To actually write: `--aplicar --confirmo-host <host-label>` (first
+label of the `DATABASE_URL` host, e.g. `ep-xxxx`). By default it only
+fills rows where `rating` **and** `review` are empty; conflicting rows
+are skipped and listed — `--sobrescrever` writes them too. The write is
+a single atomic query (`update ... from (values ...)`) that updates
+`updated_at`.
+
 ## 🧰 Code quality (formatting, linters and CI)
 
 Style is checked automatically on every push, via [GitHub Actions](.github/workflows/lint.yml):
