@@ -76,29 +76,72 @@ describe('workflows: permissions no topo, nunca write-all', () => {
   }
 });
 
-/* (d) SYNC_FORCE — guardas G1/G2 do sync-db. A única atribuição
-   aceitável é a expressão que amarra o valor ao input booleano
-   `force` do workflow_dispatch (em push fica vazio). Um
-   `SYNC_FORCE: '1'` fixo desligaria as guardas em todo push
-   (rating/review sem proteção); apagar a linha também é regressão. */
+/* (d) SYNC_FORCE e BACKUP_ACEITAR_PERDA em QUALQUER forma. Critério
+   antigo só enxergava a forma YAML `SYNC_FORCE:` — um
+   `run: SYNC_FORCE=1 node sync-db.mjs` (shell) passava batido e
+   desligaria as guardas G1/G2 do sync-db em todo push. Novo critério,
+   em TODOS os workflows: toda linha NÃO comentária que contenha o
+   nome da variável deve ser exatamente a atribuição que amarra o
+   valor ao input booleano do workflow_dispatch — e só no workflow
+   certo (sync-neon.yml / backup-notas.yml, que precisam tê-la).
+   Linhas de comentário (#) são ignoradas; linhas `description:` de
+   input também (metadados que citam a env por documentação — uma
+   description nunca atribui valor). */
 const SYNC_FORCE_EXATO = "SYNC_FORCE: ${{ inputs.force && '1' || '' }}";
+const BACKUP_PERDA_EXATO = "BACKUP_ACEITAR_PERDA: ${{ inputs.aceitar_perda && '1' || '' }}";
 
-describe('workflows: SYNC_FORCE só no sync-neon e exatamente controlado', () => {
+const linhasComAtribuicao = (texto, nomeVar) =>
+  texto
+    .split(/\r?\n/)
+    .filter(
+      (l) =>
+        l.includes(nomeVar) && !l.trim().startsWith('#') && !l.trim().startsWith('description:')
+    )
+    .map((l) => l.trim());
+
+describe('workflows: SYNC_FORCE e BACKUP_ACEITAR_PERDA só na forma exata e só no lugar certo', () => {
   for (const { nome, texto } of arquivos) {
-    const atribuicoes = texto
-      .split(/\r?\n/)
-      .filter((l) => /SYNC_FORCE\s*:/.test(l))
-      .map((l) => l.trim());
-    if (nome === 'sync-neon.yml') {
-      it(`${nome}: SYNC_FORCE presente e exatamente via input force`, () => {
-        expect(atribuicoes, 'apagou ou reescreveu o SYNC_FORCE?').toEqual([SYNC_FORCE_EXATO]);
-      });
-    } else {
-      it(`${nome}: nenhum SYNC_FORCE`, () => {
-        expect(atribuicoes).toEqual([]);
-      });
-    }
+    const sync = linhasComAtribuicao(texto, 'SYNC_FORCE');
+    const perda = linhasComAtribuicao(texto, 'BACKUP_ACEITAR_PERDA');
+    const esperadoSync = nome === 'sync-neon.yml' ? [SYNC_FORCE_EXATO] : [];
+    const esperadoPerda = nome === 'backup-notas.yml' ? [BACKUP_PERDA_EXATO] : [];
+    it(`${nome}: SYNC_FORCE ${nome === 'sync-neon.yml' ? 'presente e exatamente via input force' : 'ausente'}`, () => {
+      expect(sync, 'forma shell SYNC_FORCE=1 ou valor fixo desligaria as guardas G1/G2').toEqual(
+        esperadoSync
+      );
+    });
+    it(`${nome}: BACKUP_ACEITAR_PERDA ${nome === 'backup-notas.yml' ? 'presente e exatamente via input aceitar_perda' : 'ausente'}`, () => {
+      expect(perda, 'forma shell ou valor fixo desligaria a guarda de perda do backup').toEqual(
+        esperadoPerda
+      );
+    });
   }
+  it('backup-notas.yml: a atribuição está no passo que roda o script', () => {
+    const bnf = arquivos.find(({ nome }) => nome === 'backup-notas.yml').texto;
+    const linhas = bnf.split(/\r?\n/);
+    const inicio = linhas.findIndex((l) => /^      - name: Roda o backup/.test(l));
+    expect(inicio, 'passo "Roda o backup" não encontrado').toBeGreaterThanOrEqual(0);
+    const fim = linhas.findIndex((l, i) => i > inicio && /^      - (name|uses):/.test(l));
+    const passo = linhas.slice(inicio, fim === -1 ? linhas.length : fim).join('\n');
+    expect(passo).toContain(BACKUP_PERDA_EXATO);
+  });
+});
+
+describe('workflows: deploy-pages roda quando o próprio workflow muda', () => {
+  it('push.paths inclui .github/workflows/deploy-pages.yml', () => {
+    const dp = arquivos.find(({ nome }) => nome === 'deploy-pages.yml').texto;
+    const linhas = dp.split(/\r?\n/);
+    const iPaths = linhas.findIndex((l) => /^\s*paths:\s*$/.test(l));
+    expect(iPaths, 'gatilho push.paths não encontrado').toBeGreaterThanOrEqual(0);
+    const bloco = [];
+    for (let i = iPaths + 1; i < linhas.length; i++) {
+      const l = linhas[i];
+      if (l.trim() === '' || l.trim().startsWith('#')) continue; // comentários não encerram a lista
+      if (!/^\s+- /.test(l)) break;
+      bloco.push(l.replace(/^\s+-\s*/, ''));
+    }
+    expect(bloco).toContain('.github/workflows/deploy-pages.yml');
+  });
 });
 
 /* (e) Autenticação do push do backup: o commit é feito num clone

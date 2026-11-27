@@ -10,6 +10,8 @@ on:
       - index.html
       - assets/**
       - data/games.json
+      # valida mudanças no próprio workflow já no merge
+      - .github/workflows/deploy-pages.yml
   workflow_dispatch: {}
 
 permissions:

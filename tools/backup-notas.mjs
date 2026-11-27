@@ -17,7 +17,7 @@
 
    O arquivo NÃO tem timestamp: conteúdo idêntico gera
    "sem alteração" e nenhum commit à toa. A restauração dessas
-   notas no banco é o PR 8 (ainda não existe).
+   notas no banco é o tools/restore-notas.mjs (PR 8).
    ============================================================ */
 
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
@@ -113,12 +113,22 @@ export function conferePerda(nAnterior, nNovo, { aceitarPerda = false } = {}) {
 
 /**
  * Monta o conteúdo estável do notas.json (ordenado por id — extraiNotas
- * já garante —, indentação 2, sem timestamp).
+ * já garante —, indentação 2, sem timestamp). `total_com_nota` conta só
+ * as entradas com nota; `total_jogos_na_base` é quantos jogos a API
+ * devolveu (para diferenciar "nota sumiu" de "base encolheu"). A guarda
+ * de perda usa o TAMANHO de `jogos`, não esses campos.
  * @param {{ id: number, title: unknown, rating: number|null, review: string|null }[]} notas
+ * @param {number} totalBase - quantidade de jogos que a API devolveu
  * @returns {string}
  */
-export function montaArquivo(notas) {
-  return JSON.stringify({ total: notas.length, jogos: notas }, null, 2) + '\n';
+export function montaArquivo(notas, totalBase) {
+  return (
+    JSON.stringify(
+      { total_com_nota: notas.length, total_jogos_na_base: totalBase, jogos: notas },
+      null,
+      2
+    ) + '\n'
+  );
 }
 
 /**
@@ -154,7 +164,7 @@ export async function main(opts = {}) {
   }
   conferePerda(nAnterior, notas.length, { aceitarPerda });
 
-  const conteudo = montaArquivo(notas);
+  const conteudo = montaArquivo(notas, dados.games.length);
   if (conteudoAnterior !== null && conteudo === conteudoAnterior) {
     log('sem alteração');
     return 'sem alteração';
