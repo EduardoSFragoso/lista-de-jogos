@@ -25,14 +25,21 @@ assets/          frontend (css, js, covers, fonts)
 data/            games.json + sql pontuais
 worker/          Cloudflare Worker (src/index.js, sync-db.mjs, schema.sql,
                  seed.sql)
-tools/           scripts vivos: audit-covers, ci-status, fetch-covers,
-                 generate-seed, make-thumbs, pr-status
-test/            vitest (covers, sync-db, worker)
-.github/         workflows (lint, deploy-worker, deploy-pages,
-                 monitor-health, sync-neon)
+tools/           scripts vivos: audit-covers, backup-notas, ci-status,
+                 fetch-covers, generate-seed, make-thumbs, pr-status,
+                 restore-notas
+test/            vitest (backup-notas, covers, restore-notas, sync-db,
+                 worker, worker-rotas, workflows)
+.github/         workflows (backup-notas, deploy-pages, deploy-worker,
+                 lint, monitor-health, sync-neon)
 docs/            checklists: auditoria de infraestrutura e
-                 configuração do repositório
+                 configuração do repositório; auditoria de 2026-11
 ```
+
+Sobre os dados: `data/games.json` é o catálogo (fonte da verdade para
+render, com **ids estáveis — NUNCA renumerar**); `rating`/`review`
+existem **só no Neon**; jogos novos entram **somente** pelo
+`data/games.json` (não existe mais `POST /api/games` no Worker).
 
 ## Comandos
 
@@ -45,6 +52,9 @@ cd worker && npm run sync-db  # aplica games.json no Neon (usa DATABASE_URL loca
 ```
 
 Todos os comandos acima devem passar verde antes de qualquer commit.
+
+No Windows/PowerShell com política de scripts restrita, `npm` (que é um
+`.cmd`) pode ser bloqueado: use `npm.cmd run check`, `npm.cmd test` etc.
 
 ## Contratos que não podem quebrar
 
@@ -64,7 +74,37 @@ Todos os comandos acima devem passar verde antes de qualquer commit.
 - `corsHeaders` deve exigir origem explícita para `allow-credentials` —
   nunca `*` com credenciais.
 - Login (`/api/login`) tem rate limit em memória: 5 tentativas/min por
-  IP → 429.
+  IP → 429. É **best effort** (memória do isolate, reinicia a cada
+  deploy) e é o único limite: as rotas de escrita não têm rate limit
+  (a autenticação por Bearer, que permitia tentativas sem limite, foi
+  removida).
+- **Escrita só com cookie de sessão** (login do site): o header
+  `Authorization: Bearer` foi removido, e `POST /api/games` não existe
+  mais (jogos novos entram só pelo `data/games.json`). PATCH exige
+  sessão válida **e** origem permitida.
+- `sync-db` tem as guardas **G1** (mais de 3 ids existentes com título
+  normalizado — trim + minúsculas — diferente do JSON sugere
+  renumeração: aborta sem escrever nada) e **G2** (não apaga jogo que
+  tenha rating ou review no Neon: aborta, mas o upsert já feito
+  permanece). Liberáveis de propósito **só** com `SYNC_FORCE=1` — no
+  workflow `sync-neon`, pelo input `force` do `workflow_dispatch`; em
+  push o valor fica vazio.
+- O backup das notas tem a **guarda de perda** (mais de 3 notas a menos
+  que o backup anterior → não sobrescreve, exit 1), liberável com
+  `BACKUP_ACEITAR_PERDA=1` — no workflow `backup-notas`, pelo input
+  `aceitar_perda`.
+- `test/workflows.test.mjs` trava a CI: toda `uses:` de terceiro
+  fixada por SHA de 40 caracteres, `timeout-minutes` em todo job,
+  `permissions:` no topo de todo workflow (nunca write-all) e
+  `SYNC_FORCE`/`BACKUP_ACEITAR_PERDA` só na forma exata
+  `SYNC_FORCE: ${{ inputs.force && '1' || '' }}` (idem
+  `aceitar_perda`), apenas nos workflows correspondentes.
+- **Driver `@neondatabase/serverless` 1.x**: chame `db.query(...)`,
+  nunca `db("SQL", params)` (erro "can now be called only as a
+  tagged-template"). Com `neon(url, { fullResults: true })` o retorno
+  de `db.query` é `{ rows, rowCount }`; sem `fullResults` devolve um
+  **array** de linhas (não `{ rows }`). `neonConfig.fetchFunction` é
+  **global** (salve e restaure em testes).
 - Assunto do commit: até 70 caracteres; detalhe no corpo.
 
 ## Armadilhas conhecidas
@@ -128,7 +168,8 @@ Todos os comandos acima devem passar verde antes de qualquer commit.
 
 ## Pendências
 
-- ~142 jogos sem `engine` preenchida (aguardando lista). O rascunho
+- 163 de 364 jogos sem `engine` preenchida (contados do
+  `data/games.json` em 2026-11-26; aguardando lista). O rascunho
   `engine-faltando.txt` (na raiz, versionado) está
   desatualizado — regenerar a partir do `data/games.json` quando a
   lista for feita; não apagar, é material do dono.
@@ -146,8 +187,10 @@ Todos os comandos acima devem passar verde antes de qualquer commit.
   confirmado via `gh api` em 2026-11-25; a publicação é pelo workflow
   `deploy-pages.yml` (run verde comprovando: [45315958242](https://github.com/EduardoSFragoso/lista-de-jogos/actions/runs/45315958242)).
 - Hook local de pre-commit com gitleaks (comando no
-  `docs/configuracao-repositorio.md`); o histórico já foi varrido
-  (70 commits, limpo) e `npm audit` está zerado.
+  `docs/configuracao-repositorio.md`); o histórico foi varrido na
+  auditoria de 2026-11-25 — 78 commits (eram os existentes até então;
+  hoje são 96) por regex, sem gitleaks, sem refs de PR — limpo — e
+  `npm audit` está zerado.
 - Rate limit do login é best effort em memória de isolate; se virar
   problema real, migrar para Cloudflare KV/DO (hoje seria YAGNI).
 - Restore point-in-time do Neon (plano free tem janela limitada): usar
@@ -164,8 +207,9 @@ Todos os comandos acima devem passar verde antes de qualquer commit.
   O push da branch de backup usa `GH_TOKEN: github.token` como
   extraheader por `-c` (a credencial do checkout não vale no clone
   separado `publicar/`; sem persistir em .git/config nem na URL).
-- **Restauração das notas (PR 8)**: `tools/restore-notas.mjs` +
-  `test/restore-notas.test.mjs`. Uso:
+- **Restauração das notas**: `tools/restore-notas.mjs` +
+  `test/restore-notas.test.mjs`. O teste real numa branch descartável
+  do Neon foi feito com sucesso (nov/2026). Uso:
   `DATABASE_URL="postgresql://..." node tools/restore-notas.mjs
 --arquivo notas.json [--aplicar --confirmo-host <rótulo>] [--sobrescrever]`.
   Contratos que não podem quebrar: DRY-RUN é o padrão (sem `--aplicar`
@@ -178,3 +222,29 @@ Todos os comandos acima devem passar verde antes de qualquer commit.
   a senha nem o host completo — só o primeiro rótulo. O driver
   `@neondatabase/serverless` 1.x NÃO aceita `db("SQL", params)`: use
   `db.query(...)` (testes + teste com o driver real cobrem isso).
+
+## Como continuar o trabalho
+
+- **Uma IA implementa, outra audita**: quem implementa não audita o
+  próprio PR. Quem audita procura erros, duplicação e simplificação
+  possível, e verifica as provas.
+- **Um PR por vez**, com os testes escritos ANTES do código quando o
+  PR muda comportamento: os testes novos devem **falhar no código
+  antigo** (mostrar a saída vermelha antes de implementar).
+- **Prova por mutação em cópia descartável** — nunca na branch do PR:
+  `git worktree add --detach ../lista_jogos-mut <branch>`, linkar o
+  `node_modules` (no Windows, junction com `fs.symlinkSync(...,
+'junction')`), aplicar a mutação, rodar o teste e mostrar qual ficou
+  vermelho; `git checkout -- <arquivo>` entre mutações; remover a
+  junction antes do `git worktree remove --force` + `git worktree
+prune`. Um teste novo só prova algo se matar a mutação.
+- **Postgres em memória com PGlite** para provar SQL sem rede:
+  `npm i --no-save @electric-sql/pglite` e rodar o `schema.sql` real —
+  **nunca versionar** (`--no-save` e conferir o `git diff` antes do
+  commit).
+- Commits em português, assunto até 70 caracteres, detalhes no corpo;
+  nada de push na `main` (ruleset: PR obrigatório, rebase only).
+- **Nada destrutivo sem confirmação explícita** do dono (DROP, delete
+  sem WHERE, apagar secrets/branches, trocar `ALLOWED_ORIGIN`).
+- **Migração de banco primeiro em branch do Neon**, nunca direto na
+  produção; confirmar que existe backup ou ponto de restauração.

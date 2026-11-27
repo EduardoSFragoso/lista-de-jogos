@@ -101,7 +101,19 @@ Validação: `rating` 1–5, `year` plausível, textos ≤ 200 (review ≤ 4000)
 06:17 UTC (Horário de Verão do Brasil = UTC-3), baixa
 `GET /api/games` e grava um `notas.json` estável (só os jogos com nota
 ou review, ordenado por id) na branch `backup-notas` (criada no
-primeiro run; arquivo `notas.json` na raiz da branch).
+primeiro run; arquivo `notas.json` na raiz da branch). Formato do
+arquivo:
+
+```json
+{
+  "total_com_nota": 12,
+  "total_jogos_na_base": 364,
+  "jogos": [{ "id": 1, "title": "...", "rating": 5, "review": "..." }]
+}
+```
+
+Sem timestamp dentro do arquivo, para não gerar commit à toa em semana
+sem mudança.
 
 - Como baixar: `git fetch origin backup-notas` e
   `git show origin/backup-notas:notas.json > notas.json`
@@ -114,8 +126,8 @@ primeiro run; arquivo `notas.json` na raiz da branch).
 
 ## 🔄 Restaurar as notas (rating/review)
 
-Caminho de volta do backup (a peça "PR 8" da divisão do projeto):
-`tools/restore-notas.mjs` lê o `notas.json` da branch `backup-notas`
+Caminho de volta do backup: `tools/restore-notas.mjs` lê o
+`notas.json` da branch `backup-notas`
 e repõe as notas no Neon — **dry-run por padrão** (só imprime
 contagens, nenhuma escrita):
 
