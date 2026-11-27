@@ -375,3 +375,27 @@ describe('backup vazio (jogos: []): "nada a restaurar", NENHUMA consulta ao banc
     }
   });
 });
+
+describe('aceita os dois formatos do notas.json (só `jogos` importa)', () => {
+  it('formato antigo (com `total`) é aceito', () => {
+    expect(() => valida({ total: 2, jogos: [jogo(1, 3), jogo(2)] })).not.toThrow();
+    expect(() => valida({ total: 0, jogos: [] })).not.toThrow();
+  });
+  it('formato novo (total_com_nota/total_jogos_na_base) é aceito', () => {
+    expect(() =>
+      valida({
+        total_com_nota: 2,
+        total_jogos_na_base: 364,
+        jogos: [jogo(1, 3), jogo(2)],
+      })
+    ).not.toThrow();
+  });
+  it('carregaNotas: formato antigo lê os jogos normalmente', () => {
+    const { arq, limpar } = tempNotas({ total: 1, jogos: [jogo(7, 2, 'velha')] });
+    try {
+      expect(carregaNotas(arq).jogos).toEqual([{ id: 7, rating: 2, review: 'velha' }]);
+    } finally {
+      limpar();
+    }
+  });
+});

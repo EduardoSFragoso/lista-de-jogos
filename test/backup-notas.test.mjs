@@ -8,7 +8,7 @@
    - valida: HTTP 200, `games` array, ≥ 300 jogos, id inteiro,
      rating null ou inteiro 1..5 — qualquer falha = erro e NADA
      é gravado;
-   - notas.json estável (ordenado por id, indentação 2), { total,
+   - notas.json estável (ordenado por id, indentação 2), { total_com_nota,
      jogos: [{ id, title, rating, review }] }, só jogos com rating OU
      review não nulos, sem timestamp (não gerar commit à toa);
    - guarda de perda: anterior N notas e novo N-4 ou menos → NÃO
@@ -141,13 +141,14 @@ describe('extraiNotas + montaArquivo: estável, ordenado e sem timestamp', () =>
   });
 
   it('arquivo estável: duas execuções idênticas e sem "timestamp" dentro', () => {
-    const um = montaArquivo(extraiNotas(dados()));
-    const outro = montaArquivo(extraiNotas(dados()));
+    const um = montaArquivo(extraiNotas(dados()), 300);
+    const outro = montaArquivo(extraiNotas(dados()), 300);
     expect(outro).toBe(um);
     expect(um).toBe(
       JSON.stringify(
         {
-          total: 3,
+          total_com_nota: 3,
+          total_jogos_na_base: 300,
           jogos: [
             { id: 5, title: 'C', rating: 4, review: null },
             { id: 10, title: 'B', rating: null, review: 'Muito bom' },
@@ -158,6 +159,14 @@ describe('extraiNotas + montaArquivo: estável, ordenado e sem timestamp', () =>
         2
       ) + '\n'
     );
+  });
+
+  it('totais: total_com_nota conta só as notas; total_jogos_na_base, a base inteira', () => {
+    const arquivo = JSON.parse(montaArquivo(extraiNotas(dados()), 300));
+    expect(arquivo.total_com_nota).toBe(3);
+    expect(arquivo.total_jogos_na_base).toBe(300);
+    expect(arquivo.total).toBeUndefined();
+    expect(arquivo.jogos).toHaveLength(3); // a guarda de perda usa o tamanho de jogos
   });
 });
 
@@ -204,7 +213,8 @@ describe('main: válido, estável, guarda de perda e "sem alteração"', () => {
     writeFileSync(anterior, '{}');
     await expect(main(opts)).resolves.toBe('ok');
     const gravado = readFileSync(destino, 'utf8');
-    expect(JSON.parse(gravado).total).toBe(400);
+    expect(JSON.parse(gravado).total_com_nota).toBe(400);
+    expect(JSON.parse(gravado).total_jogos_na_base).toBe(400);
     expect(gravado.endsWith('\n')).toBe(true);
     // próximo backup idêntico ao anterior (anterior := gravado) → "sem alteração"
     const gravado2 = readFileSync(destino, 'utf8');
@@ -246,7 +256,7 @@ describe('main: válido, estável, guarda de perda e "sem alteração"', () => {
     const dir = tempDir();
     const destino = join(dir, 'notas.json');
     const anterior = join(dir, 'anterior.json');
-    writeFileSync(anterior, montaArquivo(extraiNotas(dadosComNotas(10))));
+    writeFileSync(anterior, montaArquivo(extraiNotas(dadosComNotas(10)), 10));
     const five = {
       games: jogosBase()
         .slice(0, 300)
@@ -262,14 +272,15 @@ describe('main: válido, estável, guarda de perda e "sem alteração"', () => {
         log: quiet,
       })
     ).resolves.toBe('ok');
-    expect(JSON.parse(readFileSync(destino, 'utf8')).total).toBe(5);
+    expect(JSON.parse(readFileSync(destino, 'utf8')).total_com_nota).toBe(5);
+    expect(JSON.parse(readFileSync(destino, 'utf8')).total_jogos_na_base).toBe(300);
   });
 
   it('por env: BACKUP_ACEITAR_PERDA=1 no ambiente aceita a perda', async () => {
     const dir = tempDir();
     const destino = join(dir, 'notas.json');
     const anterior = join(dir, 'anterior.json');
-    writeFileSync(anterior, montaArquivo(extraiNotas(dadosComNotas(10))));
+    writeFileSync(anterior, montaArquivo(extraiNotas(dadosComNotas(10)), 10));
     const five = {
       games: jogosBase().map((g, i) => (i < 5 ? { ...g, rating: 2 } : g)),
     };
@@ -284,9 +295,60 @@ describe('main: válido, estável, guarda de perda e "sem alteração"', () => {
           log: quiet,
         })
       ).resolves.toBe('ok');
-      expect(JSON.parse(readFileSync(destino, 'utf8')).total).toBe(5);
+      expect(JSON.parse(readFileSync(destino, 'utf8')).total_com_nota).toBe(5);
+      expect(JSON.parse(readFileSync(destino, 'utf8')).total_jogos_na_base).toBe(300);
     } finally {
       vi.unstubAllEnvs();
     }
+  });
+});
+
+describe('backup anterior no formato ANTIGO (com `total`) continua lido sem erro', () => {
+  const quiet = () => {};
+  const dadosComNotas = (n) => {
+    const games = jogosBase(Math.max(n, 300));
+    for (let i = 0; i < n; i++) games[i] = { ...games[i], rating: 3 };
+    return { games };
+  };
+  const fetcherOk = (dados) => async () => resposta(200, JSON.stringify(dados));
+  it('a guarda de perda conta as notas do formato antigo (10 → 5 rejeita)', async () => {
+    const dir = tempDir();
+    const destino = join(dir, 'notas.json');
+    const anterior = join(dir, 'anterior.json');
+    const velho = JSON.stringify(
+      { total: 10, jogos: extraiNotas(dadosComNotas(400)).slice(0, 10) },
+      null,
+      2
+    );
+    writeFileSync(anterior, velho);
+    writeFileSync(destino, velho);
+    const cinco = {
+      games: jogosBase().map((g, i) => (i < 5 ? { ...g, rating: 3 } : g)),
+    };
+    await expect(
+      main({ url: 'http://x/api/games', destino, anterior, fetcher: fetcherOk(cinco), log: quiet })
+    ).rejects.toThrow(/perderia 5/);
+    expect(readFileSync(destino, 'utf8')).toBe(velho);
+  });
+
+  it('mesmo número de notas no formato antigo → lê sem erro e grava no formato novo', async () => {
+    const dir = tempDir();
+    const destino = join(dir, 'notas.json');
+    const anterior = join(dir, 'anterior.json');
+    const notas = extraiNotas(dadosComNotas(10));
+    writeFileSync(anterior, JSON.stringify({ total: 10, jogos: notas }, null, 2));
+    await expect(
+      main({
+        url: 'http://x/api/games',
+        destino,
+        anterior,
+        fetcher: fetcherOk(dadosComNotas(10)),
+        log: quiet,
+      })
+    ).resolves.toBe('ok');
+    const gravado = JSON.parse(readFileSync(destino, 'utf8'));
+    expect(gravado.total_com_nota).toBe(10);
+    expect(gravado.total_jogos_na_base).toBe(300); // dadosComNotas(10): base = max(10, 300)
+    expect(gravado.jogos).toEqual(notas);
   });
 });
