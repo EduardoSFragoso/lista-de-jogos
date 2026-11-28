@@ -105,6 +105,14 @@ No Windows/PowerShell com política de scripts restrita, `npm` (que é um
   de `db.query` é `{ rows, rowCount }`; sem `fullResults` devolve um
   **array** de linhas (não `{ rows }`). `neonConfig.fetchFunction` é
   **global** (salve e restaure em testes).
+- **Alerta de falha dos workflows**: `sync-neon`, `backup-notas` e
+  `monitor-health` rodam `tools/alerta-falha.mjs` no fim do job —
+  falha abre/comenta a Issue `[alerta] <workflow> falhou` (label
+  `alerta-falha`); sucesso comenta "voltou a passar" e fecha. O
+  `issues: write` fica SÓ no job (topo segue `contents: read`); o
+  passo "passou" tem `continue-on-error: true`; o monitor-health não
+  comenta em Issue já aberta (`ALERTA_SEM_COMENTARIO=1`, roda a cada
+  30 min) e tem o input `simular_falha` para provar o alerta à mão.
 - Assunto do commit: até 70 caracteres; detalhe no corpo.
 
 ## Armadilhas conhecidas
@@ -118,7 +126,8 @@ No Windows/PowerShell com política de scripts restrita, `npm` (que é um
   pedir confirmação ao usuário.
 - O CI do `deploy-worker` dispara só em mudanças em `worker/*`.
 - O monitor de saúde (cron `8,58 * * * *`) usa retry 5×20s para cobrir
-  cold start do Neon e rede/redeploy; falha → e-mail automático do GitHub.
+  cold start do Neon e rede/redeploy; falha → Issue automática
+  (`[alerta] Monitor de saúde falhou`) + e-mail do GitHub.
 - Exceções de lint históricas: permissões de workflow são `contents: read`
   em todos os workflows; não afrouxar.
 - **Actions fixas por SHA**: toda `uses:` de terceiro é `@<40 hex>` com a
@@ -236,8 +245,12 @@ No Windows/PowerShell com política de scripts restrita, `npm` (que é um
   `node_modules` (no Windows, junction com `fs.symlinkSync(...,
 'junction')`), aplicar a mutação, rodar o teste e mostrar qual ficou
   vermelho; `git checkout -- <arquivo>` entre mutações; remover a
-  junction antes do `git worktree remove --force` + `git worktree
-prune`. Um teste novo só prova algo se matar a mutação.
+  junction **com cuidado** antes do `git worktree remove --force` +
+  `git worktree prune` — `fs.rmSync(junction, { recursive: true })`
+  ATRAVESSA o junction no Windows/Node 24 e apaga o `node_modules`
+  real (aconteceu no PR 11; recuperado com `npm ci`). Remoção segura:
+  `fs.rmdirSync(caminho)` ou `cmd /c rmdir`. Um teste novo só prova
+  algo se matar a mutação.
 - **Postgres em memória com PGlite** para provar SQL sem rede:
   `npm i --no-save @electric-sql/pglite` e rodar o `schema.sql` real —
   **nunca versionar** (`--no-save` e conferir o `git diff` antes do
