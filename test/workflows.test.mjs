@@ -173,3 +173,115 @@ describe('workflows: backup-notas autentica o push com GH_TOKEN, sem persistir c
     expect(bnf, 'senha/credentials embutidas em URL').not.toMatch(/https:\/\/[^/\s:@]+:[^@\s/]+@/);
   });
 });
+
+/* (f) Alerta de falha dos workflows via Issue automática
+   (tools/alerta-falha.mjs). Contratos:
+   - `issues: write` SÓ no nível de job e SÓ nos três workflows que
+     alertam (sync-neon, backup-notas, monitor-health); o permissions
+     do topo continua contents: read em todos;
+   - o job tem o passo "Alerta — falhou" com `if: failure()` e o
+     "Alerta — passou" com `if: success()` + `continue-on-error: true`
+     (erro ao fechar a Issue não pode deixar o run vermelho); nenhum
+     roda em pull_request; ambos usam GITHUB_TOKEN: github.token;
+   - monitor-health não tem checkout nativo — precisa do
+     actions/checkout com o SHA padrão do repo — e é o único com
+     ALERTA_SEM_COMENTARIO=1 (roda a cada 30 min) e com o input
+     booleano `simular_falha` (workflow_dispatch) que falha o passo de
+     checagem de propósito, para provar o alerta no GitHub real. */
+const COM_ALERTA = ['sync-neon.yml', 'backup-notas.yml', 'monitor-health.yml'];
+const CHECKOUT_SHA = '3d3c42e5aac5ba805825da76410c181273ba90b1';
+
+const blocoPermissionsTopo = (texto) => {
+  const linhas = texto.split(/\r?\n/);
+  const inicio = linhas.findIndex((l) => /^permissions:\s*$/.test(l));
+  expect(inicio, 'permissions: de topo não encontrado').toBeGreaterThanOrEqual(0);
+  const bloco = [];
+  for (let i = inicio + 1; i < linhas.length; i++) {
+    if (/^\S/.test(linhas[i])) break;
+    bloco.push(linhas[i]);
+  }
+  return bloco.join('\n');
+};
+
+const passoDe = (texto, nomePasso) => {
+  const linhas = texto.split(/\r?\n/);
+  const inicio = linhas.findIndex((l) => l.includes(`- name: ${nomePasso}`));
+  if (inicio === -1) return null;
+  let fim = linhas.length;
+  for (let i = inicio + 1; i < linhas.length; i++) {
+    if (/^      - (name|uses):/.test(linhas[i])) {
+      fim = i;
+      break;
+    }
+  }
+  return linhas.slice(inicio, fim).join('\n');
+};
+
+describe('workflows: alerta de falha (Issue automática)', () => {
+  it('issues: write existe só nos três workflows que alertam e só no nível de job', () => {
+    for (const { nome, texto } of arquivos) {
+      if (COM_ALERTA.includes(nome)) {
+        const topo = blocoPermissionsTopo(texto);
+        expect(topo, `${nome}: topo não pode ter issues: write`).not.toMatch(/issues: write/);
+        expect(topo, `${nome}: topo segue contents: read`).toMatch(/contents: read/);
+        for (const job of jobsDe(texto, nome)) {
+          expect(job.corpo, `${nome} — job ${job.nome}`).toMatch(/issues: write/);
+        }
+      } else {
+        expect(texto, `${nome}: não deveria ter issues: write em lugar nenhum`).not.toMatch(
+          /issues: write/
+        );
+      }
+    }
+  });
+
+  for (const nome of COM_ALERTA) {
+    const texto = arquivos.find((a) => a.nome === nome).texto;
+
+    it(`${nome}: passo "Alerta — falhou" com if: failure(), fora de pull_request, com GITHUB_TOKEN`, () => {
+      const passo = passoDe(texto, 'Alerta — falhou');
+      expect(passo, 'passo "Alerta — falhou" ausente').not.toBeNull();
+      expect(passo).toMatch(/if: failure\(\) && github\.event_name != 'pull_request'/);
+      expect(passo).toMatch(/run: node tools\/alerta-falha\.mjs falhou/);
+      expect(passo).toMatch(/GITHUB_TOKEN: \$\{\{ github\.token \}\}/);
+    });
+
+    it(`${nome}: passo "Alerta — passou" com if: success(), continue-on-error e GITHUB_TOKEN`, () => {
+      const passo = passoDe(texto, 'Alerta — passou');
+      expect(passo, 'passo "Alerta — passou" ausente').not.toBeNull();
+      expect(passo).toMatch(/if: success\(\) && github\.event_name != 'pull_request'/);
+      expect(passo).toMatch(/continue-on-error: true/);
+      expect(passo).toMatch(/run: node tools\/alerta-falha\.mjs passou/);
+      expect(passo).toMatch(/GITHUB_TOKEN: \$\{\{ github\.token \}\}/);
+    });
+  }
+
+  it('monitor-health.yml: tem actions/checkout (o script roda do repo)', () => {
+    const mh = arquivos.find(({ nome }) => nome === 'monitor-health.yml').texto;
+    expect(mh).toMatch(new RegExp(`uses: actions/checkout@${CHECKOUT_SHA} # v7\\.0\\.1`));
+  });
+
+  it("monitor-health.yml: ALERTA_SEM_COMENTARIO: '1' só nele e na forma exata", () => {
+    for (const { nome, texto } of arquivos) {
+      const linhas = texto
+        .split(/\r?\n/)
+        .filter((l) => l.includes('ALERTA_SEM_COMENTARIO') && !l.trim().startsWith('#'));
+      const esperado = nome === 'monitor-health.yml' ? ["ALERTA_SEM_COMENTARIO: '1'"] : [];
+      expect(
+        linhas.map((l) => l.trim()),
+        nome
+      ).toEqual(esperado);
+    }
+  });
+
+  it('monitor-health.yml: input simular_falha (booleano, padrão false) e passo que falha de propósito', () => {
+    const mh = arquivos.find(({ nome }) => nome === 'monitor-health.yml').texto;
+    expect(mh).toMatch(/simular_falha:/);
+    expect(mh).toMatch(/type: boolean/);
+    expect(mh).toMatch(/default: false/);
+    const passo = passoDe(mh, 'Verifica Worker');
+    expect(passo, 'passo "Verifica Worker" ausente').not.toBeNull();
+    expect(passo, 'passo deve consultar inputs.simular_falha').toMatch(/inputs\.simular_falha/);
+    expect(passo, 'passo deve falhar de propósito (exit 1)').toMatch(/exit 1/);
+  });
+});

@@ -20,6 +20,11 @@ on:
   schedule:
     - cron: '8,58 * * * *'
   workflow_dispatch:
+    inputs:
+      simular_falha:
+        description: 'Falha de propósito, para provar o alerta (Issue) no GitHub real'
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
@@ -27,9 +32,17 @@ jobs:
     name: GET /api/ping
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      issues: write # SÓ o job: cria/comenta/fecha a Issue de alerta
     steps:
+      # o checkout é necessário para rodar tools/alerta-falha.mjs
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Verifica Worker
         run: |
+          if [ "${{ inputs.simular_falha }}" = "true" ]; then
+            echo "simular_falha=true: falhando de propósito (prova do alerta)"
+            exit 1
+          fi
           for i in 1 2 3 4 5; do
             if body=$(curl -sS --max-time 15 https://lista-api.eduardosfragoso.workers.dev/api/ping) &&
                echo "$body" | grep -q '"ok":true'; then
@@ -41,3 +54,18 @@ jobs:
           done
           echo "Falhou após 5 tentativas. Última resposta: $body"
           exit 1
+      # Issue automática de falha (ver tools/alerta-falha.mjs). O
+      # monitor roda a cada 30 min: com Issue já aberta, NÃO comenta
+      # (ALERTA_SEM_COMENTARIO=1) para não encher a Issue de ruído.
+      - name: Alerta — falhou
+        if: failure() && github.event_name != 'pull_request'
+        run: node tools/alerta-falha.mjs falhou
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          ALERTA_SEM_COMENTARIO: '1'
+      - name: Alerta — passou
+        if: success() && github.event_name != 'pull_request'
+        continue-on-error: true # erro ao fechar a Issue não derruba o run
+        run: node tools/alerta-falha.mjs passou
+        env:
+          GITHUB_TOKEN: ${{ github.token }}

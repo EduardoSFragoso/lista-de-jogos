@@ -123,6 +123,10 @@ sem mudança.
   propósito? rode com o input `aceitar_perda` marcado
   (BACKUP_ACEITAR_PERDA=1, mesmo espírito do `SYNC_FORCE`).
 - Para restaurar no banco, veja [Restaurar as notas](#-restaurar-as-notas-ratingreview).
+- Falha no `sync-neon`, no `backup-notas` ou no monitor de saúde abre
+  (ou comenta) a Issue `[alerta] <workflow> falhou`, com a label
+  `alerta-falha`; quando o workflow volta a passar, a Issue é
+  comentada e fechada — ver `tools/alerta-falha.mjs`.
 
 ## 🔄 Restaurar as notas (rating/review)
 
